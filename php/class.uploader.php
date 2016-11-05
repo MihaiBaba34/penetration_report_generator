@@ -13,7 +13,7 @@
 
 class Uploader {
 
-    protected $options = array(
+    public $options = array(
         'limit' => null,
         'maxSize' => null,
         'extensions' => null,

@@ -98,7 +98,7 @@ $(document).ready(function(){
 				});
 
 				//call an ajax function after files are uploaded
-				get_corresponding_output_for_xml_file(data);
+				get_corresponding_output_for_xml_file(new_file_name);
 				
 
 			},
@@ -162,16 +162,18 @@ function get_corresponding_output_for_xml_file(data)
 	console.log(data);
 	console.log("*********");
 
+	
 
-/*	$.ajax({
+
+	$.ajax({
  	 method: "POST",
- 	 url: "some.php",
- 	 data: { name: "John", location: "Boston" }
+ 	 url: "nessus.php",
+ 	 data: {upload_path:"uploads", filename:data}
 	})
   	.done(function( msg ) {
-    	alert( "Data Saved: " + msg );
+    	console.log(msg);
   	});
-*/
+
 
 
 }

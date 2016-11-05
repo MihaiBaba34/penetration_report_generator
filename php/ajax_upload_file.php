@@ -23,23 +23,14 @@
     if($data['isComplete']){
         $files = $data['data'];        
 
-        echo json_encode($files['metas'][0]['name']);
-
-        foreach ($_FILES['files'] as $key => $value) {
-            # code...
-
-            
-
-        }
-
-
-        //console_log($files);
+        //$output = $uploader->options["uploadDir"]."/".$files['metas'][0]['name'];
+        $output = $files['metas'][0]['name'];
+        echo json_encode($output);        
     }
 
     if($data['hasErrors']){
         $errors = $data['errors'];
-        echo json_encode($errors);
-        
+        echo json_encode($errors);        
     }
 
 
