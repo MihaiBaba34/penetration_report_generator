@@ -1,4 +1,4 @@
-needed fields : 	retina					Nessus							Acuntix
+needed fields : 	retina					Nessus							Acunetix
 
       Title		<name>					<plugin_name>						<Name>
        Risk 		<risk>					<risk_factor>						<Severity><![CDATA[txt]]></Severity>					
@@ -13,3 +13,4 @@ path in xml:		$xmlDoc->hosts->host->audit		$xmlDoc->Report->ReportHost->ReportIt
 
 
 
+s
