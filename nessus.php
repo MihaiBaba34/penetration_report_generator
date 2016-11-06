@@ -1,7 +1,14 @@
 <?php
 
 
+$uploaddir = $_POST['upload_path'];
+$filename = $_POST['filename'];
+$uploadfile = $uploaddir."/".$filename;
 
+echo $_POST['upload_path']."/".$_POST['filename'];
+
+
+/*
 $uploaddir = 'uploads/';
 $uploadfile = $uploaddir . basename($_FILES['userfile']['name']);
 if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
@@ -10,8 +17,33 @@ if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
 
 } else {
 	echo "File is not valid!\n";
-}
+}*/
 
+
+	//load coresponding xml file
+	$xmlDoc = simplexml_load_file($uploadfile);
+	if(!$xmlDoc) {
+		die('Error while reading XML file '.$uploadfile);	
+	}
+
+
+	if(isset($xmlDoc->hosts->host->audit))
+	{
+		//echo "retina file!\n";
+		retinaXMLFileParser($uploadfile);
+	}
+	else
+		if(isset($xmlDoc->Report->ReportHost->ReportItem))
+		{
+			//echo "Nessus file!\n";
+			nessusXMLFileParser($uploadfile);
+		}
+		else
+			if(isset($xmlDoc->Scan->ReportItems->ReportItem))
+			{
+				//echo "Acuntix file!\n";
+				acunetixXMLFileParser($uploadfile);
+			}
 
 
 
@@ -22,13 +54,13 @@ $time_pre = microtime(true);
 
 //nessusXMLFileParser($uploadfile);
 //retinaXMLFileParser($uploadfile);
-acunetixXMLFileParser($uploadfile);
+//acunetixXMLFileParser($uploadfile);
 $time_post = microtime(true);
 
 $exec_time = $time_post - $time_pre;
-echo "<br>***********";
+/*echo "<br>***********";
 echo "Execution time :".$exec_time;
-echo "<br>***********";
+echo "<br>***********";*/
 
 function nessusXMLFileParser($uploadfile)
 {
@@ -107,7 +139,11 @@ function nessusXMLFileParser($uploadfile)
 			//inserting data about each Report into main array
 		array_push($parsed_data_array,$parsed_data_line_format);
 	}
-print_r($parsed_data_array);
+
+
+	echo json_encode($parsed_data_array);
+
+//print_r($parsed_data_array);
 }
 
 function retinaXMLFileParser($uploadfile)
@@ -151,7 +187,7 @@ function retinaXMLFileParser($uploadfile)
 			//inserting data about each Report into main array
 		array_push($parsed_data_array,$parsed_data_line_format);
 	}
-	
+	echo json_encode($parsed_data_array);
 		
 
 }
@@ -201,7 +237,7 @@ function acunetixXMLFileParser($uploadfile)
 	}
 	
 		
-
+	echo json_encode($parsed_data_array);
 }
 
 

@@ -34,16 +34,19 @@
 
 		$('#uploadfile').click(function(){
 			var formData = new FormData($('form')[0]);
+
+			alert("request");
+
 			// alert(JSON.stringify(formData));
 			$.ajax({
-				url: 'nessus.php',  //Server script to process data
+				url: 'xml_uploader.php',  //Server script to process data
 				type: 'POST',
 				success: function(data){
-					// alert(data);
-					$('#xml_result').html(data);
+					alert(data);
+					/*$('#xml_result').html(data);
 					$('#xmlname').val(name);
 					$('.nodedata input[type=checkbox]').prop('checked', true);
-					$('span input[type=checkbox]').prop('checked', true);
+					$('span input[type=checkbox]').prop('checked', true);*/
 				},
 				error: function(){},
 				data: formData,
@@ -52,8 +55,8 @@
 				contentType: false,
 				processData: false
 			});
-			$('#nodelist').show();
-			$('#upload').hide();
+			/*$('#nodelist').show();
+			$('#upload').hide();*/
 		});
 
 		$(document).on("click", "#supplied", function(){
