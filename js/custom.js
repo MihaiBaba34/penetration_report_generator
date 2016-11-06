@@ -11,57 +11,57 @@ $(document).ready(function(){
 		templates: {
 			box: '<ul class="jFiler-items-list jFiler-items-grid"></ul>',
 			item: '<li class="jFiler-item">\
-						<div class="jFiler-item-container">\
-							<div class="jFiler-item-inner">\
-								<div class="jFiler-item-thumb">\
-									<div class="jFiler-item-status"></div>\
-									<div class="jFiler-item-thumb-overlay">\
-										<div class="jFiler-item-info">\
-											<div style="display:table-cell;vertical-align: middle;">\
-												<span class="jFiler-item-title"><b title="{{fi-name}}">{{fi-name}}</b></span>\
-												<span class="jFiler-item-others">{{fi-size2}}</span>\
-											</div>\
-										</div>\
-									</div>\
-									{{fi-image}}\
-								</div>\
-								<div class="jFiler-item-assets jFiler-row">\
-									<ul class="list-inline pull-left">\
-										<li>{{fi-progressBar}}</li>\
-									</ul>\
-									<ul class="list-inline pull-right">\
-										<li><a class="icon-jfi-trash jFiler-item-trash-action"></a></li>\
-									</ul>\
-								</div>\
-							</div>\
-						</div>\
-					</li>',
+			<div class="jFiler-item-container">\
+			<div class="jFiler-item-inner">\
+			<div class="jFiler-item-thumb">\
+			<div class="jFiler-item-status"></div>\
+			<div class="jFiler-item-thumb-overlay">\
+			<div class="jFiler-item-info">\
+			<div style="display:table-cell;vertical-align: middle;">\
+			<span class="jFiler-item-title"><b title="{{fi-name}}">{{fi-name}}</b></span>\
+			<span class="jFiler-item-others">{{fi-size2}}</span>\
+			</div>\
+			</div>\
+			</div>\
+			{{fi-image}}\
+			</div>\
+			<div class="jFiler-item-assets jFiler-row">\
+			<ul class="list-inline pull-left">\
+			<li>{{fi-progressBar}}</li>\
+			</ul>\
+			<ul class="list-inline pull-right">\
+			<li><a class="icon-jfi-trash jFiler-item-trash-action"></a></li>\
+			</ul>\
+			</div>\
+			</div>\
+			</div>\
+			</li>',
 			itemAppend: '<li class="jFiler-item">\
-							<div class="jFiler-item-container">\
-								<div class="jFiler-item-inner">\
-									<div class="jFiler-item-thumb">\
-										<div class="jFiler-item-status"></div>\
-										<div class="jFiler-item-thumb-overlay">\
-											<div class="jFiler-item-info">\
-												<div style="display:table-cell;vertical-align: middle;">\
-													<span class="jFiler-item-title"><b title="{{fi-name}}">{{fi-name}}</b></span>\
-													<span class="jFiler-item-others">{{fi-size2}}</span>\
-												</div>\
-											</div>\
-										</div>\
-										{{fi-image}}\
-									</div>\
-									<div class="jFiler-item-assets jFiler-row">\
-										<ul class="list-inline pull-left">\
-											<li><span class="jFiler-item-others">{{fi-icon}}</span></li>\
-										</ul>\
-										<ul class="list-inline pull-right">\
-											<li><a class="icon-jfi-trash jFiler-item-trash-action"></a></li>\
-										</ul>\
-									</div>\
-								</div>\
-							</div>\
-						</li>',
+			<div class="jFiler-item-container">\
+			<div class="jFiler-item-inner">\
+			<div class="jFiler-item-thumb">\
+			<div class="jFiler-item-status"></div>\
+			<div class="jFiler-item-thumb-overlay">\
+			<div class="jFiler-item-info">\
+			<div style="display:table-cell;vertical-align: middle;">\
+			<span class="jFiler-item-title"><b title="{{fi-name}}">{{fi-name}}</b></span>\
+			<span class="jFiler-item-others">{{fi-size2}}</span>\
+			</div>\
+			</div>\
+			</div>\
+			{{fi-image}}\
+			</div>\
+			<div class="jFiler-item-assets jFiler-row">\
+			<ul class="list-inline pull-left">\
+			<li><span class="jFiler-item-others">{{fi-icon}}</span></li>\
+			</ul>\
+			<ul class="list-inline pull-right">\
+			<li><a class="icon-jfi-trash jFiler-item-trash-action"></a></li>\
+			</ul>\
+			</div>\
+			</div>\
+			</div>\
+			</li>',
 			progressBar: '<div class="bar"></div>',
 			itemAppendToEnd: false,
 			canvasImage: true,
@@ -88,10 +88,10 @@ $(document).ready(function(){
 			beforeSend: function(){},
 			success: function(data, itemEl, listEl, boxEl, newInputEl, inputEl, id){
 				var parent = itemEl.find(".jFiler-jProgressBar").parent(),
-					new_file_name = JSON.parse(data),
-					filerKit = inputEl.prop("jFiler");
+				new_file_name = JSON.parse(data),
+				filerKit = inputEl.prop("jFiler");
 
-        		filerKit.files_list[id].name = new_file_name;
+				filerKit.files_list[id].name = new_file_name;
 
 				itemEl.find(".jFiler-jProgressBar").fadeOut("slow", function(){
 					$("<div class=\"jFiler-item-others text-success\"><i class=\"icon-jfi-check-circle\"></i> Success</div>").hide().appendTo(parent).fadeIn("slow");
@@ -125,9 +125,9 @@ $(document).ready(function(){
 		afterShow: null,
 		onRemove: function(itemEl, file, id, listEl, boxEl, newInputEl, inputEl){
 			var filerKit = inputEl.prop("jFiler"),
-		        file_name = filerKit.files_list[id].name;
+			file_name = filerKit.files_list[id].name;
 
-		    $.post('./php/ajax_remove_file.php', {file: file_name});
+			$.post('./php/ajax_remove_file.php', {file: file_name});
 		},
 		onEmpty: null,
 		options: null,
@@ -158,21 +158,76 @@ $(document).ready(function(){
 
 function get_corresponding_output_for_xml_file(data)
 {
-	console.log("*********");
-	console.log(data);
-	console.log("*********");
-
-	
 
 
 	$.ajax({
- 	 method: "POST",
- 	 url: "nessus.php",
- 	 data: {upload_path:"uploads", filename:data}
+		method: "POST",
+		url: "XMLParser.php",
+		data: {upload_path:"uploads", filename:data}
 	})
-  	.done(function( msg ) {
-    	console.log(msg);
-  	});
+	.done(function( msg ) {
+    	//console.log(msg);
+    	var dataContainer=document.getElementById("parseResults");
+    	//var jsonObj = JSON.parse(msg);
+    	//console.log(jsonObj);
+
+    	var objects= JSON.parse(msg);
+
+    	var dataInContainer="";
+    	for (object in objects)
+    	{
+
+    		dataInContainer+="<br>Report number : "+object+"<br>";
+
+    		var objCVE="";
+    		var objDescription="";
+    		var objExploit="";
+    		var objName="";
+    		var objRisk="";
+			var objInfo="";
+
+    		objCVE=objects[object].cve;
+    		if(objCVE=="")
+    			objCVE="none";
+
+    		objDescription+=objects[object].description;
+    		if(objDescription=="")
+    			objDescription="none";
+
+    		objExploit+=objects[object].exploitability_ease;
+    		if(objExploit=="")
+    			objExploit="none";
+    		
+    		objName+=objects[object].plugin_name;
+    		if(objName=="")
+    			objName="none";
+
+    		objRisk+=objects[object].risk_factor;
+    		if(objRisk=="")
+    			objRisk="none";
+
+
+    		objInfo=objects[object].information;
+    		if(objInfo=="")
+    			objInfo="none";
+
+
+    		dataInContainer+="Name : "+objName+"<br>";
+    		dataInContainer+="Risk : "+objRisk+"<br>";
+    		dataInContainer+="Description : "+objDescription+"<br>";
+    		dataInContainer+="Cve : "+objCVE+"<br>";
+    		dataInContainer+="Exploit : "+objExploit+"<br>";
+    		dataInContainer+="Information : "+objInfo+"<br>";
+
+
+
+		dataContainer.innerHTML=dataInContainer;
+
+
+
+
+}
+});
 
 
 
