@@ -1,4 +1,0 @@
-Questions:
-
-1) Do parsers have to process more than one file at once?
-2) 

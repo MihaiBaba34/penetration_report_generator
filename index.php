@@ -1,7 +1,4 @@
-<?php
-  define('FPDF_FONTPATH','font/');
-  require('fpdf.php');
-?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>

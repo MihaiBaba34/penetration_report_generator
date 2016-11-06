@@ -1,6 +1,5 @@
 $(document).ready(function(){
 
-	//Example 2
 	$("#filer_input2").filer({
 		limit: null,
 		maxSize: null,
@@ -161,17 +160,16 @@ function get_corresponding_output_for_xml_file(data)
 
 
 	$.ajax({
-		method: "POST",
-		url: "XMLParser.php",
+		type: "POST",
+		url: "./php/XMLParser.php",
 		data: {upload_path:"uploads", filename:data}
 	})
 	.done(function( msg ) {
-    	//console.log(msg);
+ 
     	var dataContainer=document.getElementById("parseResults");
-    	//var jsonObj = JSON.parse(msg);
-    	//console.log(jsonObj);
 
     	var objects= JSON.parse(msg);
+
 
     	var dataInContainer="";
     	for (object in objects)
@@ -220,11 +218,7 @@ function get_corresponding_output_for_xml_file(data)
     		dataInContainer+="Information : "+objInfo+"<br>";
 
 
-
 		dataContainer.innerHTML=dataInContainer;
-
-
-
 
 }
 });
