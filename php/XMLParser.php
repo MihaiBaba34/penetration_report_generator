@@ -1,11 +1,8 @@
 <?php
 
-
 $uploaddir = $_POST['upload_path'];
 $filename = $_POST['filename'];
 $uploadfile = "../".$uploaddir."/".$filename;
-
-//echo $_POST['upload_path']."/".$_POST['filename'];
 
 
     //load coresponding xml file
@@ -32,18 +29,6 @@ $uploadfile = "../".$uploaddir."/".$filename;
                  //Call retina XML file parser if file Acunetix app output
                 acunetixXMLFileParser($uploadfile);
             }
-
-
-
-
-
-// $time_pre = microtime(true);
-
-
-// $time_post = microtime(true);
-
-// $exec_time = $time_post - $time_pre;
-
 
 function nessusXMLFileParser($uploadfile)
 {
@@ -78,14 +63,11 @@ function nessusXMLFileParser($uploadfile)
         $parsed_data_line_format["plugin_name"] = strip_tags((string)$x->plugin_name);
             //setting Risk Factor
         $parsed_data_line_format["risk_factor"] = strip_tags((string)$x->risk_factor);
-     
             //setting Exploitability Ease
-        $parsed_data_line_format["exploitability_ease"] = strip_tags((string)$x->exploitability_ease);
+        $parsed_data_line_format["exploit"] = strip_tags((string)$x->exploitability_ease);
             //setting Description
         $parsed_data_line_format["description"] = strip_tags((string)$x->description);
         
-         
-
         $lastPos = 0;
         $positions = array();
 
@@ -98,7 +80,6 @@ function nessusXMLFileParser($uploadfile)
         foreach ($positions as $value) 
         {   
             $cveOutput = ""; 
-            
             $posOfCveStartOffset = $value;
             $posOfCveStopOffset = 0;
 
@@ -116,10 +97,9 @@ function nessusXMLFileParser($uploadfile)
         array_push($parsed_data_array,$parsed_data_line_format);
     }
 
-
+    //passing data to Javascript  
     echo json_encode($parsed_data_array);
 
-//print_r($parsed_data_array);
 }
 
 function retinaXMLFileParser($uploadfile)
@@ -163,9 +143,9 @@ function retinaXMLFileParser($uploadfile)
             //inserting data about each Report into main array
         array_push($parsed_data_array,$parsed_data_line_format);
     }
+    //passing data to Javascript  
     echo json_encode($parsed_data_array);
         
-
 }
 
 function acunetixXMLFileParser($uploadfile)
@@ -203,7 +183,6 @@ function acunetixXMLFileParser($uploadfile)
         $parsed_data_line_format["information"] = strip_tags((string)$x->Impact);
             //setting Description
         $parsed_data_line_format["description"] = strip_tags((string)$x->Description);
-
 
         // //echo gettype($parsed_data_line_format["plugin_name"]);
         // echo "Data: <br> Name: ".$parsed_data_line_format["plugin_name"]."<br>Risk: ".$parsed_data_line_format["risk_factor"]."<br>Cve: ".$parsed_data_line_format["cve"]."<br>Information: ".$parsed_data_line_format["information"]."<br>Description: ".$parsed_data_line_format["description"]."<br><br><br>"  ;

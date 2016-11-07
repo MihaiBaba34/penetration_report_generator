@@ -158,7 +158,7 @@ $(document).ready(function(){
 function get_corresponding_output_for_xml_file(data)
 {
 
-
+var dataInContainer="<pre>********************************************************************************************************";
 	$.ajax({
 		type: "POST",
 		url: "./php/XMLParser.php",
@@ -167,49 +167,58 @@ function get_corresponding_output_for_xml_file(data)
 	.done(function( msg ) {
  
     	var dataContainer=document.getElementById("parseResults");
-
     	var objects= JSON.parse(msg);
 
-
-    	var dataInContainer="";
+    	//iterating trough all objects
     	for (object in objects)
     	{
-
-    		dataInContainer+="<br>Report number : "+object+"<br>";
-
+    		dataInContainer+="<br>Report number : "+object+"----------------------------------------------------------------------------------------<br>";
+    		//Cve value from object
     		var objCVE="";
+    		//Description value from object
     		var objDescription="";
+    		//Exploit value from object
     		var objExploit="";
+    		//Name value from object
     		var objName="";
-    		var objRisk="";
+    		//Risk Factor value from object
+    		var objRisk="";	
+    		//Information value from object
 			var objInfo="";
 
+			//setting Cve for current report
     		objCVE=objects[object].cve;
     		if(objCVE=="")
     			objCVE="none";
 
+			//setting Description for current report
     		objDescription+=objects[object].description;
     		if(objDescription=="")
     			objDescription="none";
 
-    		objExploit+=objects[object].exploitability_ease;
+			//setting Exploit for current report
+    		objExploit+=objects[object].exploit;
     		if(objExploit=="")
     			objExploit="none";
     		
+			//setting Name for current report
     		objName+=objects[object].plugin_name;
     		if(objName=="")
     			objName="none";
 
+			//setting Risk Factor for current report
     		objRisk+=objects[object].risk_factor;
     		if(objRisk=="")
     			objRisk="none";
 
 
+			//setting Information for current report
     		objInfo=objects[object].information;
     		if(objInfo=="")
     			objInfo="none";
 
 
+    		//temporar display
     		dataInContainer+="Name : "+objName+"<br>";
     		dataInContainer+="Risk : "+objRisk+"<br>";
     		dataInContainer+="Description : "+objDescription+"<br>";
@@ -217,10 +226,10 @@ function get_corresponding_output_for_xml_file(data)
     		dataInContainer+="Exploit : "+objExploit+"<br>";
     		dataInContainer+="Information : "+objInfo+"<br>";
 
-
-		dataContainer.innerHTML=dataInContainer;
-
 }
+       //appdending data to main report container {temporar}
+		dataContainer.innerHTML+=dataInContainer+"</pre><br><br><br>";
+
 });
 
 
