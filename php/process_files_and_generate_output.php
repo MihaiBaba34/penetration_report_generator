@@ -1,22 +1,26 @@
 <?php
 
+
 $uploaded_files = $_POST['files_map'];
 $global_array = array();
 
 
 
-foreach ($uploaded_files as $key => $value) {
+header('Location: '."http://www.google.com");
+
+
+/*foreach ($uploaded_files as $key => $value) {
 	# code...
 	process_xml_input_file($value);	
 }
+*/
 
 
 
 
 
 
-
-echo json_encode($global_array);	
+echo json_encode($uploaded_files);	
 
 
 function process_xml_input_file($file)
