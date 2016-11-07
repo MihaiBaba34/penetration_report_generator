@@ -8,7 +8,8 @@ $uploadfile = "../".$uploaddir."/".$filename;
     //load coresponding xml file
     $xmlDoc = simplexml_load_file($uploadfile);
     if(!$xmlDoc) {
-        die('Error while reading XML file '.$uploadfile);   
+        //die('Error while reading XML file '.$uploadfile);  
+        die('Error while reading XML file '.$uploadfile);  
     }
 
     //check type of uploaded XML, and calling its parser
@@ -29,6 +30,13 @@ $uploadfile = "../".$uploaddir."/".$filename;
                  //Call retina XML file parser if file Acunetix app output
                 acunetixXMLFileParser($uploadfile);
             }
+            else
+            {
+                //not a valid xml
+                $parsed_data_array = array();
+                $parsed_data_array["report_type"] = "Not a valid xml file!";
+                echo json_encode($parsed_data_array);
+            }
 
 function nessusXMLFileParser($uploadfile)
 {
@@ -42,6 +50,8 @@ function nessusXMLFileParser($uploadfile)
     //array where are stored items from xml file
     $data=array();   
     $parsed_data_array = array();
+
+    $parsed_data_array["report_type"] = "Nessus";
     
     //Cve form from description script
     $cveInitials="CVE-";
@@ -114,6 +124,8 @@ function retinaXMLFileParser($uploadfile)
     //array where are stored items from xml file
     $data=array();   
     $parsed_data_array = array();
+
+    $parsed_data_array["report_type"] = "Retina";
     
     //iterating through retina XML file structure
     foreach($xmlDoc->hosts->host->audit as $auditElement) {
@@ -160,6 +172,8 @@ function acunetixXMLFileParser($uploadfile)
     //array where are stored items from xml file
     $data=array();   
     $parsed_data_array = array();
+
+    $parsed_data_array["report_type"] = "Acunetix";
     
     //iterating through retina XML file structure
     foreach($xmlDoc->Scan->ReportItems->ReportItem as $auditElement) {
