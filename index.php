@@ -22,11 +22,12 @@
 
     <style>
         body {
+
             font-family: 'Roboto Condensed', sans-serif;
             font-size: 14px;
             line-height: 1.42857143;
             color: #47525d;
-            background-color: #fff;
+            background-color: #FFFFFF;
 
             margin: 0;
             padding: 20px;
@@ -48,7 +49,7 @@
 
     <body>
      
-    <div id="content">
+    <div id="content" style="padding-top: 10%">
 
 
       <input type="file" name="files[]" id="filer_input2" multiple="multiple">
