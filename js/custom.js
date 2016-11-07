@@ -6,7 +6,7 @@ $(document).ready(function(){
 		limit: null,
 		maxSize: null,
 		extensions: null,
-		changeInput: '<div class="jFiler-input-dragDrop"><div class="jFiler-input-inner"><div class="jFiler-input-icon"><i class="icon-jfi-cloud-up-o"></i></div><div class="jFiler-input-text"><h3>Drag&Drop files here</h3> <span style="display:inline-block; margin: 15px 0">or</span></div><a class="jFiler-input-choose-btn blue">Browse Files</a><a class="jFiler-input-choose-btn blue" onclick="preventDefaultFunction(event)">Start Processing</a></div></div>',
+		changeInput: '<div class="jFiler-input-dragDrop"><div class="jFiler-input-inner"><div class="jFiler-input-icon"><i class="icon-jfi-cloud-up-o"></i></div><div class="jFiler-input-text"><h3>Drag&Drop files here</h3> <span style="display:inline-block; margin: 15px 0">or</span></div><a class="jFiler-input-choose-btn blue">Browse Files</a><a class="jFiler-input-choose-btn red" onclick="preventDefaultFunction(event)">Parse Files</a></div></div>',
 		showThumbs: true,
 		theme: "dragdropbox",
 		templates: {
@@ -246,12 +246,22 @@ var dataInContainer="<pre>******************************************************
 }
 
 
-
+// prevent Start Processing button from triggering upload file window
 function preventDefaultFunction(event)
-{
-
+{	
 	 clickOnMainAreaFlag=true; 
 	 event.preventDefault();
+/*
+	 if(uploaded_files_map.length > 0)
+	 {
+	 	$('#formularModal').modal('toggle');
+	 }
+	 else
+	 {
+	 	alert("Please add at least one file!");
+	 }
+*/
+
 	$('#formularModal').modal('toggle');
 	
 }
