@@ -97,7 +97,7 @@ $(document).ready(function(){
 				});
 
 				//call an ajax function after files are uploaded
-				get_corresponding_output_for_xml_file(new_file_name);
+				//get_corresponding_output_for_xml_file(new_file_name);
 				
 
 			},
@@ -227,8 +227,11 @@ var dataInContainer="<pre>******************************************************
     		dataInContainer+="Information : "+objInfo+"<br>";
 
 }
+
+
        //appdending data to main report container {temporar}
-		dataContainer.innerHTML+=dataInContainer+"</pre><br><br><br>";
+		dataContainer.innerHTML=dataInContainer+"</pre><br><br><br>"+dataContainer.innerHTML;
+		
 
 });
 
