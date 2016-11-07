@@ -86,7 +86,8 @@ $(document).ready(function(){
 			synchron: true,
 			beforeSend: function(){},
 			success: function(data, itemEl, listEl, boxEl, newInputEl, inputEl, id){
-				var parent = itemEl.find(".jFiler-jProgressBar").parent(),
+
+/*				var parent = itemEl.find(".jFiler-jProgressBar").parent(),
 				new_file_name = JSON.parse(data),
 				filerKit = inputEl.prop("jFiler");
 
@@ -97,9 +98,9 @@ $(document).ready(function(){
 				});
 
 				//call an ajax function after files are uploaded
-				get_corresponding_output_for_xml_file(new_file_name);
-				
+				get_corresponding_output_for_xml_file(new_file_name);*/
 
+				
 			},
 			error: function(el){
 				var parent = el.find(".jFiler-jProgressBar").parent();
@@ -158,7 +159,9 @@ $(document).ready(function(){
 function get_corresponding_output_for_xml_file(data)
 {
 
-var dataInContainer="<pre>********************************************************************************************************";
+	console.log(data);
+
+/*var dataInContainer="<pre>********************************************************************************************************";
 	$.ajax({
 		type: "POST",
 		url: "./php/XMLParser.php",
@@ -230,7 +233,7 @@ var dataInContainer="<pre>******************************************************
        //appdending data to main report container {temporar}
 		dataContainer.innerHTML+=dataInContainer+"</pre><br><br><br>";
 
-});
+});*/
 
 
 
