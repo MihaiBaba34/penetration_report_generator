@@ -29,6 +29,7 @@ $uploadfile = "../".$uploaddir."/".$filename;
                  //Call retina XML file parser if file Acunetix app output
                 acunetixXMLFileParser($uploadfile);
             }
+       
 
 function nessusXMLFileParser($uploadfile)
 {

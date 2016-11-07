@@ -1,3 +1,7 @@
+
+var uploaded_files_map = [];
+
+
 $(document).ready(function(){
 
 	$("#filer_input2").filer({
@@ -87,7 +91,7 @@ $(document).ready(function(){
 			beforeSend: function(){},
 			success: function(data, itemEl, listEl, boxEl, newInputEl, inputEl, id){
 
-/*				var parent = itemEl.find(".jFiler-jProgressBar").parent(),
+				var parent = itemEl.find(".jFiler-jProgressBar").parent(),
 				new_file_name = JSON.parse(data),
 				filerKit = inputEl.prop("jFiler");
 
@@ -98,7 +102,11 @@ $(document).ready(function(){
 				});
 
 				//call an ajax function after files are uploaded
-				get_corresponding_output_for_xml_file(new_file_name);*/
+				get_corresponding_output_for_xml_file(new_file_name);
+
+				
+				
+
 
 				
 			},
@@ -159,7 +167,9 @@ $(document).ready(function(){
 function get_corresponding_output_for_xml_file(data)
 {
 
-	console.log(data);
+	uploaded_files_map.push(data);
+	
+	console.log(uploaded_files_map);
 
 /*var dataInContainer="<pre>********************************************************************************************************";
 	$.ajax({
@@ -230,8 +240,11 @@ function get_corresponding_output_for_xml_file(data)
     		dataInContainer+="Information : "+objInfo+"<br>";
 
 }
+
+
        //appdending data to main report container {temporar}
-		dataContainer.innerHTML+=dataInContainer+"</pre><br><br><br>";
+		dataContainer.innerHTML=dataInContainer+"</pre><br><br><br>"+dataContainer.innerHTML;
+		
 
 });*/
 

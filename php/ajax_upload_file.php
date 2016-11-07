@@ -23,7 +23,6 @@
     if($data['isComplete']){
         $files = $data['data'];        
 
-        //$output = $uploader->options["uploadDir"]."/".$files['metas'][0]['name'];
         $output = $files['metas'][0]['name'];
         echo json_encode($output);        
     }
@@ -33,11 +32,7 @@
         echo json_encode($errors);        
     }
 
-
-
     /*console_log($_FILES['files']);
-
-
 
 function console_log( $data ){
   echo '<script>';
