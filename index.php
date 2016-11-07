@@ -9,7 +9,6 @@
 
   <!-- Google Fonts -->
 
-
   <meta http-equiv="content-type" content="text/html; charset=UTF-8">
   <meta charset="utf-8">
   <title>Navbar Static top Template</title>
@@ -19,8 +18,7 @@
     <!--[if lt IE 9]>
       <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
       <![endif]-->
-      <link href="css/styles.css" rel="stylesheet">
-
+    
 
     <style>
         body {
@@ -58,13 +56,6 @@
 
     </div>
 
-
-
-
-
-
-
-
 <div id="parseResults">
 	
 
@@ -73,9 +64,6 @@
 
 
 
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#formularModal">
-  Start Processing
-</button>
 
 <!-- Formular with report info modal -->
 <div class="modal" id="formularModal" tabindex="-1" role="dialog"
@@ -86,29 +74,38 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
-        <h4 class="modal-title " id="myModalLabel1">Modal title</h4>
+        <h4 class="modal-title" style="margin-left: 30%;" id="myModalLabel1">Please Insert Client Data</h4>
       </div>
       <div class="modal-body " >
-<div class="row">
-  <div class="col-lg-8 col-lg-offset-2">
-        <form>
+   
 
-  <div class="form-group">
-    <input type="text" class="form-control" id="formGroupExampleInput" placeholder="Server Name">
-  </div>
-  <div class="form-group">
-    <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input">
-  </div>
-  <div class="form-group">
-      <input type="text" class="form-control" id="formGroupExampleInput2" placeholder="Another input">
-  </div>
-</form>
-</div>
-</div>
+   <form class = "" role = "form">
+
+      <div class = "input-group col-md-10 col-md-offset-1">
+         <span class = "input-group-addon">Server Name</span>
+         <input id="serverNameInput" type = "text" class = "form-control" placeholder = "Server Name">
+      </div>
+    
+      <br>
+
+       <div class = "input-group col-md-10 col-md-offset-1">
+         <span class = "input-group-addon">Website URL</span>
+         <input id="webURLInput" type = "text" class = "form-control" placeholder = "www.example.org">
+      </div>
+    
+      <br>
+     <div class = "input-group col-md-10 col-md-offset-1">
+         <span class = "input-group-addon">Date</span>
+         <input id="dateInput" type = "text" class = "form-control" placeholder = "MM/DD/YYYY">
+      </div>
+
+   </form>
+
+
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" >Cancel</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" >Generate Report</button>
       </div>
     </div>
   </div>
@@ -121,9 +118,8 @@
 
  
   <script src="http://code.jquery.com/jquery-3.1.0.min.js" crossorigin="anonymous"></script>
-  <script src="js/jquery.filer.min.js" type="text/javascript"></script>
+  <script src="js/jquery.filer.js" type="text/javascript"></script>
   <script src="js/custom.js" type="text/javascript"></script>
-   <script type="text/javascript" src="js/Upload_js.js"></script>
   <script src="js/bootstrap.min.js"></script>
       </body>
     </html>
