@@ -1,5 +1,7 @@
 
 
+var uploaded_files_map = [];
+
 $(document).ready(function(){
 
 	$("#filer_input2").filer({
@@ -88,6 +90,7 @@ $(document).ready(function(){
 			synchron: true,
 			beforeSend: function(){},
 			success: function(data, itemEl, listEl, boxEl, newInputEl, inputEl, id){
+
 				var parent = itemEl.find(".jFiler-jProgressBar").parent(),
 				new_file_name = JSON.parse(data),
 				filerKit = inputEl.prop("jFiler");
@@ -99,9 +102,9 @@ $(document).ready(function(){
 				});
 
 				//call an ajax function after files are uploaded
-				//get_corresponding_output_for_xml_file(new_file_name);
-				
+				get_corresponding_output_for_xml_file(new_file_name);
 
+			
 			},
 			error: function(el){
 				var parent = el.find(".jFiler-jProgressBar").parent();
@@ -164,16 +167,63 @@ $(document).ready(function(){
 function get_corresponding_output_for_xml_file(data)
 {
 
-var dataInContainer="<pre>********************************************************************************************************";
+
+	var dataInContainer="<pre>********************************************************************************************************";
+
+	uploaded_files_map.push(data);
+	
+	console.log(uploaded_files_map);
+
+/*var dataInContainer="<pre>********************************************************************************************************";
+>>>>>>> developer
 	$.ajax({
 		type: "POST",
 		url: "./php/XMLParser.php",
 		data: {upload_path:"uploads", filename:data}
 	})
+	.fail(function() {
+		alert( "error" );
+	})
 	.done(function( msg ) {
- 
-    	var dataContainer=document.getElementById("parseResults");
-    	var objects= JSON.parse(msg);
+
+		var dataContainer=document.getElementById("parseResults");    
+		var objects;
+		var isOk = true;
+
+		try
+		{
+			objects = JSON.parse(msg);
+			isOk = true;
+
+		
+
+
+
+   }
+   catch(e)
+   {
+   	console.log("************");
+   	console.log("Not a valid xml file!");
+   	console.log("************");
+
+   	//TODO:
+   	alert("Not a valid xml file!");
+
+   	isOk = false;
+
+   	//var matches = msg.match(/Error while reading XML file ..\/uploads\/(.*)/);
+   	//console.log(matches[1]);
+
+	//$.post('./php/ajax_remove_file.php', {file: matches[1]});
+
+   }   	
+
+
+   console.log(isOk);
+
+   if(isOk === true)
+   {
+   	dataInContainer += "<br>Report type: " + objects["report_type"] + "<br>";
 
     	//iterating trough all objects
     	for (object in objects)
@@ -190,38 +240,40 @@ var dataInContainer="<pre>******************************************************
     		//Risk Factor value from object
     		var objRisk="";	
     		//Information value from object
-			var objInfo="";
+    		var objInfo="";
+
 
 			//setting Cve for current report
-    		objCVE=objects[object].cve;
-    		if(objCVE=="")
-    			objCVE="none";
+			objCVE=objects[object].cve;
+			if(objCVE=="")
+				objCVE="none";
 
 			//setting Description for current report
-    		objDescription+=objects[object].description;
-    		if(objDescription=="")
-    			objDescription="none";
+			objDescription+=objects[object].description;
+			if(objDescription=="")
+				objDescription="none";
 
 			//setting Exploit for current report
-    		objExploit+=objects[object].exploit;
-    		if(objExploit=="")
-    			objExploit="none";
-    		
+			objExploit+=objects[object].exploit;
+			if(objExploit=="")
+				objExploit="none";
+
 			//setting Name for current report
-    		objName+=objects[object].plugin_name;
-    		if(objName=="")
-    			objName="none";
+			objName+=objects[object].plugin_name;
+			if(objName=="")
+				objName="none";
 
 			//setting Risk Factor for current report
-    		objRisk+=objects[object].risk_factor;
-    		if(objRisk=="")
-    			objRisk="none";
+			objRisk+=objects[object].risk_factor;
+			if(objRisk=="")
+				objRisk="none";
 
 
 			//setting Information for current report
-    		objInfo=objects[object].information;
-    		if(objInfo=="")
-    			objInfo="none";
+			objInfo=objects[object].information;
+			if(objInfo=="")
+				objInfo="none";
+
 
 
     		//temporar display
@@ -232,14 +284,23 @@ var dataInContainer="<pre>******************************************************
     		dataInContainer+="Exploit : "+objExploit+"<br>";
     		dataInContainer+="Information : "+objInfo+"<br>";
 
+<<<<<<< HEAD
+    	}
+       //appdending data to main report container {temporar}
+       dataContainer.innerHTML =dataInContainer+"</pre><br><br><br>" + dataContainer.innerHTML;	
+   }
+
+
+=======
 }
 
 
        //appdending data to main report container {temporar}
 		dataContainer.innerHTML=dataInContainer+"</pre><br><br><br>"+dataContainer.innerHTML;
 		
+>>>>>>> developer
 
-});
+});*/
 
 
 
@@ -260,7 +321,7 @@ function preventDefaultFunction(event)
 	 {
 	 	alert("Please add at least one file!");
 	 }
-*/
+*/	
 
 	$('#formularModal').modal('toggle');
 	

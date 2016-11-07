@@ -3,9 +3,9 @@
 
     $uploader = new Uploader();
     $data = $uploader->upload($_FILES['files'], array(
-        'limit' => 10, //Maximum Limit of files. {null, Number}
+        'limit' => 2, //Maximum Limit of files. {null, Number}
         'maxSize' => 10, //Maximum Size of files {null, Number(in MB's)}
-        'extensions' => null, //Whitelist for file extension. {null, Array(ex: array('jpg', 'png'))}
+        'extensions' => array('xml'), //Whitelist for file extension. {null, Array(ex: array('jpg', 'png'))}
         'required' => false, //Minimum one file is required for upload {Boolean}
         'uploadDir' => '../uploads/', //Upload directory {String}
         'title' => array('name'), //New file name {null, String, Array} *please read documentation in README.md
@@ -32,11 +32,7 @@
         echo json_encode($errors);        
     }
 
-
-
     /*console_log($_FILES['files']);
-
-
 
 function console_log( $data ){
   echo '<script>';

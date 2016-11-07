@@ -64,8 +64,6 @@
 
 
 
-
-
 <!-- Formular with report info modal -->
 <div class="modal" id="formularModal" tabindex="-1" role="dialog"
      aria-labelledby="myModalLabel1" aria-hidden="true">
@@ -122,5 +120,6 @@
   <script src="js/jquery.filer.js" type="text/javascript"></script>
   <script src="js/custom.js" type="text/javascript"></script>
   <script src="js/bootstrap.min.js"></script>
+  <script src="js/main.js"></script>
       </body>
     </html>

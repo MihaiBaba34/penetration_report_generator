@@ -1,0 +1,16 @@
+needed fields : 	retina					Nessus							Acunetix
+
+      Title		<name>					<plugin_name>						<Name>
+       Risk 		<risk>					<risk_factor>						<Severity><![CDATA[txt]]></Severity>					
+Description		<description>				<description>						<Description><![CDATA[txt]]><![CDATA[txt]]></Description>
+        Fix 		<fixInformation>			<solution>						<Recommendation><![CDATA[txt]]></Recommendation>
+information														<impact><![CDATA[txt]]></impact>
+        CVE 		<cve>*2					<cve>*2							<CWE id="284"><![CDATA[ CWE-284 ]]></CWE>
+    exploit		<exploit>				<exploit_available>;<exploitability_ease>
+						
+
+path in xml:		$xmlDoc->hosts->host->audit		$xmlDoc->Report->ReportHost->ReportItem			$xmlDoc->Scan->ReportItems->ReportItem
+
+
+
+s
