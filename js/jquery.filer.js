@@ -61,19 +61,19 @@
                     if (all) {
                         s.off("change", f._onChange);
                         if (n.dragDrop) {
-<<<<<<< HEAD
+
                             n.dragDrop.dragContainer.on("drag dragstart dragend dragover dragenter dragleave drop", function(e) {
-                                //e.preventDefault();
-                                //e.stopPropagation();
+                                e.preventDefault();
+                                e.stopPropagation();
                             });
                             n.dragDrop.dragContainer.on("drop", f._dragDrop.drop);
                             n.dragDrop.dragContainer.on("dragover", f._dragDrop.dragEnter);
                             n.dragDrop.dragContainer.on("dragleave", f._dragDrop.dragLeave);
-=======
+
                             n.dragDrop.dragContainer.off("drop", f._dragDrop.drop);
                             n.dragDrop.dragContainer.off("dragover", f._dragDrop.dragEnter);
                             n.dragDrop.dragContainer.off("dragleave", f._dragDrop.dragLeave);
->>>>>>> bea3e3f174663ebf4dca1092a60ff68b0b5fbe58
+
                         }
                         if (n.uploadFile && n.clipBoardPaste) {
                             $(window)

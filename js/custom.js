@@ -1,9 +1,6 @@
 
-<<<<<<< HEAD
-var uploaded_files_map = [];
 
-=======
->>>>>>> bea3e3f174663ebf4dca1092a60ff68b0b5fbe58
+var uploaded_files_map = [];
 
 $(document).ready(function(){
 
@@ -107,14 +104,7 @@ $(document).ready(function(){
 				//call an ajax function after files are uploaded
 				get_corresponding_output_for_xml_file(new_file_name);
 
-				
-				
-<<<<<<< HEAD
-=======
-
-
-				
->>>>>>> developer
+			
 			},
 			error: function(el){
 				var parent = el.find(".jFiler-jProgressBar").parent();
@@ -177,11 +167,9 @@ $(document).ready(function(){
 function get_corresponding_output_for_xml_file(data)
 {
 
-<<<<<<< HEAD
-
 
 	var dataInContainer="<pre>********************************************************************************************************";
-=======
+
 	uploaded_files_map.push(data);
 	
 	console.log(uploaded_files_map);
@@ -333,7 +321,7 @@ function preventDefaultFunction(event)
 	 {
 	 	alert("Please add at least one file!");
 	 }
-*/
+*/	
 
 	$('#formularModal').modal('toggle');
 	

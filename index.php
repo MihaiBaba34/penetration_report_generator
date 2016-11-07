@@ -64,14 +64,6 @@
 
 
 
-
-<<<<<<< HEAD
-<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#formularModal" onclick = "startProcessing()">
-  Start Processing
-</button>
-=======
->>>>>>> bea3e3f174663ebf4dca1092a60ff68b0b5fbe58
-
 <!-- Formular with report info modal -->
 <div class="modal" id="formularModal" tabindex="-1" role="dialog"
      aria-labelledby="myModalLabel1" aria-hidden="true">
@@ -125,10 +117,6 @@
 
  
   <script src="http://code.jquery.com/jquery-3.1.0.min.js" crossorigin="anonymous"></script>
-<<<<<<< HEAD
-  <!-- <script src="js/jquery.filer.min.js" type="text/javascript"></script> -->
-=======
->>>>>>> bea3e3f174663ebf4dca1092a60ff68b0b5fbe58
   <script src="js/jquery.filer.js" type="text/javascript"></script>
   <script src="js/custom.js" type="text/javascript"></script>
   <script src="js/bootstrap.min.js"></script>
