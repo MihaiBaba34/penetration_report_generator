@@ -1,15 +1,40 @@
 <?php
 
-$uploaddir = $_POST['upload_path'];
+$uploaded_files = $_POST['files_map'];
+$global_array = array();
+
+
+
+foreach ($uploaded_files as $key => $value) {
+	# code...
+	process_xml_input_file($value);	
+}
+
+
+
+
+
+
+
+echo json_encode($global_array);	
+
+
+function process_xml_input_file($file)
+{
+
+	
+
+	$uploadfile = "../uploads/".$file;
+
+/*$uploaddir = $_POST['upload_path'];
 $filename = $_POST['filename'];
-$uploadfile = "../".$uploaddir."/".$filename;
+$uploadfile = "../".$uploaddir."/".$filename;*/
 
 
     //load coresponding xml file
     $xmlDoc = simplexml_load_file($uploadfile);
     if(!$xmlDoc) {
-        //die('Error while reading XML file '.$uploadfile);  
-        die('Error while reading XML file '.$uploadfile);  
+        die('Error while reading XML file '.$uploadfile);   
     }
 
     //check type of uploaded XML, and calling its parser
@@ -17,34 +42,35 @@ $uploadfile = "../".$uploaddir."/".$filename;
     {
         //Call retina XML file parser if file Retina app output
         retinaXMLFileParser($uploadfile);
+        //array_push($global_array, "retina");
+
     }
     else
         if(isset($xmlDoc->Report->ReportHost->ReportItem))
         {
           //Call retina XML file parser if file Nessus app output
             nessusXMLFileParser($uploadfile);
+            //array_push($global_array, "nessus");
         }
         else
             if(isset($xmlDoc->Scan->ReportItems->ReportItem))
             {
                  //Call retina XML file parser if file Acunetix app output
                 acunetixXMLFileParser($uploadfile);
+                //array_push($global_array, "acunetix");
             }
-<<<<<<< HEAD
-            else
-            {
-                //not a valid xml
-                $parsed_data_array = array();
-                $parsed_data_array["report_type"] = "Not a valid xml file!";
-                echo json_encode($parsed_data_array);
-            }
-=======
-       
->>>>>>> developer
+      
+
+
+}
+
 
 function nessusXMLFileParser($uploadfile)
 {
 
+
+	global $global_array;
+    
     //load coresponding xml file
     $xmlDoc = simplexml_load_file($uploadfile);
     if(!$xmlDoc) {
@@ -54,8 +80,6 @@ function nessusXMLFileParser($uploadfile)
     //array where are stored items from xml file
     $data=array();   
     $parsed_data_array = array();
-
-    $parsed_data_array["report_type"] = "Nessus";
     
     //Cve form from description script
     $cveInitials="CVE-";
@@ -112,12 +136,15 @@ function nessusXMLFileParser($uploadfile)
     }
 
     //passing data to Javascript  
-    echo json_encode($parsed_data_array);
+    //echo json_encode($parsed_data_array);
+    array_push($global_array,$parsed_data_array);
 
 }
 
 function retinaXMLFileParser($uploadfile)
 {
+	global $global_array;
+
     //load coresponding xml file
     $xmlDoc = simplexml_load_file($uploadfile);
     if(!$xmlDoc) {
@@ -128,8 +155,6 @@ function retinaXMLFileParser($uploadfile)
     //array where are stored items from xml file
     $data=array();   
     $parsed_data_array = array();
-
-    $parsed_data_array["report_type"] = "Retina";
     
     //iterating through retina XML file structure
     foreach($xmlDoc->hosts->host->audit as $auditElement) {
@@ -160,12 +185,17 @@ function retinaXMLFileParser($uploadfile)
         array_push($parsed_data_array,$parsed_data_line_format);
     }
     //passing data to Javascript  
-    echo json_encode($parsed_data_array);
+    
+    //echo json_encode($parsed_data_array);
+    array_push($global_array,$parsed_data_array);
         
 }
 
 function acunetixXMLFileParser($uploadfile)
 {
+
+	global $global_array;
+	
     //load coresponding xml file
     $xmlDoc = simplexml_load_file($uploadfile);
     if(!$xmlDoc) {
@@ -176,8 +206,6 @@ function acunetixXMLFileParser($uploadfile)
     //array where are stored items from xml file
     $data=array();   
     $parsed_data_array = array();
-
-    $parsed_data_array["report_type"] = "Acunetix";
     
     //iterating through retina XML file structure
     foreach($xmlDoc->Scan->ReportItems->ReportItem as $auditElement) {
@@ -210,7 +238,15 @@ function acunetixXMLFileParser($uploadfile)
     }
     
         
-    echo json_encode($parsed_data_array);
+    
+    //echo json_encode($parsed_data_array);
+    array_push($global_array,$parsed_data_array);
 }
+
+
+
+
+
+
 
 ?>

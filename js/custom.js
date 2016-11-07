@@ -1,3 +1,7 @@
+
+var uploaded_files_map = [];
+
+
 $(document).ready(function(){
 
 	$("#filer_input2").filer({
@@ -86,6 +90,7 @@ $(document).ready(function(){
 			synchron: true,
 			beforeSend: function(){},
 			success: function(data, itemEl, listEl, boxEl, newInputEl, inputEl, id){
+
 				var parent = itemEl.find(".jFiler-jProgressBar").parent(),
 				new_file_name = JSON.parse(data),
 				filerKit = inputEl.prop("jFiler");
@@ -98,7 +103,15 @@ $(document).ready(function(){
 
 				//call an ajax function after files are uploaded
 				get_corresponding_output_for_xml_file(new_file_name);
+
 				
+				
+<<<<<<< HEAD
+=======
+
+
+				
+>>>>>>> developer
 			},
 			error: function(el){
 				var parent = el.find(".jFiler-jProgressBar").parent();
@@ -157,9 +170,17 @@ $(document).ready(function(){
 function get_corresponding_output_for_xml_file(data)
 {
 
+<<<<<<< HEAD
 
 
 	var dataInContainer="<pre>********************************************************************************************************";
+=======
+	uploaded_files_map.push(data);
+	
+	console.log(uploaded_files_map);
+
+/*var dataInContainer="<pre>********************************************************************************************************";
+>>>>>>> developer
 	$.ajax({
 		type: "POST",
 		url: "./php/XMLParser.php",
@@ -268,14 +289,23 @@ function get_corresponding_output_for_xml_file(data)
     		dataInContainer+="Exploit : "+objExploit+"<br>";
     		dataInContainer+="Information : "+objInfo+"<br>";
 
+<<<<<<< HEAD
     	}
        //appdending data to main report container {temporar}
        dataContainer.innerHTML =dataInContainer+"</pre><br><br><br>" + dataContainer.innerHTML;	
    }
 
 
+=======
+}
 
-});
+
+       //appdending data to main report container {temporar}
+		dataContainer.innerHTML=dataInContainer+"</pre><br><br><br>"+dataContainer.innerHTML;
+		
+>>>>>>> developer
+
+});*/
 
 
 
