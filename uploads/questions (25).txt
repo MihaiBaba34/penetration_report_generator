@@ -1,8 +1,0 @@
-1)this app will use just these 4 applications for testing ? 
-2)for nessus what exploit field is needed 
- - exploit ease true
- - exploit Available: Exploits are available
-3)which fields must coincide for report to be ignored ? 
-4) displayed order 
-5) how do you see app documentation //comments in code or a manual
-

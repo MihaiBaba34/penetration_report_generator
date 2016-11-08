@@ -18,16 +18,19 @@ header('Location: '."http://www.google.com");
 
 
 
+<<<<<<< HEAD
 
 
 echo json_encode($uploaded_files);	
+=======
+echo json_encode($global_array);	
+>>>>>>> cc64e51bec49cbd58fb4e65003bf33572cd0c62a
 
 
 function process_xml_input_file($file)
 {
 
 	
-
 	$uploadfile = "../uploads/".$file;
 
 /*$uploaddir = $_POST['upload_path'];
@@ -64,8 +67,6 @@ $uploadfile = "../".$uploaddir."/".$filename;*/
                 //array_push($global_array, "acunetix");
             }
       
-
-
 }
 
 
@@ -131,7 +132,6 @@ function nessusXMLFileParser($uploadfile)
             $finalCVE=$finalCVE." ".$cveOutput;
 
         }
-      
             //Setting Cve
         $parsed_data_line_format["cve"] =  $finalCVE;
 
@@ -156,7 +156,7 @@ function retinaXMLFileParser($uploadfile)
     }
 
     
-    //array where are stored items from xml file
+    //array where are stored items from xml file(filename)
     $data=array();   
     $parsed_data_array = array();
     
