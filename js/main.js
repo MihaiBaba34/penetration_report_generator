@@ -11,16 +11,23 @@ function startProcessing()
 		data: {files_map:uploaded_files_map}
 	})
 	.done(function( msg ) {
+		
 
-		var objects= JSON.parse(msg);
+		console.log("********* debug msg *********");
+		console.log(msg);
+		console.log("********* debug msg *********");
+		var url = JSON.parse(msg);
 
-		console.log(objects);
+
+
+		console.log(url);
 		//displayContent(msg);
 
-		//displayContent(msg);		
-	});
- 
+		//displayContent(msg);
+		
+		window.location.href = url;
 
+	});
  }
 
  function displayContent(msg)
