@@ -7,24 +7,30 @@ function startProcessing()
 
 	$.post( "./php/process_files_and_generate_output.php", uploaded_files_map);
 
-/*	$.ajax({
+	$.ajax({
 		type: "POST",
 		url: "./php/process_files_and_generate_output.php",
 		data: {files_map:uploaded_files_map}
 	})
-	.done(function( data ) {
-
-		//var parsedData= JSON.parse(data);
-
-		//console.log(parsedData);
-
+	.done(function( msg ) {
 		
-		//populatePageWithParsedData(parsedData);
 
+/*		console.log("********* debug msg *********");
+		console.log(msg);
+		console.log("********* debug msg *********");
+		var url = JSON.parse(msg);
+
+*/
+
+		console.log(url);
+		//displayContent(msg);
+
+		//displayContent(msg);
 		
-	});*/
- 
+		window.location.href = url;
 
+
+	});
  }
 
 function populatePageWithParsedData(parsedData)

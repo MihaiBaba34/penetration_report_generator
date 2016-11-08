@@ -194,7 +194,5 @@ function preventDefaultFunction(event)
 	{
 		alert("Please add at least one XML file!");
 	}
-	
-
-	
+		
 }
