@@ -13,9 +13,6 @@ foreach ($uploaded_files as $key => $value) {
 
 
 
-
-
-
 echo json_encode($global_array);	
 
 
@@ -23,7 +20,6 @@ function process_xml_input_file($file)
 {
 
 	
-
 	$uploadfile = "../uploads/".$file;
 
 /*$uploaddir = $_POST['upload_path'];
@@ -60,8 +56,6 @@ $uploadfile = "../".$uploaddir."/".$filename;*/
                 //array_push($global_array, "acunetix");
             }
       
-
-
 }
 
 
@@ -127,7 +121,6 @@ function nessusXMLFileParser($uploadfile)
             $finalCVE=$finalCVE." ".$cveOutput;
 
         }
-      
             //Setting Cve
         $parsed_data_line_format["cve"] =  $finalCVE;
 
@@ -152,7 +145,7 @@ function retinaXMLFileParser($uploadfile)
     }
 
     
-    //array where are stored items from xml file
+    //array where are stored items from xml file(filename)
     $data=array();   
     $parsed_data_array = array();
     

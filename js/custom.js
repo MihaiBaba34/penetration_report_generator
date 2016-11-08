@@ -1,6 +1,6 @@
 
 
-var uploaded_files_map = [];
+
 
 $(document).ready(function(){
 
@@ -8,7 +8,7 @@ $(document).ready(function(){
 		limit: null,
 		maxSize: null,
 		extensions: null,
-		changeInput: '<div class="jFiler-input-dragDrop"><div class="jFiler-input-inner"><div class="jFiler-input-icon"><i class="icon-jfi-cloud-up-o"></i></div><div class="jFiler-input-text"><h3>Drag&Drop files here</h3> <span style="display:inline-block; margin: 15px 0">or</span></div><a class="jFiler-input-choose-btn blue">Browse Files</a><a class="jFiler-input-choose-btn red" onclick="preventDefaultFunction(event)">Parse Files</a></div></div>',
+		changeInput: '<div class="jFiler-input-dragDrop"><div class="jFiler-input-inner"><div class="jFiler-input-icon"><i class="icon-jfi-cloud-up-o"></i></div><div class="jFiler-input-text"><h3>Drag&Drop files here</h3> <span style="display:inline-block; margin: 15px 0"></span></div><a class="jFiler-input-choose-btn blue">Browse Files</a><a class="jFiler-input-choose-btn red" onclick="preventDefaultFunction(event)">Parse Files</a></div></div>',
 		showThumbs: true,
 		theme: "dragdropbox",
 		templates: {
@@ -91,20 +91,28 @@ $(document).ready(function(){
 			beforeSend: function(){},
 			success: function(data, itemEl, listEl, boxEl, newInputEl, inputEl, id){
 
-				var parent = itemEl.find(".jFiler-jProgressBar").parent(),
-				new_file_name = JSON.parse(data),
-				filerKit = inputEl.prop("jFiler");
+				if(data.indexOf("Filetype not allowed") > 0)
+				{
+					var parent = itemEl.find(".jFiler-jProgressBar").parent();
+					itemEl.find(".jFiler-jProgressBar").fadeOut("slow", function(){
+						$("<div class=\"jFiler-item-others text-error\"><i class=\"icon-jfi-minus-circle\"></i> File type not allowed</div>").hide().appendTo(parent).fadeIn("slow");
+					});	
+				}
+				else
+				{
+					var parent = itemEl.find(".jFiler-jProgressBar").parent(),
+					new_file_name = JSON.parse(data),
+					filerKit = inputEl.prop("jFiler");
 
-				filerKit.files_list[id].name = new_file_name;
+					filerKit.files_list[id].name = new_file_name;
 
-				itemEl.find(".jFiler-jProgressBar").fadeOut("slow", function(){
-					$("<div class=\"jFiler-item-others text-success\"><i class=\"icon-jfi-check-circle\"></i> Success</div>").hide().appendTo(parent).fadeIn("slow");
-				});
+					itemEl.find(".jFiler-jProgressBar").fadeOut("slow", function(){
+						$("<div class=\"jFiler-item-others text-success\"><i class=\"icon-jfi-check-circle\"></i> Success</div>").hide().appendTo(parent).fadeIn("slow");
+					});
+				}
+				
+				
 
-				//call an ajax function after files are uploaded
-				get_corresponding_output_for_xml_file(new_file_name);
-
-			
 			},
 			error: function(el){
 				var parent = el.find(".jFiler-jProgressBar").parent();
@@ -131,7 +139,13 @@ $(document).ready(function(){
 			var filerKit = inputEl.prop("jFiler"),
 			file_name = filerKit.files_list[id].name;
 
+			for (var i=uploaded_files_map.length-1; i>=0; i--) {
+				if (uploaded_files_map[i] === file_name) {
+					uploaded_files_map.splice(i, 1);
+				}
+			}
 			$.post('./php/ajax_remove_file.php', {file: file_name});
+
 		},
 		onEmpty: null,
 		options: null,
@@ -150,10 +164,11 @@ $(document).ready(function(){
 			drop: "Drop file here to Upload",
 			removeConfirmation: "Are you sure you want to remove this file?",
 			errors: {
-				filesLimit: "Only {{fi-limit}} files are allowed to be uploaded.",
-				filesType: "Only Images are allowed to be uploaded.",
+				filesLimit: "Only 4 files are allowed to be uploaded.",
+				filesType: "Only proper XML files are allowed to be uploaded.",
 				filesSize: "{{fi-name}} is too large! Please upload file up to {{fi-maxSize}} MB.",
-				filesSizeAll: "Files you've choosed are too large! Please upload files up to {{fi-maxSize}} MB."
+				filesSizeAll: "Files you've choosed are too large! Please upload files up to {{fi-maxSize}} MB.",
+				filesExist: "File you try to upload already exists in on the server"
 			}
 		}
 	});
@@ -161,168 +176,25 @@ $(document).ready(function(){
 
 
 
-	
 
 
-function get_corresponding_output_for_xml_file(data)
-{
-
-
-	var dataInContainer="<pre>********************************************************************************************************";
-
-	uploaded_files_map.push(data);
-	
-	console.log(uploaded_files_map);
-
-/*var dataInContainer="<pre>********************************************************************************************************";
->>>>>>> developer
-	$.ajax({
-		type: "POST",
-		url: "./php/XMLParser.php",
-		data: {upload_path:"uploads", filename:data}
-	})
-	.fail(function() {
-		alert( "error" );
-	})
-	.done(function( msg ) {
-
-		var dataContainer=document.getElementById("parseResults");    
-		var objects;
-		var isOk = true;
-
-		try
-		{
-			objects = JSON.parse(msg);
-			isOk = true;
-
-		
-
-
-
-   }
-   catch(e)
-   {
-   	console.log("************");
-   	console.log("Not a valid xml file!");
-   	console.log("************");
-
-   	//TODO:
-   	alert("Not a valid xml file!");
-
-   	isOk = false;
-
-   	//var matches = msg.match(/Error while reading XML file ..\/uploads\/(.*)/);
-   	//console.log(matches[1]);
-
-	//$.post('./php/ajax_remove_file.php', {file: matches[1]});
-
-   }   	
-
-
-   console.log(isOk);
-
-   if(isOk === true)
-   {
-   	dataInContainer += "<br>Report type: " + objects["report_type"] + "<br>";
-
-    	//iterating trough all objects
-    	for (object in objects)
-    	{
-    		dataInContainer+="<br>Report number : "+object+"----------------------------------------------------------------------------------------<br>";
-    		//Cve value from object
-    		var objCVE="";
-    		//Description value from object
-    		var objDescription="";
-    		//Exploit value from object
-    		var objExploit="";
-    		//Name value from object
-    		var objName="";
-    		//Risk Factor value from object
-    		var objRisk="";	
-    		//Information value from object
-    		var objInfo="";
-
-
-			//setting Cve for current report
-			objCVE=objects[object].cve;
-			if(objCVE=="")
-				objCVE="none";
-
-			//setting Description for current report
-			objDescription+=objects[object].description;
-			if(objDescription=="")
-				objDescription="none";
-
-			//setting Exploit for current report
-			objExploit+=objects[object].exploit;
-			if(objExploit=="")
-				objExploit="none";
-
-			//setting Name for current report
-			objName+=objects[object].plugin_name;
-			if(objName=="")
-				objName="none";
-
-			//setting Risk Factor for current report
-			objRisk+=objects[object].risk_factor;
-			if(objRisk=="")
-				objRisk="none";
-
-
-			//setting Information for current report
-			objInfo=objects[object].information;
-			if(objInfo=="")
-				objInfo="none";
-
-
-
-    		//temporar display
-    		dataInContainer+="Name : "+objName+"<br>";
-    		dataInContainer+="Risk : "+objRisk+"<br>";
-    		dataInContainer+="Description : "+objDescription+"<br>";
-    		dataInContainer+="Cve : "+objCVE+"<br>";
-    		dataInContainer+="Exploit : "+objExploit+"<br>";
-    		dataInContainer+="Information : "+objInfo+"<br>";
-
-<<<<<<< HEAD
-    	}
-       //appdending data to main report container {temporar}
-       dataContainer.innerHTML =dataInContainer+"</pre><br><br><br>" + dataContainer.innerHTML;	
-   }
-
-
-=======
-}
-
-
-       //appdending data to main report container {temporar}
-		dataContainer.innerHTML=dataInContainer+"</pre><br><br><br>"+dataContainer.innerHTML;
-		
->>>>>>> developer
-
-});*/
-
-
-
-}
 
 
 // prevent Start Processing button from triggering upload file window
 function preventDefaultFunction(event)
 {	
-	 clickOnMainAreaFlag=true; 
-	 event.preventDefault();
-/*
-	 if(uploaded_files_map.length > 0)
-	 {
-	 	$('#formularModal').modal('toggle');
-	 }
-	 else
-	 {
-	 	alert("Please add at least one file!");
-	 }
-*/	
+	clickOnMainAreaFlag=true; 
+	event.preventDefault();
 
-	$('#formularModal').modal('toggle');
+	if(uploaded_files_map.length > 0)
+	{
+		$('#formularModal').modal('toggle');
+	}
+	else
+	{
+		alert("Please add at least one XML file!");
+	}
+	
+
 	
 }
