@@ -1,6 +1,7 @@
-function startProcessing()
+function startProcessing(inputFields)
 {
 
+console.log(inputFields);
 /*	console.log("Processing...");
 	console.log(uploaded_files_map);
 	console.log("Processing...");*/
@@ -24,7 +25,7 @@ function startProcessing()
 
 		//displayContent(msg);
 		
-		window.location.href = url;
+		//window.location.href = url;
 
 
 	});

@@ -43,81 +43,81 @@
       	}
       </style>
 
-  </head>
+    </head>
 
-  <body>
+    <body>
 
-  	<div id="content" style="padding-top: 10%">
-
-
-  		<input type="file" name="files[]" id="filer_input2" multiple="multiple">
+     <div id="content" style="padding-top: 10%">
 
 
-<style type="text/css">
-	.table td {
-   text-align: center;   
-}
-.table th {
-   text-align: center;   
-}
-</style>
-  	</div>
+      <input type="file" name="files[]" id="filer_input2" multiple="multiple">
 
 
-  	<!-- Formular with report info modal -->
-  	<div class="modal" id="formularModal" tabindex="-1" role="dialog"
-  	aria-labelledby="myModalLabel1" aria-hidden="true">
-  	<div class="modal-dialog" role="document">
-  		<div class="modal-content">
-  			<div class="modal-header">
-  				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-  					<span aria-hidden="true">&times;</span>
-  				</button>
-  				<h4 class="modal-title" style="margin-left: 30%;" id="myModalLabel1">Please Insert Client Data</h4>
-  			</div>
-  			<div class="modal-body " >
+      <style type="text/css">
+       .table td {
+         text-align: center;   
+       }
+       .table th {
+         text-align: center;   
+       }
+     </style>
+   </div>
 
 
-  				<form class = "" role = "form">
-
-  					<div class = "input-group col-md-10 col-md-offset-1">
-  						<span class = "input-group-addon">Server Name</span>
-  						<input id="serverNameInput" type = "text" class = "form-control" placeholder = "Server Name">
-  					</div>
-
-  					<br>
-  					<br>
-  					
-
-
-  					<div class = "input-group col-md-10 col-md-offset-1">
-  						<span class = "input-group-addon">Website URL</span>
-  						<input id="webURLInput" type = "text" class = "form-control" placeholder = "www.example.org">
-  					</div>
-
-  					<br>
-  					<br>
-
-  					<div class = "input-group col-md-10 col-md-offset-1">
-  						<span class = "input-group-addon">Date</span>
-  						<input id="dateInput" type = "text" class = "form-control" placeholder = "DD/MM/YYYY">
-  					</div>
-<br>
-            <br>
-  				</form>
+   <!-- Formular with report info modal -->
+   <div class="modal" id="formularModal" tabindex="-1" role="dialog"
+   aria-labelledby="myModalLabel1" aria-hidden="true">
+   <div class="modal-dialog" role="document">
+    <div class="modal-content">
+     <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+       <span aria-hidden="true">&times;</span>
+     </button>
+     <h4 class="modal-title" style="margin-left: 30%;" id="myModalLabel1">Please Insert Client Data</h4>
+   </div>
+   <div class="modal-body " >
 
 
-  			</div>
-  			<div class="modal-footer">
-  				<button type="button" class="btn btn-default" data-dismiss="modal" >Cancel</button>
-  				<button type="button" class="btn btn-primary"  onclick=" ValidateForm();" >Generate Report</button>
-  			</div>
-  		</div>
-  	</div>
-  </div>
+    <form class = "" role = "form">
+
+     <div class = "input-group col-md-10 col-md-offset-1">
+      <span class = "input-group-addon">Server Name</span>
+      <input id="serverNameInput" type = "text" class = "form-control" placeholder = "Server Name">
+    </div>
+
+    <br>
+    <br>
 
 
-  <script type="text/javascript">
+
+    <div class = "input-group col-md-10 col-md-offset-1">
+      <span class = "input-group-addon">Website URL</span>
+      <input id="webURLInput" type = "text" class = "form-control" placeholder = "www.example.org">
+    </div>
+
+    <br>
+    <br>
+
+    <div class = "input-group col-md-10 col-md-offset-1">
+      <span class = "input-group-addon">Date</span>
+      <input id="dateInput" type = "text" class = "form-control" placeholder = "DD/MM/YYYY">
+    </div>
+    <br>
+    <br>
+  </form>
+
+
+</div>
+<div class="modal-footer">
+  <button type="button" class="btn btn-default" data-dismiss="modal" >Cancel</button>
+  <button type="button" class="btn btn-primary"  onclick=" ValidateForm();" >Generate Report</button>
+</div>
+</div>
+</div>
+</div>
+
+
+<script type="text/javascript">
 /**
  * DHTML date validation script for dd/mm/yyyy. Courtesy of SmartWebby.com (http://www.smartwebby.com/dhtml/datevalidation.asp)
  */
@@ -132,14 +132,14 @@ function isInteger(s){
         // Check that current character is number.
         var c = s.charAt(i);
         if (((c < "0") || (c > "9"))) return false;
-    }
+      }
     // All characters are numbers.
     return true;
-}
+  }
 
-function stripCharsInBag(s, bag){
-	var i;
-	var returnString = "";
+  function stripCharsInBag(s, bag){
+   var i;
+   var returnString = "";
     // Search through string's characters one by one.
     // If character is not in bag, append to returnString.
     for (i = 0; i < s.length; i++){   
@@ -147,20 +147,20 @@ function stripCharsInBag(s, bag){
     	if (bag.indexOf(c) == -1) returnString += c;
     }
     return returnString;
-}
+  }
 
-function daysInFebruary (year){
+  function daysInFebruary (year){
   // February has 29 days in any year evenly divisible by four,
     // EXCEPT for centurial years which are not also divisible by 400.
     return (((year % 4 == 0) && ( (!(year % 100 == 0)) || (year % 400 == 0))) ? 29 : 28 );
-}
-function DaysArray(n) {
-	for (var i = 1; i <= n; i++) {
-		this[i] = 31
-		if (i==4 || i==6 || i==9 || i==11) {this[i] = 30}
-			if (i==2) {this[i] = 29}
-		} 
-	return this
+  }
+  function DaysArray(n) {
+   for (var i = 1; i <= n; i++) {
+    this[i] = 31
+    if (i==4 || i==6 || i==9 || i==11) {this[i] = 30}
+     if (i==2) {this[i] = 29}
+   } 
+ return this
 }
 
 function isDate(dtStr){
@@ -203,15 +203,48 @@ function isDate(dtStr){
 	}
 
 	function ValidateForm(){
-		var dt=document.getElementById("dateInput");
-		if (isDate(dt.value)==false){
-			dt.focus()
-			return false
-		}
-		alert("ok"+dt.value);
-    startProcessing();
-		return true
-	}
+
+
+    var inputFields = new Array();
+
+    var dateAndTimeField=document.getElementById("dateInput");
+    var serverNameField= document.getElementById("serverNameInput");
+    var webURLField= document.getElementById("webURLInput");
+    
+    if(serverNameField.value=="" || serverNameField.value.length<3)
+    {
+      alert("Server Name must be at least 3 characters long");
+      serverNameField.focus();
+      return false;
+    }
+    else
+    {
+      inputFields["serverNameInput"]=serverNameField.value;
+    }
+
+    if(webURLField.value=="" || webURLField.value.length<3)
+    {
+      alert("Web URL must be at least 3 characters long");
+      webURLField.focus();
+      return false;
+    }
+    else
+    {
+      inputFields["webURLInput"]=webURLField.value;
+    }
+    
+    if (isDate(dateAndTimeField.value)==false){
+     dateAndTimeField.focus();
+     return false;
+   }
+   else
+   {
+    inputFields["dateAndTime"]=dateAndTimeField.value;
+  }
+
+  startProcessing(inputFields);
+  return true
+}
 
 
 </script>

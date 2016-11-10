@@ -1,6 +1,5 @@
 <?php
 
-
 //$uploaded_files = $_POST['files_map'];
 $global_array = array();
 
@@ -31,17 +30,17 @@ function main()
 
 	//extract xml files content
   foreach ($uploaded_files as $key => $value) {
-     process_xml_input_file($value);	
- }
+   process_xml_input_file($value);	
+}
 
 	//remove duplicates
- $processed_array = removeDuplicates($global_array);
+$processed_array = removeDuplicates($global_array);
 
 	//sort items
- $sorted_array = sortItemsByRisk($processed_array);
+$sorted_array = sortItemsByRisk($processed_array);
 
 	//generate html report output
- buildHTMLPageWithContent($sorted_array);
+buildHTMLPageWithContent($sorted_array);
 
 		//console_log($risk_counters);
 }
@@ -59,7 +58,7 @@ function buildHTMLPageWithContent($global_array)
 	libxml_clear_errors();    
 
 	$divElement = $htmlDocument->getElementById('container');
-   
+
 
   $htmlContent = buildHTMLString($htmlDocument, $divElement, $global_array);
 
@@ -87,147 +86,147 @@ function buildHTMLString($htmlDocument, $divElement, $global_array)
   for($i = 0;$i<$nr_priorities;$i++)
   {
 			//treat all combined values from applications: nessus, retina, nmap
-     foreach ($global_array["combined"][$risk_priorities[$i]] as $key_2 => $report) 
-     {
+   foreach ($global_array["combined"][$risk_priorities[$i]] as $key_2 => $report) 
+   {
 
-        if(!isset($risk_counters[$risk_priorities[$i]]))
-        {
-           $risk_counters[$risk_priorities[$i]] = 0;
-       }
-       else
-       {
-           $risk_counters[$risk_priorities[$i]]++;	
-       }
+    if(!isset($risk_counters[$risk_priorities[$i]]))
+    {
+     $risk_counters[$risk_priorities[$i]] = 0;
+ }
+ else
+ {
+     $risk_counters[$risk_priorities[$i]]++;	
+ }
 
-       $fixInformation = "";
-       if(isset($report["information"]))
-       {
-           $fixInformation = $report["information"];
-           $fixInformation = preprocessOutputString($fixInformation);
-       }
+ $fixInformation = "";
+ if(isset($report["information"]))
+ {
+     $fixInformation = $report["information"];
+     $fixInformation = preprocessOutputString($fixInformation);
+ }
 
-       $plugin_name = "";
-       if(isset($report["plugin_name"]))
-       {				
-           $plugin_name = $report["plugin_name"];
-           $plugin_name = preprocessOutputString($plugin_name);
-       }
+ $plugin_name = "";
+ if(isset($report["plugin_name"]))
+ {				
+     $plugin_name = $report["plugin_name"];
+     $plugin_name = preprocessOutputString($plugin_name);
+ }
 
-       $description = "";
-       if(isset($report["description"]))
-       {
-           $description = $report["description"];
-           $description = preprocessOutputString($description);					
-       }
+ $description = "";
+ if(isset($report["description"]))
+ {
+     $description = $report["description"];
+     $description = preprocessOutputString($description);					
+ }
 
-       $risk_factor = "";
-       if(isset($report["risk_factor"]))
-       {
+ $risk_factor = "";
+ if(isset($report["risk_factor"]))
+ {
 					//$risk_factor = $report["risk_factor"];
-           $risk_factor = $risk_priorities[$i];
-           if($risk_priorities[$i] === "Information")
-           {
-              $risk_factor = $risk_priorities[$i]."al";	
-          }
-          $risk_factor = preprocessOutputString($risk_factor);
-      }
+     $risk_factor = $risk_priorities[$i];
+     if($risk_priorities[$i] === "Information")
+     {
+      $risk_factor = $risk_priorities[$i]."al";	
+  }
+  $risk_factor = preprocessOutputString($risk_factor);
+}
 
-      $cve_strings = "";
-      if(isset($report["cve"]))
-      {
-       $cve_strings = $report["cve"];
-       $cve_strings = preprocessOutputString($cve_strings);
-   }
-   $reportNumber++;
-   $reportId="combined".$reportNumber;
-   $html = "
-   <div class='nodedata'>
-       <div class='panel-group'>
-          <div class='panel panel-default'>
-             <div class='panel-heading'>
-                <h4 class='panel-title'>
-                   <span>
-                      <input id='supplied' class='checkrecord' type='checkbox' value='Record:1' name='Record:1' /> 
-                      <span style='margin-left: 30px;'>".$plugin_name."
-                      </span>
-                  </span>
-                  <span class='pull-right'>
-                      <span class='label label-danger'>".$risk_factor."
-                      </span>
-                      <a data-toggle='collapse' href='#".$reportId."' class='' aria-expanded='true'>Extend</a>
-                  </span>       
-              </h4>
-          </div>
-          <input type='checkbox' style='display:none;' name='result[0][name]' value=\"".$plugin_name."\" /> 
-          <input type='checkbox' style='display:none;' name='result[0][risk]' value=\"".$risk_factor."\" />
-          <div id='".$reportId."' class='panel-collapse collapse ' aria-expanded='false'>
-            <ul class='list-group'>
-               <li class='list-group-item'>
-                  <input type='checkbox' style='display:none;' name='result[0][description]' value=\"".$description."\" /><strong>Description: </strong><br /> ".$description." </li>
-                  <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][fixInformation]' value=\"".$fixInformation."\" /><strong>Fix 
-                     Information:  </strong>".$fixInformation."<br />  </li>
-                     <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][cve]' value=\"".$cve_strings."\" /><strong>CVE:</strong><br />".$cve_strings."
-                     </li>
-                 </ul>
-             </div>
-         </div>
-     </div>
- </div>";
-        $HTMLCombinedContent=$HTMLCombinedContent.$html;
+$cve_strings = "";
+if(isset($report["cve"]))
+{
+ $cve_strings = $report["cve"];
+ $cve_strings = preprocessOutputString($cve_strings);
+}
+$reportNumber++;
+$reportId="combined".$reportNumber;
+$html = "
+<div class='nodedata'>
+ <div class='panel-group'>
+  <div class='panel panel-default'>
+   <div class='panel-heading'>
+    <h4 class='panel-title'>
+     <span>
+      <input id='supplied' class='checkrecord' type='checkbox' value='Record:1' name='Record:1' /> 
+      <span style='margin-left: 30px;'>".$plugin_name."
+      </span>
+  </span>
+  <span class='pull-right'>
+      <span class='label label-danger'>".$risk_factor."
+      </span>
+      <a data-toggle='collapse' href='#".$reportId."' class='' aria-expanded='true'>Extend</a>
+  </span>       
+</h4>
+</div>
+<input type='checkbox' style='display:none;' name='result[0][name]' value=\"".$plugin_name."\" /> 
+<input type='checkbox' style='display:none;' name='result[0][risk]' value=\"".$risk_factor."\" />
+<div id='".$reportId."' class='panel-collapse collapse ' aria-expanded='false'>
+    <ul class='list-group'>
+     <li class='list-group-item'>
+      <input type='checkbox' style='display:none;' name='result[0][description]' value=\"".$description."\" /><strong>Description: </strong><br /> ".$description." </li>
+      <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][fixInformation]' value=\"".$fixInformation."\" /><strong>Fix 
+       Information:  </strong>".$fixInformation."<br />  </li>
+       <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][cve]' value=\"".$cve_strings."\" /><strong>CVE:</strong><br />".$cve_strings."
+       </li>
+   </ul>
+</div>
+</div>
+</div>
+</div>";
+$HTMLCombinedContent=$HTMLCombinedContent.$html;
 				////echo $html;
 
 }		
 
 }
 $HTMLCombinedAntet="<h1>Combined</h1>
-    <table class=\"table \">
-        <thead >
-            <tr>
-                <th class=\"table-danger\">Critical</th>
-                <th class=\"table-warning\">High</th>
-                <th class=\"table-info\">Medium</th>
-                <th class=\"table-active\">Low</th>
-                <th class=\"table-success\">Informational</th>
+<table class=\"table \">
+    <thead >
+        <tr>
+            <th class=\"table-danger\">Critical</th>
+            <th class=\"table-warning\">High</th>
+            <th class=\"table-info\">Medium</th>
+            <th class=\"table-active\">Low</th>
+            <th class=\"table-success\">Informational</th>
 
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td id=\"Critical\" class=\"table-danger\">".$risk_counters["Critical"]."</td>
-                <td id=\"High\" class=\"table-warning\">".$risk_counters["High"]."</td>
-                <td id=\"Medium\" class=\"table-info\">".$risk_counters["Medium"]."</td>
-                <td id=\"Low\" class=\"table-active\">".$risk_counters["Low"]."</td>
-                <td id=\"Informational\" class=\"table-success\">".$risk_counters["Information"]."</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td id=\"Critical\" class=\"table-danger\">".$risk_counters["Critical"]."</td>
+            <td id=\"High\" class=\"table-warning\">".$risk_counters["High"]."</td>
+            <td id=\"Medium\" class=\"table-info\">".$risk_counters["Medium"]."</td>
+            <td id=\"Low\" class=\"table-active\">".$risk_counters["Low"]."</td>
+            <td id=\"Informational\" class=\"table-success\">".$risk_counters["Information"]."</td>
 
-            </tr>
+        </tr>
 
-        </tbody>
-    </table>
-    ";
+    </tbody>
+</table>
+";
                    //create a fragment (a html fragment) with changed parameters such as 
- $fragment = $htmlDocument->createDocumentFragment();
- if($fragment -> appendXML($HTMLCombinedAntet))
- {
-     /*$divElement->insertBefore($fragment, $divElement->firstChild);*/
-     $divElement->appendChild($fragment); 
- }
- else
- {
+$fragment = $htmlDocument->createDocumentFragment();
+if($fragment -> appendXML($HTMLCombinedAntet))
+{
+   /*$divElement->insertBefore($fragment, $divElement->firstChild);*/
+   $divElement->appendChild($fragment); 
+}
+else
+{
      //echo $HTMLCombinedAntet;        
      //echo $plugin_name."<br>";      
- }
+}
                 //create a fragment (a html fragment) with changed parameters such as 
- $fragment = $htmlDocument->createDocumentFragment();
- if($fragment -> appendXML($HTMLCombinedContent))
- {
-     /*$divElement->insertBefore($fragment, $divElement->firstChild);*/
-     $divElement->appendChild($fragment); 
- }
- else
- {
+$fragment = $htmlDocument->createDocumentFragment();
+if($fragment -> appendXML($HTMLCombinedContent))
+{
+   /*$divElement->insertBefore($fragment, $divElement->firstChild);*/
+   $divElement->appendChild($fragment); 
+}
+else
+{
      //echo $HTMLCombinedContent;        
      //echo $plugin_name."<br>";      
- }
+}
 
 
 	//display the risk counters
@@ -250,102 +249,102 @@ console_log($risk_counters);
 
 
 	$risk_counters = array();
-     $reportNumber=0;
+   $reportNumber=0;
    
 	//treat acunetix values 
-	for($i = 0;$i<$nr_priorities;$i++)
-  {
+   for($i = 0;$i<$nr_priorities;$i++)
+   {
 
 			//treat all combined values from applications: nessus, retina, nmap
-     foreach ($global_array["acunetix"][$risk_priorities[$i]] as $key_2 => $report) 
-     {
+       foreach ($global_array["acunetix"][$risk_priorities[$i]] as $key_2 => $report) 
+       {
 
 
         if(!isset($risk_counters[$risk_priorities[$i]]))
         {
-           $risk_counters[$risk_priorities[$i]] = 0;
-       }
-       else
-       {
-           $risk_counters[$risk_priorities[$i]]++;	
-       }
+         $risk_counters[$risk_priorities[$i]] = 0;
+     }
+     else
+     {
+         $risk_counters[$risk_priorities[$i]]++;	
+     }
 
-       $fixInformation = "";
-       if(isset($report["information"]))
-       {
-           $fixInformation = $report["information"];
-           $fixInformation = preprocessOutputString($fixInformation);
-       }
+     $fixInformation = "";
+     if(isset($report["information"]))
+     {
+         $fixInformation = $report["information"];
+         $fixInformation = preprocessOutputString($fixInformation);
+     }
 
-       $plugin_name = "";
-       if(isset($report["plugin_name"]))
-       {				
-           $plugin_name = $report["plugin_name"];
-           $plugin_name = preprocessOutputString($plugin_name);
-       }
+     $plugin_name = "";
+     if(isset($report["plugin_name"]))
+     {				
+         $plugin_name = $report["plugin_name"];
+         $plugin_name = preprocessOutputString($plugin_name);
+     }
 
-       $description = "";
-       if(isset($report["description"]))
-       {
-           $description = $report["description"];
-           $description = preprocessOutputString($description);					
-       }
+     $description = "";
+     if(isset($report["description"]))
+     {
+         $description = $report["description"];
+         $description = preprocessOutputString($description);					
+     }
 
-       $risk_factor = "";
-       if(isset($report["risk_factor"]))
-       {
+     $risk_factor = "";
+     if(isset($report["risk_factor"]))
+     {
 					//$risk_factor = $report["risk_factor"];
-           $risk_factor = $risk_priorities[$i];
-           if($risk_priorities[$i] === "Information")
-           {
-              $risk_factor = $risk_priorities[$i]."al";	
-          }
-          $risk_factor = preprocessOutputString($risk_factor);
+         $risk_factor = $risk_priorities[$i];
+         if($risk_priorities[$i] === "Information")
+         {
+          $risk_factor = $risk_priorities[$i]."al";	
       }
+      $risk_factor = preprocessOutputString($risk_factor);
+  }
 
-      $cve_strings = "";
-      if(isset($report["cve"]))
-      {
-       $cve_strings = $report["cve"];
-       $cve_strings = preprocessOutputString($cve_strings);
-   }
+  $cve_strings = "";
+  if(isset($report["cve"]))
+  {
+     $cve_strings = $report["cve"];
+     $cve_strings = preprocessOutputString($cve_strings);
+ }
 
-   $reportNumber++;
-    $reportId="acunetix".$reportNumber;
+ $reportNumber++;
+ $reportId="acunetix".$reportNumber;
 
-   $html = "
-   <div class='nodedata'>
-       <div class='panel-group'>
-          <div class='panel panel-default'>
-             <div class='panel-heading'>
-                <h4 class='panel-title'>
-                   <span>
-                      <input id='supplied' class='checkrecord' type='checkbox' value='Record:1' name='Record:1' /> 
-                      <span style='margin-left: 30px;'>".$plugin_name."
-                      </span>
-                  </span>
-                  <span class='pull-right'>
-                      <span class='label label-danger'>".$risk_factor."
-                      </span>
-                      <a data-toggle='collapse' href='#".$reportId."' class='' aria-expanded='true'>Expand </a>
-                  </span>       
-              </h4>
-          </div>
-          <input type='checkbox' style='display:none;' name='result[0][name]' value=\"".$plugin_name."\" /> 
-          <input type='checkbox' style='display:none;' name='result[0][risk]' value=\"".$risk_factor."\" />
-          <div id='".$reportId."' class='panel-collapse collapse ' aria-expanded='false'>
-            <ul class='list-group'>
-               <li class='list-group-item'>
-                  <input type='checkbox' style='display:none;' name='result[0][description]' value=\"".$description."\" /><strong>Description: </strong><br /> ".$description." </li>
-                  <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][fixInformation]' value=\"".$fixInformation."\" /><strong>Fix 
-                     Information:  </strong>".$fixInformation."<br />  </li>
-                     <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][cve]' value=\"".$cve_strings."\" /><strong>CVE:</strong><br />".$cve_strings."
-                     </li>
-                 </ul>
-             </div>
-         </div>
-     </div>
- </div>";
+ $html = "
+ <div class='nodedata'>
+     <div class='panel-group'>
+      <div class='panel panel-default'>
+       <div class='panel-heading'>
+        <h4 class='panel-title'>
+         <span>
+          <input id='supplied' class='checkrecord' type='checkbox' value='Record:1' name='Record:1' /> 
+          <span style='margin-left: 30px;'>".$plugin_name."
+          </span>
+      </span>
+      <span class='pull-right'>
+          <span class='label label-danger'>".$risk_factor."
+          </span>
+          <a data-toggle='collapse' href='#".$reportId."' class='' aria-expanded='true'>Expand </a>
+      </span>       
+  </h4>
+</div>
+<input type='checkbox' style='display:none;' name='result[0][name]' value=\"".$plugin_name."\" /> 
+<input type='checkbox' style='display:none;' name='result[0][risk]' value=\"".$risk_factor."\" />
+<div id='".$reportId."' class='panel-collapse collapse ' aria-expanded='false'>
+    <ul class='list-group'>
+     <li class='list-group-item'>
+      <input type='checkbox' style='display:none;' name='result[0][description]' value=\"".$description."\" /><strong>Description: </strong><br /> ".$description." </li>
+      <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][fixInformation]' value=\"".$fixInformation."\" /><strong>Fix 
+       Information:  </strong>".$fixInformation."<br />  </li>
+       <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][cve]' value=\"".$cve_strings."\" /><strong>CVE:</strong><br />".$cve_strings."
+       </li>
+   </ul>
+</div>
+</div>
+</div>
+</div>";
 
 				////echo $html;
 $HTMLAcunetixContent=$HTMLAcunetixContent.$html;
@@ -353,52 +352,52 @@ $HTMLAcunetixContent=$HTMLAcunetixContent.$html;
 }
 
 $HTMLAcunetixAntet="<h1>Acunetix</h1>
-    <table class=\"table \">
-        <thead >
-            <tr>
-                <th class=\"table-danger\">High</th>
-                <th class=\"table-warning\">Medium</th>
-                <th class=\"table-info\">Low</th>
-                <th class=\"table-active\">Informational</th>
+<table class=\"table \">
+    <thead >
+        <tr>
+            <th class=\"table-danger\">High</th>
+            <th class=\"table-warning\">Medium</th>
+            <th class=\"table-info\">Low</th>
+            <th class=\"table-active\">Informational</th>
 
-            </tr>
-        </thead>
-        <tbody>
-            <tr>
-                <td id=\"High\" class=\"table-danger\">".$risk_counters["High"]."</td>
-                <td id=\"Medium\" class=\"table-warning\">".$risk_counters["Medium"]."</td>
-                <td id=\"Low\" class=\"table-info\">".$risk_counters["Low"]."</td>
-                <td id=\"Informational\" class=\"table-active\">".$risk_counters["Information"]."</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td id=\"High\" class=\"table-danger\">".$risk_counters["High"]."</td>
+            <td id=\"Medium\" class=\"table-warning\">".$risk_counters["Medium"]."</td>
+            <td id=\"Low\" class=\"table-info\">".$risk_counters["Low"]."</td>
+            <td id=\"Informational\" class=\"table-active\">".$risk_counters["Information"]."</td>
 
-            </tr>
+        </tr>
 
-        </tbody>
-    </table>
-    ";
+    </tbody>
+</table>
+";
                    //create a fragment (a html fragment) with changed parameters such as 
- $fragment = $htmlDocument->createDocumentFragment();
- if($fragment -> appendXML($HTMLAcunetixAntet))
- {
-     /*$divElement->insertBefore($fragment, $divElement->firstChild);*/
-     $divElement->appendChild($fragment); 
- }
- else
- {
+$fragment = $htmlDocument->createDocumentFragment();
+if($fragment -> appendXML($HTMLAcunetixAntet))
+{
+   /*$divElement->insertBefore($fragment, $divElement->firstChild);*/
+   $divElement->appendChild($fragment); 
+}
+else
+{
      //echo $HTMLAcunetixAntet;        
      //echo $plugin_name."<br>";      
- }
+}
                 //create a fragment (a html fragment) with changed parameters such as 
- $fragment = $htmlDocument->createDocumentFragment();
- if($fragment -> appendXML($HTMLAcunetixContent))
- {
-     /*$divElement->insertBefore($fragment, $divElement->firstChild);*/
-     $divElement->appendChild($fragment); 
- }
- else
- {
+$fragment = $htmlDocument->createDocumentFragment();
+if($fragment -> appendXML($HTMLAcunetixContent))
+{
+   /*$divElement->insertBefore($fragment, $divElement->firstChild);*/
+   $divElement->appendChild($fragment); 
+}
+else
+{
      //echo $HTMLAcunetixContent;        
      //echo $plugin_name."<br>";      
- }
+}
 
 
 
@@ -585,11 +584,11 @@ function isInsertedAlready($vector,$val)
 			//echo $first_cve."<br>";
 			//echo $second_cve."<br>";
 			//echo "<br>";*/
-			return true;			
-		}	
-	}
+return true;			
+}	
+}
 
-	return false;
+return false;
 }
 
 function reunion($firstArray, $secondArray)
@@ -682,7 +681,7 @@ function preprocessOutputString($output)
 
 //TODO
 ////echo the path to built html file
-	
+
 
 function process_xml_input_file($file)
 {
@@ -923,7 +922,7 @@ else
 
 
 
-echo json_encode("output_html/generated_output2.html");
+    echo json_encode("output_html/generated_output2.html");
 
 
-	?>
+    ?>
