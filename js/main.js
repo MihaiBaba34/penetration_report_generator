@@ -1,9 +1,11 @@
 function startProcessing()
 {
 
-	console.log("Processing...");
+/*	console.log("Processing...");
 	console.log(uploaded_files_map);
-	console.log("Processing...");
+	console.log("Processing...");*/
+
+	$.post( "./php/process_files_and_generate_output.php", uploaded_files_map);
 
 	$.ajax({
 		type: "POST",
@@ -11,17 +13,55 @@ function startProcessing()
 		data: {files_map:uploaded_files_map}
 	})
 	.done(function( msg ) {
+		
 
-		var objects= JSON.parse(msg);
+		
+		var url = JSON.parse(msg);
 
-		console.log(objects);
+
+		console.log(url);
 		//displayContent(msg);
 
-		//displayContent(msg);		
-	});
- 
+		//displayContent(msg);
+		
+		window.location.href = url;
 
+
+	});
  }
+
+function populatePageWithParsedData(parsedData)
+{
+	var accordion = document.getElementById("accordion");
+	var html = "";
+
+	for(report in parsedData)
+	{
+		html += 
+	"<div class='card'>" +  
+    "<div class='card-header' role='tab' id='headingOne'>" + 
+      "<h5 class='mb-0'>" + 
+        "<a data-toggle='collapse' data-parent='#accordion' href='#collapseOne' aria-expanded='true' aria-controls='collapseOne'>" + 
+          "Collapsible Group Item #1" + 
+        "</a>" + 
+      "</h5>" + 
+    "</div>" + 
+    "<div id='collapseOne' class='collapse in' role='tabpanel' aria-labelledby='headingOne'>" + 
+      "<div class='card-block'>" + 
+        "sustainable VHS." + 
+      "</div>" + 
+    "</div>" + 
+  "</div>";
+	}
+
+	
+
+  accordion.innerHTML = html;
+
+}
+
+
+
 
  function displayContent(msg)
  {

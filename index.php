@@ -18,8 +18,6 @@
     <!--[if lt IE 9]>
       <script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
       <![endif]-->
-
-
       <style>
       	body {
 
@@ -64,41 +62,6 @@
 }
 </style>
   	</div>
-<div class="row">
-<!-- <div class="col-md-2"></div> -->
-  	<div id="parseResults" class="col-xs-3 pull-right">
-
-  	
-  		<table class="table ">
-  		<thead >
-  				<tr>
-  					<th class="table-danger">Critical</th>
-  					<th class="table-warning">High</th>
-  					<th class="table-info">Medium</th>
-  					<th class="table-active">Low</th>
-  					<th class="table-success">Informational</th>
-
-  				</tr>
-  			</thead>
-  			<tbody>
-  				<tr>
-  					<td id="Critical" class="table-danger">10</td>
-  					<td id="High" class="table-warning">15</td>
-  					<td id="Medium" class="table-info">20</td>
-  					<td id="Low" class="table-active">30</td>
-					<td id="Informational" class="table-success">50</td>
-
-  				</tr>
-  				
-  			</tbody>
-  		</table>
-
-
-  	</div>
-  	</div>
-
-
-
 
 
   	<!-- Formular with report info modal -->
@@ -123,6 +86,9 @@
   					</div>
 
   					<br>
+  					<br>
+  					
+
 
   					<div class = "input-group col-md-10 col-md-offset-1">
   						<span class = "input-group-addon">Website URL</span>
@@ -130,18 +96,21 @@
   					</div>
 
   					<br>
+  					<br>
+
   					<div class = "input-group col-md-10 col-md-offset-1">
   						<span class = "input-group-addon">Date</span>
   						<input id="dateInput" type = "text" class = "form-control" placeholder = "DD/MM/YYYY">
   					</div>
-
+<br>
+            <br>
   				</form>
 
 
   			</div>
   			<div class="modal-footer">
   				<button type="button" class="btn btn-default" data-dismiss="modal" >Cancel</button>
-  				<button type="button" class="btn btn-primary"  onclick="startProcessing(); ValidateForm();" >Generate Report</button>
+  				<button type="button" class="btn btn-primary"  onclick=" ValidateForm();" >Generate Report</button>
   			</div>
   		</div>
   	</div>
@@ -240,9 +209,9 @@ function isDate(dtStr){
 			return false
 		}
 		alert("ok"+dt.value);
+    startProcessing();
 		return true
 	}
-
 
 
 </script>
