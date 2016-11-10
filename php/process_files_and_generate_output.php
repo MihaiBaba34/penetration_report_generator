@@ -25,9 +25,12 @@ main();
 
 function main()
 {
+	
   global $global_array;
   global $uploaded_files;
   global $risk_counters;
+
+
 
 	//extract xml files content
   foreach ($uploaded_files as $key => $value) {
@@ -92,7 +95,7 @@ function buildHTMLString($htmlDocument, $divElement, $global_array)
 
         if(!isset($risk_counters[$risk_priorities[$i]]))
         {
-           $risk_counters[$risk_priorities[$i]] = 0;
+           $risk_counters[$risk_priorities[$i]] = 1;
        }
        else
        {
@@ -263,7 +266,7 @@ console_log($risk_counters);
 
         if(!isset($risk_counters[$risk_priorities[$i]]))
         {
-           $risk_counters[$risk_priorities[$i]] = 0;
+           $risk_counters[$risk_priorities[$i]] = 1;
        }
        else
        {
@@ -530,7 +533,7 @@ function sortItemsByRisk($vector)
 	}
 	
 
-	console_log($vector);
+	//console_log($vector);
 
 	return $result;
 }	
@@ -538,9 +541,9 @@ function sortItemsByRisk($vector)
 
 
 function console_log( $data ){
-	//echo '<script>';
-	//echo 'console.log('. json_encode( $data ) .')';
-	//echo '</script>';
+	echo '<script>';
+	echo 'console.log('. json_encode( $data ) .')';
+	echo '</script>';
 }
 
 function test_diff($item)
@@ -566,6 +569,7 @@ function test_diff($item)
 function isInsertedAlready($vector,$val)
 {
 
+
 	foreach ($vector as $key => $item) {
 		# code...
 		$pattern = '/\s+/';
@@ -578,23 +582,109 @@ function isInsertedAlready($vector,$val)
 		if(strcmp($first_desc , $second_desc) == 0 && 
 			strcmp($first_cve , $second_cve) == 0)
 		{			
-/*			//echo "<br>";
-			//echo $first_desc."<br>";
-			//echo $second_desc."<br>";
+			echo "<br>";
+/*
+			echo $val['plugin_name']."<br>";
+			echo $first_desc."<br>";
+			echo $second_desc."<br>";
 
-			//echo $first_cve."<br>";
-			//echo $second_cve."<br>";
-			//echo "<br>";*/
+			echo $first_cve."<br>";
+			echo $second_cve."<br>";*/
+			echo "<br>";
 			return true;			
 		}	
 	}
 
 	return false;
 }
+function reunion2($firstArray, $secondArray)
+{
+	$result = array();
+	$unique_elements_map = array();
+
+	if(count($firstArray) >= count($secondArray))
+	{
+		echo "count(firstArray) >= count(secondArray) <br>";
+		foreach ($firstArray as $key => $value) {
+			
+			$pattern = '/\s+/';
+			$first_cve = preg_replace($pattern,'',strtolower($value['cve']));
+			$first_desc = preg_replace($pattern,'',strtolower($value['description']));
+
+			$entry_key = $first_cve."_".$first_desc;
+			if(!isset($unique_elements_map[$entry_key]))
+			{				
+				$unique_elements_map[$entry_key] = $value;	
+			}
+		}
+
+		foreach ($secondArray as $key => $value) {
+			
+			$pattern = '/\s+/';
+			$second_cve = preg_replace($pattern,'',strtolower($value['cve']));
+			$second_desc = preg_replace($pattern,'',strtolower($value['description']));
+
+			$entry_key = $second_cve."_".$second_desc;
+			if(!isset($unique_elements_map[$entry_key]))
+			{				
+				$unique_elements_map[$entry_key] = $value;
+			}	
+		}
+	}
+	else
+	{
+		echo "count(firstArray) < count(secondArray) <br>";
+		foreach ($secondArray as $key => $value) {
+			
+			$pattern = '/\s+/';
+			$first_cve = preg_replace($pattern,'',strtolower($value['cve']));
+			$first_desc = preg_replace($pattern,'',strtolower($value['description']));
+
+			$entry_key = $first_cve."_".$first_desc;
+
+			if(!isset($unique_elements_map[$entry_key]))
+			{
+				
+				$unique_elements_map[$entry_key] = $value;	
+			}
+		}
+
+
+		foreach ($firstArray as $key => $value) {
+			
+			$pattern = '/\s+/';
+			$second_cve = preg_replace($pattern,'',strtolower($value['cve']));
+			$second_desc = preg_replace($pattern,'',strtolower($value['description']));
+
+			$entry_key = $second_cve + "_" + $second_desc;
+			if(!isset($unique_elements_map[$entry_key]))
+			{
+				$unique_elements_map[$entry_key] = $value;	
+			}	
+		}
+	}
+
+/*	console_log("unique_elements_map");
+	console_log($unique_elements_map);
+	console_log("unique_elements_map");*/
+
+	//copying elements from unique_elements_map to result array
+	foreach ($unique_elements_map as $key => $value) {
+		
+		array_push($result,$value);
+
+	}
+
+
+	return $result;
+}
+
+
 
 function reunion($firstArray, $secondArray)
 {
 	$result = array();
+
 
 	if(count($firstArray) >= count($secondArray))
 	{
@@ -626,7 +716,8 @@ function removeDuplicatesFromArray($vector)
 {
 	$result = array();
 
-	foreach ($vector as $key => $value) {
+	foreach ($vector as $key => $value) 
+	{
 
 		if(!isInsertedAlready($result, $value))
 		{
@@ -643,15 +734,44 @@ function removeDuplicates($global_array)
 	$result = array();
 	$result["combined"] = array();
 
+/*	$arr1 = array();
+	$arr1['cve'] = "CVE-2015-0204
+";
+	$arr1['description'] = "The remote host supports EXPORT_RSA cipher suites with keys less than or equal to 512 bits. An attacker can factor a 512-bit RSA modulus in a short amount of time. A man-in-the middle attacker may be able to downgrade the session to use EXPORT_RSA cipher suites (e.g. CVE-2015-0204). Thus, it is recommended to remove support for weak cipher suites.
+";
+
+	$arr2 = array();
+	$arr2['cve'] = "CVE-2015-0204
+";
+	$arr2['description'] = "The remote host supports EXPORT_RSA cipher suites with keys less than or equal to 512 bits. An attacker can factor a 512-bit RSA modulus in a short amount of time. A man-in-the middle attacker may be able to downgrade the session to use EXPORT_RSA cipher suites (e.g. CVE-2015-0204). Thus, it is recommended to remove support for weak cipher suites.
+";
+
+	$arr3 = array();
+	$arr3 = reunion($arr1,$arr2);
+
+	console_log("arr1");
+	console_log($arr1);
+	console_log("arr1");
+
+	console_log("arr2");
+	console_log($arr2);
+	console_log("arr2");
+
+	console_log("arr3");
+	console_log($arr3);
+	console_log("arr3");*/
+
 	//remove duplicates for nessus and retina by making a reunion 
 	//between two of them
+	$unique_elements_map_combined = array();
+	//$result["combined"] = reunion2($result["combined"], $global_array['nessus']);	
 	foreach ($global_array as $key => $value) {
 		if($key !== "acunetix")
 		{
-			$result["combined"] = reunion($result["combined"], $value);	
+			$result["combined"] = reunion2($result["combined"], $value);	
 		}
 	}
-	
+		
 	//remove duplicates for acunetix
 	$result['acunetix'] = array();
 	$duplicates = array();
@@ -662,6 +782,10 @@ function removeDuplicates($global_array)
 	}
 
 	$result['acunetix'] = $duplicates;
+
+	console_log("removeDuplicates");
+	console_log($result);
+	console_log("removeDuplicates");
 
 	return $result;
 }
@@ -677,17 +801,12 @@ function preprocessOutputString($output)
 }
 
 
-
-
-
 //TODO
 ////echo the path to built html file
 	
 
 function process_xml_input_file($file)
 {
-
-
 	$uploadfile = $file;
 
 /*$uploaddir = $_POST['upload_path'];
@@ -722,7 +841,6 @@ else
 			acunetixXMLFileParser($uploadfile);
               //array_push($global_array, "acunetix");
 		}
-
 	}
 
 
