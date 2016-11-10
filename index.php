@@ -205,7 +205,7 @@ function isDate(dtStr){
 	function ValidateForm(){
 
 
-    var inputFields = new Array();
+    var inputFields = new Object();
 
     var dateAndTimeField=document.getElementById("dateInput");
     var serverNameField= document.getElementById("serverNameInput");

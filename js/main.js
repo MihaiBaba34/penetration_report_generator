@@ -1,31 +1,31 @@
-function startProcessing(inputFields)
+function startProcessing(inputArgument)
 {
 
-console.log(inputFields);
-/*	console.log("Processing...");
-	console.log(uploaded_files_map);
-	console.log("Processing...");*/
-
-	$.post( "./php/process_files_and_generate_output.php", uploaded_files_map);
+    var input_fields= JSON.stringify(inputArgument);
 
 	$.ajax({
 		type: "POST",
 		url: "./php/process_files_and_generate_output.php",
-		data: {files_map:uploaded_files_map}
+		data: {
+
+            files_map:uploaded_files_map,
+            input: input_fields
+        }
 	})
 	.done(function( msg ) {
-		
+				
 
-		
+
+
 		var url = JSON.parse(msg);
-
-
-		console.log(url);
+        console.log("From PHP");
+		console.log(msg);
+        console.log("From PHP");
 		//displayContent(msg);
 
 		//displayContent(msg);
 		
-		//window.location.href = url;
+		window.location.href = url;
 
 
 	});
