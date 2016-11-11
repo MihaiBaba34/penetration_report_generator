@@ -17,7 +17,7 @@ function startProcessing(inputArgument)
 
 
 
-		//var url = JSON.parse(msg);
+		var url = JSON.parse(msg);
         console.log("From PHP");
 		console.log(msg);
         console.log("From PHP");
@@ -25,7 +25,7 @@ function startProcessing(inputArgument)
 
 		//displayContent(msg);
 		
-		//window.location.href = url;
+		window.location.href = url;
 
 
 	});
