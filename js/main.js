@@ -17,7 +17,7 @@ function startProcessing(inputArgument)
 
 
 
-		var url = JSON.parse(msg);
+		//var url = JSON.parse(msg);
         console.log("From PHP");
 		console.log(msg);
         console.log("From PHP");
@@ -25,7 +25,7 @@ function startProcessing(inputArgument)
 
 		//displayContent(msg);
 		
-		window.location.href = url;
+		//window.location.href = url;
 
 
 	});
@@ -139,3 +139,21 @@ function populatePageWithParsedData(parsedData)
 		dataContainer.innerHTML=dataInContainer+"</pre><br><br><br>"+dataContainer.innerHTML;
 		
  }
+
+
+// prevent Start Processing button from triggering upload file window
+function preventDefaultFunction(event)
+{   
+    clickOnMainAreaFlag=true; 
+    event.preventDefault();
+
+    if(uploaded_files_map.length > 0)
+    {
+        ValidateForm();
+    }
+    else
+    {
+        alert("Please add at least one XML file!");
+    }
+        
+}

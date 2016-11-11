@@ -7,6 +7,7 @@ $inputFields = $_POST['input'];
 $uploaded_files = $_POST['files_map'];
 
 $global_array = array();
+$issuesNumber =0;
 
 /*$uploaded_files = array();
 array_push($uploaded_files,"../test/testphp.vulnweb_retina.xml");
@@ -28,7 +29,7 @@ $risk_priorities = array(
   'Information'
   );
 $badge_collors = array(
-  'label label-danger',
+  'label label-info',
   'label label-warning',
   'label label-default',
   'label label-primary',
@@ -70,6 +71,7 @@ function main()
 function buildHTMLPageWithContent($global_array)
 {
   global $inputFields;
+  global $issuesNumber;
 
   $htmlDocument = new DOMDocument();
 
@@ -83,11 +85,14 @@ function buildHTMLPageWithContent($global_array)
   $server_name_span = $htmlDocument->getElementById('server_name');
   $site_name_span = $htmlDocument->getElementById('site_name');
   $date_span = $htmlDocument->getElementById('date_field');
+  $issues_number_span=$htmlDocument->getElementById('issues_number');
   $inputFields=json_decode($inputFields);
+
 
   $server_name = $inputFields->serverNameInput;
   $site_name = $inputFields->webURLInput;
   $date = $inputFields->dateAndTime;
+
 
   $fragment = $htmlDocument->createDocumentFragment();
   if ($fragment->appendXML($server_name)) {
@@ -116,6 +121,12 @@ function buildHTMLPageWithContent($global_array)
 
 
   $htmlContent = buildHTMLString($htmlDocument, $divElement, $global_array);
+  $fragment = $htmlDocument->createDocumentFragment();
+  if ($fragment->appendXML($issuesNumber)) {
+    $issues_number_span->appendChild($fragment);
+  } else {
+            //error      
+  }
 
     //////echo $htmlContent;
     //$divElement->documentElement->appendChild()
@@ -147,6 +158,15 @@ function buildHTMLString($htmlDocument, $divElement, $global_array)
 
         //treat acunetix values 
     for ($i = 0; $i < $nr_priorities; $i++) {
+ //sorting by alphabet order in each priority type
+      $report_title = array();
+      foreach ($global_array["acunetix"][$risk_priorities[$i]] as $key => $row)
+      {
+
+        $report_title[$key] = $row['plugin_name'];
+      }
+      array_multisort($report_title, SORT_ASC|SORT_NATURAL|SORT_FLAG_CASE, $global_array["acunetix"][$risk_priorities[$i]]);
+
 
             //treat all combined values from applications: nessus, retina, nmap
       foreach ($global_array["acunetix"][$risk_priorities[$i]] as $key_2 => $report) {
@@ -204,6 +224,12 @@ function buildHTMLString($htmlDocument, $divElement, $global_array)
           $cve_strings = preprocessOutputString($cve_strings);
         }
 
+        $mandatory_item="";
+        if($risk_factor=="Critical"||$risk_factor=="High"||$risk_factor=="Medium")
+        {
+          $mandatory_item="checked=\"checked\"";
+        }
+
         $reportNumber++;
         $reportId = "acunetix" . $reportNumber;
 
@@ -214,28 +240,29 @@ function buildHTMLString($htmlDocument, $divElement, $global_array)
            <div class='panel-heading'>
             <h4 class='panel-title'>
              <span>
-              <input id='supplied' class='checkrecord' type='checkbox' value='Record:1' name='Record:1' /> 
+              <input id='supplied' class='checkrecord' type='checkbox' value='Record:1' name='Record:1' checked=\"checked\" /> 
               <span style='margin-left: 30px;'>" . $plugin_name . "
               </span>
             </span>
             <span class='pull-right'>
               <span class=\"".$badge_collors[$i]."\">" . $risk_factor . "
               </span>
-              <a style=\"color:black\" data-toggle='collapse' href='#" . $reportId . "' class='' aria-expanded='true'> &#160;Extend<span style=\"color:black\" class=\"glyphicon glyphicon-resize-vertical\"></span> </a>
+              <a style=\"color:black\" data-toggle='collapse' href='#" . $reportId . "' class='' aria-expanded='true'> &#160;Extend  &#160;<span style=\"color:black\" class=\"glyphicon glyphicon-menu-hamburger\"></span> </a>
+              <input id='supplied' class='checkrecord' type='checkbox' value='Record:1' name='Record:1' ".$mandatory_item." /> 
             </span>       
-         
+
           </h4>
         </div>
-        <input type='checkbox' style='display:none;' name='result[0][name]' value=\"" . $plugin_name . "\" /> 
-        <input type='checkbox' style='display:none;' name='result[0][risk]' value=\"" . $risk_factor . "\" />
+
+        
         <div id='" . $reportId . "' class='panel-collapse collapse ' aria-expanded='false'>
           <ul class='list-group'>
            <li class='list-group-item'>
-            <input type='checkbox' style='display:none;' name='result[0][description]' value=\"" . $description . "\" /><strong>Description: </strong><br /> " . $description . " </li>
-            <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][fixInformation]' value=\"" . $fixInformation . "\" /><strong>Fix 
-             Information:  </strong>" . $fixInformation . "<br />  </li>
-           
-             <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][cve]' value=\"" . $cve_strings . "\" /><strong>CVE:</strong>" . $cve_strings . "
+            <input type='checkbox' style='display:none;' name='result[0][description]' value=\"" . $description . "\" /><strong>Description: </strong> " . $description . " </li>
+            <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][fixInformation]' value=\"" . $fixInformation . "\" /><strong>
+             Information:&#160;  </strong>" . $fixInformation . "<br />  </li>
+
+             <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][cve]' value=\"" . $cve_strings . "\" /><strong>CVE:&#160;</strong>" . $cve_strings . "
              </li>
            </ul>
          </div>
@@ -267,34 +294,41 @@ if (!isset($risk_counters["Low"])) {
 if (!isset($risk_counters["Information"])) {
   $risk_counters["Information"] = 0;
 }
-
+$totalNumberOfIssues=$risk_counters["Critical"]+$risk_counters["High"]+$risk_counters["Medium"]+$risk_counters["Low"]+$risk_counters["Information"];
+global $issuesNumber;
+$issuesNumber=$issuesNumber+$totalNumberOfIssues;
 $HTMLAcunetixAntet = "
-<div class=\"alert alert-info\" role=\"alert\">
-  <h1 class=\"text-center\"><strong>Web Application Vulnerabilities</strong></h1> 
+<div class=\"alert alert-info\" role=\"alert\" style=\"background: #ECEEEF; border:0;\">
+  <h3 class=\"text-center\"><strong>Web Application Vulnerabilities</strong></h3> 
 </div>
 <br />
 <table class=\"table \">
   <thead >
     <tr>
-      <th class=\"table-danger\">High</th>
-      <th class=\"table-warning\">Medium</th>
-      <th class=\"table-info\">Low</th>
-      <th class=\"table-active\">Informational</th>
+      <th style=\"background: #FF4D00;\">High</th>
+      <th style=\"background: #E99F54;\">Medium</th>
+      <th style=\"background: #008800;\">Low</th>
+      <th style=\"background: #337AB7;\">Info</th>
+      <th class=\"table-active\">Total</th>
+
 
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td id=\"High\" class=\"table-danger\">" . $risk_counters["High"] . "</td>
-      <td id=\"Medium\" class=\"table-warning\">" . $risk_counters["Medium"] . "</td>
-      <td id=\"Low\" class=\"table-info\">" . $risk_counters["Low"] . "</td>
-      <td id=\"Informational\" class=\"table-active\">" . $risk_counters["Information"] . "</td>
+      <td id=\"High\" style=\"background: #FF4D00;  font-weight: bold; font-size: 160%;\">" . $risk_counters["High"] . "</td>
+      <td id=\"Medium\" style=\"background: #E99F54; font-weight: bold; font-size: 160%;\">" . $risk_counters["Medium"] . "</td>
+      <td id=\"Low\" style=\"background: #008800;  font-weight: bold; font-size: 160%;\">" . $risk_counters["Low"] . "</td>
+      <td id=\"Informational\" style=\"background: #337AB7; font-weight: bold; font-size: 160%;\">" . $risk_counters["Information"] . "</td>
+      <td id=\"Total\" class=\"table-active\" style=\"font-size: 160%; font-weight: bold;\" >" . $totalNumberOfIssues . "</td>
+
 
     </tr>
 
   </tbody>
 </table>
 ";
+//DF0803- red
         //create a fragment (a html fragment) with changed parameters such as 
 $fragment          = $htmlDocument->createDocumentFragment();
 if ($fragment->appendXML($HTMLAcunetixAntet)) {
@@ -329,6 +363,15 @@ if(count($global_array["combined"]))
   $risk_counters = array();
       //display values after the defined risk priorities 
   for ($i = 0; $i < $nr_priorities; $i++) {
+ //sorting by alphabet order in each priority type
+    $report_title = array();
+    foreach ($global_array["combined"][$risk_priorities[$i]] as $key => $row)
+    {
+      $report_title[$key] = $row['plugin_name'];
+    }
+    array_multisort($report_title, SORT_ASC|SORT_NATURAL|SORT_FLAG_CASE, $global_array["combined"][$risk_priorities[$i]]);
+
+
         //treat all combined values from applications: nessus, retina, nmap
     foreach ($global_array["combined"][$risk_priorities[$i]] as $key_2 => $report) {
 
@@ -343,7 +386,7 @@ if(count($global_array["combined"]))
         $fixInformation = $report["information"];
         $fixInformation = preprocessOutputString($fixInformation);
       }
-       $exploit = "";
+      $exploit = "";
       if (isset($report["exploit"])) {
         $exploit = $report["exploit"];
 
@@ -390,38 +433,43 @@ if(count($global_array["combined"]))
         $cve_strings = preprocessOutputString($cve_strings);
       }
       $reportNumber++;
-
-
+      $mandatory_item="";
+      if($risk_factor=="Critical"||$risk_factor=="High"||$risk_factor=="Medium")
+      {
+        $mandatory_item="checked=\"checked\"";
+      }
+    
       $reportId            = "combined" . $reportNumber;
       $html                = "
       <div class='nodedata'>
        <div class='panel-group'>
         <div class='panel panel-default'>
-         <div class='panel-heading'>
+         <div class='panel-heading' style=\"background: #ECEEEF\">
           <h4 class='panel-title'>
            <span>
-            <input id='supplied' class='checkrecord' type='checkbox' value='Record:1' name='Record:1' /> 
+            <input id='supplied' class='checkrecord' type='checkbox' value='Record:1' name='Record:1' checked=\"checked\" /> 
             <span style='margin-left: 30px;'>" . $plugin_name . "
             </span>
           </span>
           <span class='pull-right'>
             <span class=\"".$badge_collors[$i]."\">" . $risk_factor . "
             </span>
-            <a style=\"color:black\" data-toggle='collapse' href='#" . $reportId . "' class='' aria-expanded='true'> &#160; Extend<span style=\"color:black\" class=\"glyphicon glyphicon-resize-vertical\"></span></a>
+            <a style=\"color:black\" data-toggle='collapse' href='#" . $reportId . "' class='' aria-expanded='true'> &#160; Extend    &#160;<span style=\"color:black\" class=\"glyphicon glyphicon-menu-hamburger\"></span></a>
+            <input id='supplied' class='checkrecord' type='checkbox' value='Record:1' name='Record:1' ".$mandatory_item." /> 
+
           </span>       
         </h4>
       </div>
-      <input type='checkbox' style='display:none;' name='result[0][name]' value=\"" . $plugin_name . "\" /> 
-      <input type='checkbox' style='display:none;' name='result[0][risk]' value=\"" . $risk_factor . "\" />
+
       <div id='" . $reportId . "' class='panel-collapse collapse ' aria-expanded='false'>
         <ul class='list-group'>
          <li class='list-group-item'>
-          <input type='checkbox' style='display:none;' name='result[0][description]' value=\"" . $description . "\" /><strong>Description: </strong><br /> " . $description . " </li>
+          <input type='checkbox' style='display:none;' name='result[0][description]' value=\"" . $description . "\" /><strong>Description: </strong> " . $description . " </li>
           <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][fixInformation]' value=\"" . $fixInformation . "\" /><strong>Fix 
-           Information:  </strong>" . $fixInformation . "<br />  </li>
-           <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][cve]' value=\"" . $exploit . "\" /><strong>Exploit:</strong>" . $exploit . "
+           Information:&#160;  </strong>" . $fixInformation . "<br />  </li>
+           <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][cve]' value=\"" . $exploit . "\" /><strong>Exploit: &#160;</strong>" . $exploit . "
            </li>
-           <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][cve]' value=\"" . $cve_strings . "\" /><strong>CVE:</strong>" . $cve_strings . "
+           <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][cve]' value=\"" . $cve_strings . "\" /><strong>CVE: &#160;</strong>" . $cve_strings . "
            </li>
          </ul>
        </div>
@@ -455,33 +503,39 @@ if (!isset($risk_counters["Information"])) {
   $risk_counters["Information"] = 0;
 }
 
-
+$totalNumberOfIssues=$risk_counters["Critical"]+$risk_counters["High"]+$risk_counters["Medium"]+$risk_counters["Low"]+$risk_counters["Information"];
+global $issuesNumber;
+$issuesNumber=$issuesNumber+$totalNumberOfIssues;
 
 if(count($global_array["combined"]) > 0)
 {
   $HTMLCombinedAntet = "
-  <div class=\"alert alert-info\" role=\"alert\">
-  <h1 class=\"text-center\"><strong>Infrastructure Vulnerabilities</strong></h1> 
-</div>
-<br />
+  <div class=\"alert alert-info\" role=\"alert\" style=\"background: #ECEEEF; border:0;\">
+    <h3 class=\"text-center\"><strong>Infrastructure Vulnerabilities</strong></h3> 
+  </div>
+  <br />
   <table class=\"table \">
     <thead >
       <tr>
-        <th class=\"table-danger\">Critical</th>
-        <th class=\"table-warning\">High</th>
-        <th class=\"table-info\">Medium</th>
-        <th class=\"table-active\">Low</th>
-        <th class=\"table-success\">Informational</th>
+        <th style=\"background: #DF0803;\">Critical</th>
+        <th style=\"background: #FF4D00;\">High</th>
+        <th style=\"background: #E99F54;\">Medium</th>
+        <th style=\"background: #008800;\">Low</th>
+        <th style=\"background: #337AB7;\">Info</th>
+        <th class=\"table-active\">Total</th>
+
 
       </tr>
     </thead>
     <tbody>
       <tr>
-        <td id=\"Critical\" class=\"table-danger\">" . $risk_counters["Critical"] . "</td>
-        <td id=\"High\" class=\"table-warning\">" . $risk_counters["High"] . "</td>
-        <td id=\"Medium\" class=\"table-info\">" . $risk_counters["Medium"] . "</td>
-        <td id=\"Low\" class=\"table-active\">" . $risk_counters["Low"] . "</td>
-        <td id=\"Informational\" class=\"table-success\">" . $risk_counters["Information"] . "</td>
+        <td id=\"Critical\" style=\"background: #DF0803;  font-weight: bold; font-size: 160%;\">" . $risk_counters["Critical"] . "</td>
+        <td id=\"High\" style=\"background: #FF4D00;  font-weight: bold; font-size: 160%;\">" . $risk_counters["High"] . "</td>
+        <td id=\"Medium\" style=\"background: #E99F54; font-weight: bold; font-size: 160%;\">" . $risk_counters["Medium"] . "</td>
+        <td id=\"Low\" style=\"background: #008800;  font-weight: bold; font-size: 160%;\">" . $risk_counters["Low"] . "</td>
+        <td id=\"Informational\" style=\"background: #337AB7; font-weight: bold; font-size: 160%;\">" . $risk_counters["Information"] . "</td>
+        <td id=\"Total\" class=\"table-active\" style=\"font-size: 160%; font-weight: bold;\" >" . $totalNumberOfIssues . "</td>
+
 
       </tr>
 
@@ -586,6 +640,7 @@ function sortItemsByRisk($vector)
       }
     }
   }
+
 }
 
 

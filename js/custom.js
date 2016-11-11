@@ -179,20 +179,3 @@ $(document).ready(function(){
 
 
 
-
-// prevent Start Processing button from triggering upload file window
-function preventDefaultFunction(event)
-{	
-	clickOnMainAreaFlag=true; 
-	event.preventDefault();
-
-	if(uploaded_files_map.length > 0)
-	{
-		$('#formularModal').modal('toggle');
-	}
-	else
-	{
-		alert("Please add at least one XML file!");
-	}
-		
-}

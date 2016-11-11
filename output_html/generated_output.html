@@ -18,6 +18,37 @@
 		.table th {
 			text-align: center;   
 		}
+		a {
+    color: #FFFFFF;
+    text-decoration: none !important;
+}  
+
+* {
+  -webkit-border-radius: 0 !important;
+     -moz-border-radius: 0 !important;
+          border-radius: 0 !important;
+}
+.label-default {
+  background-color: #E99F54 !important;
+}
+.label-warning {
+  background-color: #FF4D00 !important;
+}
+.label-primary {
+  background-color: #008800 !important;
+}
+.label-success {
+  background-color: #337AB7 !important;
+}
+
+.label-info {
+background-color: #DF0803 !important;
+}
+
+
+
+}
+
 	</style>
 </head>
 
@@ -28,25 +59,52 @@
 		<div class="col-md-8 col-md-offset-2">
 			<div class="jumbotron jumbotron-fluid">
 				<div class="container">
-					<h4 class="display-5">
 
-					<div class="col-md-4">
+
+					<h4 class="display-4">
+					<div class="row">
+					<div class="col-md-6">
+					<b>Vulnerability Report</b>
+					</div>
+					</div>
+					</h4>
+
+
+					<h4 class="display-5">
+						<div class="row">
+					<div class="col-md-4 " style="margin-left: 3%;">
+					<b>Issues Found:</b>
+					<span id="issues_number"></span> 
+					</div>
+					</div>
+					<div class="row">
+					<div class="col-md-6" style="margin-left: 3%;">
 					<b>Server Name:</b>
 					 <span id="server_name"></span> 
 					</div>
+					</div>
 
-					<div class="col-md-4">
+					<div class="row">
+					<div class="col-md-4 " style="margin-left: 3%;">
 					<b>Site Name:</b>
 					<span id="site_name"></span> 
 					</div>
-					<div class="col-md-4">
-					<b>Date:</b> 
-					<span id="date_field"></h4></span>
 					</div>
+				
+					</h4>
+
+
+					<h4 class="display-6">
+					<div class="row">
+					<div class="col-md-6" style="margin-left: 3%;">
+					<b>Date:</b> 
+					<span id="date_field"></span>
+					</div>
+					</div>
+					</h4>
 					
 
-					<!-- <p class="lead">This is a modified jumbotron that occupies
-					</p> -->
+					
 					</div>
 				</div>
 
@@ -66,6 +124,12 @@
 
 
 			</div>
+
+		</div>
+		<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+		<a class="btn btn-block btn-danger" href="#">Generate Final Report</a>
+		<br/>
 		</div>
 	</body>
 	</html>

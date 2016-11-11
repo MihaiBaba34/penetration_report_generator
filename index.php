@@ -41,26 +41,51 @@
       	.jFiler {
       		font-family: inherit;
       	}
+
       </style>
 
     </head>
 
     <body>
 
-     <div id="content" style="padding-top: 10%">
+      <div class="row">
+      <div class="col-md-4"></div>
+        <div class="col-md-4" style="padding-top: 3%">
+
+         <div class = "input-group col-md-10 col-md-offset-1">
+          <span class = "input-group-addon">Server Name</span>
+          <input id="serverNameInput" type = "text" class = "form-control" placeholder = "Server Name" >
+        </div>
+
+        <br>
+        <br>
+
+
+
+        <div class = "input-group col-md-10 col-md-offset-1">
+          <span class = "input-group-addon">Website URL</span>
+          <input id="webURLInput" type = "text" class = "form-control" placeholder = "www.example.org">
+        </div>
+
+        <br>
+        <br>
+
+        <div class = "input-group col-md-10 col-md-offset-1">
+          <span class = "input-group-addon">Date</span>
+          <input id="dateInput" type = "text" class = "form-control" placeholder = "DD/MM/YYYY">
+        </div>
+        <br>
+        <br>
+      </form>
+    </div>
+  </div>
+    <div id="content" style="padding-top: 3%">
 
 
       <input type="file" name="files[]" id="filer_input2" multiple="multiple">
 
 
-      <style type="text/css">
-       .table td {
-         text-align: center;   
-       }
-       .table th {
-         text-align: center;   
-       }
-     </style>
+
    </div>
 
 
@@ -78,40 +103,13 @@
    <div class="modal-body " >
 
 
-    <form class = "" role = "form">
-
-     <div class = "input-group col-md-10 col-md-offset-1">
-      <span class = "input-group-addon">Server Name</span>
-      <input id="serverNameInput" type = "text" class = "form-control" placeholder = "Server Name">
-    </div>
-
-    <br>
-    <br>
 
 
-
-    <div class = "input-group col-md-10 col-md-offset-1">
-      <span class = "input-group-addon">Website URL</span>
-      <input id="webURLInput" type = "text" class = "form-control" placeholder = "www.example.org">
-    </div>
-
-    <br>
-    <br>
-
-    <div class = "input-group col-md-10 col-md-offset-1">
-      <span class = "input-group-addon">Date</span>
-      <input id="dateInput" type = "text" class = "form-control" placeholder = "DD/MM/YYYY">
-    </div>
-    <br>
-    <br>
-  </form>
-
-
-</div>
-<div class="modal-footer">
-  <button type="button" class="btn btn-default" data-dismiss="modal" >Cancel</button>
-  <button type="button" class="btn btn-primary"  onclick=" ValidateForm();" >Generate Report</button>
-</div>
+   </div>
+   <div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal" >Cancel</button>
+    <button type="button" class="btn btn-primary"  onclick=" ValidateForm();" >Generate Report</button>
+  </div>
 </div>
 </div>
 </div>
@@ -224,9 +222,8 @@ function isDate(dtStr){
 
     if(webURLField.value=="" || webURLField.value.length<3)
     {
-      alert("Web URL must be at least 3 characters long");
-      webURLField.focus();
-      return false;
+
+      inputFields["webURLInput"]="Not Set";
     }
     else
     {
