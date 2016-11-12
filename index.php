@@ -6,7 +6,7 @@
 	<!-- Styles -->
 	<link href="css/jquery.filer.css" rel="stylesheet">
 	<link href="css/themes/jquery.filer-dragdropbox-theme.css" rel="stylesheet">
-<script src="https://www.atlasestateagents.co.uk/javascript/tether.min.js"></script><!-- Tether for Bootstrap -->
+  <script src="https://www.atlasestateagents.co.uk/javascript/tether.min.js"></script><!-- Tether for Bootstrap -->
 
 	<meta http-equiv="content-type" content="text/html; charset=UTF-8">
 	<meta charset="utf-8">
@@ -46,17 +46,7 @@
     </head>
 
     <body>
-<div class="row">
-<div class="col-md-12">
-<div class="jumbotron jumbotron-fluid" >
-  <div class="container" style="margin-left: 35%;">
-    <h1 class="display-5 ">Penetration Report Generator</h1>
-    
-  </div>
-</div>
-  
-</div>
-</div>
+
       <div class="row">
       <div class="col-md-4"></div>
         <div class="col-md-4" >

@@ -20,37 +20,37 @@
 			text-align: center;   
 		}
 		a {
-    color: #FFFFFF;
-    text-decoration: none !important;
-}  
+			color: #FFFFFF;
+			text-decoration: none !important;
+		}  
 
-* {
-  -webkit-border-radius: 0 !important;
-     -moz-border-radius: 0 !important;
-          border-radius: 0 !important;
-}
-.label-default {
-  background-color: #E99F54 !important;
-}
-.label-warning {
-  background-color: #FF4D00 !important;
-}
-.label-primary {
-  background-color: #008800 !important;
-}
-.label-success {
-  background-color: #337AB7 !important;
-}
+		* {
+			-webkit-border-radius: 0 !important;
+			-moz-border-radius: 0 !important;
+			border-radius: 0 !important;
+		}
+		.label-default {
+			background-color: #E99F54 !important;
+		}
+		.label-warning {
+			background-color: #FF4D00 !important;
+		}
+		.label-primary {
+			background-color: #008800 !important;
+		}
+		.label-success {
+			background-color: #337AB7 !important;
+		}
 
-.label-info {
-background-color: #DF0803 !important;
-}
+		.label-info {
+			background-color: #DF0803 !important;
+		}
 
 
 
-}
+	}
 
-	</style>
+</style>
 </head>
 
 
@@ -63,74 +63,130 @@ background-color: #DF0803 !important;
 
 
 					<h4 class="display-4">
-					<div class="row">
-					<div class="col-md-6">
-					<b>Vulnerability Report</b>
-					</div>
-					</div>
+						<div class="row">
+							<div class="col-md-6">
+								<b>Vulnerability Report</b>
+							</div>
+						</div>
 					</h4>
 
 
 					<h4 class="display-5">
 						<div class="row">
-					<div class="col-md-4 " style="margin-left: 3%;">
-					<b>Issues Found:</b>
-					<span id="issues_number"></span> 
-					</div>
-					</div>
-					<div class="row">
-					<div class="col-md-6" style="margin-left: 3%;">
-					<b>Server Name:</b>
-					 <span id="server_name"></span> 
-					</div>
-					</div>
+							<div class="col-md-4 " style="margin-left: 3%;">
+								<b>Issues Found:</b>
+								<span id="issues_number"></span> 
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6" style="margin-left: 3%;">
+								<b>Server Name:</b>
+								<span id="server_name"></span> 
+							</div>
+						</div>
 
-					<div class="row">
-					<div class="col-md-4 " style="margin-left: 3%;">
-					<b>Site Name:</b>
-					<span id="site_name"></span> 
-					</div>
-					</div>
-				
+						<div class="row">
+							<div class="col-md-4 " style="margin-left: 3%;">
+								<b>Site Name:</b>
+								<span id="site_name"></span> 
+							</div>
+						</div>
+
 					</h4>
 
 
 					<h4 class="display-6">
-					<div class="row">
-					<div class="col-md-6" style="margin-left: 3%;">
-					<b>Date:</b> 
-					<span id="date_field"></span>
-					</div>
-					</div>
+						<div class="row">
+							<div class="col-md-6" style="margin-left: 3%;">
+								<b>Date:</b> 
+								<span id="date_field"></span>
+							</div>
+						</div>
 					</h4>
 					
 
 					
-					</div>
 				</div>
-
 			</div>
 
 		</div>
 
-		<div class="row">
+	</div>
+
+	<div class="row">
 
 
-			<div id = "container" class="col-md-8 col-md-offset-2">
+		<div id = "container" class="col-md-8 col-md-offset-2">
 
 
 
 
 
 
-
-			</div>
 
 		</div>
-		<div class="row">
+
+	</div>
+	<div class="row">
 		<div class="col-md-8 col-md-offset-2">
-		<a class="btn btn-block btn-danger" href="#">Generate Final Report</a>
-		<br/>
+			<a class="btn btn-block btn-danger" href="JavaScript:collectSelectedReports();">Generate Final Report</a>
+			<br/>
 		</div>
+		<script type="text/javascript">
+			
+			function collectSelectedReports()
+			{
+				var acunetixLeftCheckboxClass="acunetixLeftCheckbox";
+				var acunetixRightCheckboxClass="acunetixRightCheckbox";
+				var combinedLeftCheckboxClass="combinedLeftCheckbox";
+				var combinedRightCheckboxClass="combinedRightCheckbox";
+				var acL=0;
+				var acR=0;
+				var coL=0;
+				var coR=0;
+
+				acL=getReportByCheckboxClass(acunetixLeftCheckboxClass);
+				acR=getReportByCheckboxClass(acunetixRightCheckboxClass);
+				coL=getReportByCheckboxClass(combinedLeftCheckboxClass);
+				coR=getReportByCheckboxClass(combinedRightCheckboxClass);
+
+
+				alert("You have selected: "+acL+" Web Application Vulnerabilities "+acR+" of them are mandatory "
+					+coL+" Infrastructure Vulnerabilities "+coR+"-mandatory" );
+
+				
+
+
+
+
+				function getReportByCheckboxClass(checkboxClass)
+				{
+					var checkboxes = document.getElementsByClassName(checkboxClass);
+					var checkboxesChecked = [];
+
+
+				  // loop over them all
+				  for (var i=0; i<checkboxes.length; i++) {
+				     // And stick the checked ones onto an array...
+				     if (checkboxes[i].checked) {
+				     	var reportInfo= {};
+				     	reportInfo["riskLevel"]=checkboxes[i].value;
+				     	reportInfo["positionInRiskVector"]=checkboxes[i].name;
+
+				     	checkboxesChecked.push(reportInfo);
+				     }
+				 }
+
+
+				 //console.log(checkboxesChecked);
+				 return checkboxesChecked.length;
+
+				}
+
+
+				
+
+			}
+		</script>
 	</body>
 	</html>

@@ -23,9 +23,9 @@ function startProcessing(inputArgument)
         console.log("From PHP");
 		//displayContent(msg);
 
-		//displayContent(msg);
+		// //displayContent(msg);
 		
-		window.location.href = url;
+		 window.location.href = url;
 
 
 	});
