@@ -1,20 +1,16 @@
 <?php
-
-
 $inputFields = $_POST['input'];
+//get the list of files uploaded
 $uploaded_files = $_POST['files_map'];
 
+//data container of parsed xml files
 $global_array = array();
 $issuesNumber = 0;
+//the php response used to transmit all the processed data
+//and the url to the generated output html
 $php_response = array();
+//preprocessed data container of xml files
 $sorted_global_array = array();
-
-
-for ($i = 0; $i < count($uploaded_files); ++$i) {
-    $uploaded_files[$i] = '../uploads/'.$uploaded_files[$i];
-}
-
-//echo json_encode($uploaded_files);
 
 $risk_priorities = array(
   'Critical',
@@ -23,6 +19,8 @@ $risk_priorities = array(
   'Low',
   'Information',
   );
+
+//aserting every risk priority to a specific color
 $badge_collors = array(
   'label label-info',
   'label label-warning',
@@ -33,185 +31,336 @@ $badge_collors = array(
 
 $risk_counters = array();
 
+//global point of access to all processing functions
 main();
 
 function main()
 {
-    global $global_array;
-    global $uploaded_files;
-    global $risk_counters;
-    global $php_response;
-    global $sorted_global_array;
+  global $global_array;
+  global $uploaded_files;
+  global $risk_counters;
+  global $php_response;
+  global $sorted_global_array;
+
+    //append the relative path to the list of files 
+  for ($i = 0; $i < count($uploaded_files); ++$i) {
+    $uploaded_files[$i] = '../uploads/'.$uploaded_files[$i];
+  }
 
     //extract xml files content
   foreach ($uploaded_files as $key => $value) {
-      process_xml_input_file($value);
+    process_xml_input_file($value);
   }
 
-    //remove duplicates
+    //remove duplicate elements
   $processed_array = removeDuplicates($global_array);
 
-    //sort items
+    //sort items by their risk
   $sorted_array = sortItemsByRisk($processed_array);
 
-    //generate html report output
-  $url_to_html_output = buildHTMLPageWithContent($sorted_array);
+    //generate html report output and return its url
+  $url_to_html_output = buildHTMLOutput($sorted_array);
 
-    //build response to ajax call
+  //build the response with the url to the generated html output 
+  //and the global processed data
   $php_response["url_to_html_output"] = $url_to_html_output;
   $php_response["global_array"] = $sorted_global_array;
 
   echo json_encode($php_response);
+
 }
 
-function buildHTMLPageWithContent($global_array)
+  //global xml processor function
+function process_xml_input_file($file)
 {
-    global $inputFields;
-    global $issuesNumber;
+  $uploadfile = $file;
 
-    $htmlDocument = new DOMDocument();
+    //load coresponding xml file
+  $xmlDoc = simplexml_load_file($uploadfile);
+  if (!$xmlDoc) {
+    die('Error while reading XML file '.$uploadfile);
+  }
+          //check type of uploaded XML, and calling its parser
+  if (isset($xmlDoc->hosts->host->audit)) {
+                      //Call retina XML file parser if file Retina app output
+    retinaXMLFileParser($uploadfile);
+                    
+  } elseif (isset($xmlDoc->Report->ReportHost->ReportItem)) {
+                      //Call retina XML file parser if file Nessus app output
+    nessusXMLFileParser($uploadfile);
+                    
+  } elseif (isset($xmlDoc->Scan->ReportItems->ReportItem)) {
+                      //Call retina XML file parser if file Acunetix app output
+    acunetixXMLFileParser($uploadfile);              
+  }
+}
 
-    $html_input_path = '../output_html/generated_output.html';
-    $html_output_path = 'output_html/generated_output2.html';
+function sortItemsByRisk($vector)
+{
+  $result = array();
 
-    //load the index.php file without displaying warnings
+  //building sorted result for the given parameter
+  //'combined' coresponds to the data from all xml files other than acunetix
+  //'acunetix' coresponts to the data from acunetix xml files
+  $result['combined'] = array();
+  $result['acunetix'] = array();
+
+  if (count($vector['combined']) > 0) {
+    
+    //initializing every risk type field 
+    if (!isset($result['combined']['High'])) {
+      $result['combined']['High'] = array();
+    }
+
+    if (!isset($result['combined']['Medium'])) {
+      $result['combined']['Medium'] = array();
+    }
+
+    if (!isset($result['combined']['Low'])) {
+      $result['combined']['Low'] = array();
+    }
+
+    if (!isset($result['combined']['Information'])) {
+      $result['combined']['Information'] = array();
+    }
+
+    if (!isset($result['combined']['Critical'])) {
+      $result['combined']['Critical'] = array();
+    }
+
+    //split array elements by their risk factor
+    foreach ($vector['combined'] as $key => $value) {
+      if (isset($value['risk_factor'])) {
+                
+        switch ($value['risk_factor']) {
+          case 'Critical':
+          array_push($result['combined']['Critical'], $value);
+          break;
+
+          case 'High':
+          array_push($result['combined']['High'], $value);
+          break;
+
+          case 'Medium':
+          array_push($result['combined']['Medium'], $value);
+          break;
+
+          case 'Low':
+          array_push($result['combined']['Low'], $value);
+          break;
+
+          case 'Information':
+          array_push($result['combined']['Information'], $value);
+          break;
+
+          case 'None':
+          array_push($result['combined']['Information'], $value);
+          break;
+        }
+      }
+    }
+  }
+
+  if (count($vector['acunetix']) > 0) {
+        //acunetix
+    if (!isset($result['acunetix']['High'])) {
+      $result['acunetix']['High'] = array();
+    }
+
+    if (!isset($result['acunetix']['Medium'])) {
+      $result['acunetix']['Medium'] = array();
+    }
+
+    if (!isset($result['acunetix']['Low'])) {
+      $result['acunetix']['Low'] = array();
+    }
+
+    if (!isset($result['acunetix']['Information'])) {
+      $result['acunetix']['Information'] = array();
+    }
+
+    if (!isset($result['acunetix']['Critical'])) {
+      $result['acunetix']['Critical'] = array();
+    }
+
+    foreach ($vector['acunetix'] as $key => $value) {
+      if (isset($value['risk_factor'])) {
+                
+        switch ($value['risk_factor']) {
+
+          case 'high':
+          array_push($result['acunetix']['High'], $value);
+          break;
+
+          case 'medium':
+          array_push($result['acunetix']['Medium'], $value);
+          break;
+
+          case 'low':
+          array_push($result['acunetix']['Low'], $value);
+          break;
+
+          case 'info':
+          array_push($result['acunetix']['Information'], $value);
+          break;
+        }
+      }
+    }
+  }
+
+  return $result;
+}
+
+
+function buildHTMLOutput($global_array)
+{
+  global $inputFields;
+  global $issuesNumber;
+
+  $htmlDocument = new DOMDocument();
+
+  //relative path to the input html template
+  $html_input_path = '../output_html/generated_output.html';
+  //relative path to the output html report
+  $html_output_path = 'output_html/HTML_first_output.html';
+
+  //load the input file without displaying warnings
   libxml_use_internal_errors(true);
-    $htmlDocument->loadHTMLFile($html_input_path);
-    libxml_clear_errors();
-    $server_name_span = $htmlDocument->getElementById('server_name');
-    $site_name_span = $htmlDocument->getElementById('site_name');
-    $date_span = $htmlDocument->getElementById('date_field');
-    $issues_number_span = $htmlDocument->getElementById('issues_number');
-    $inputFields = json_decode($inputFields);
+  $htmlDocument->loadHTMLFile($html_input_path);
+  libxml_clear_errors();
 
-    $server_name = $inputFields->serverNameInput;
-    $site_name = $inputFields->webURLInput;
-    $date = $inputFields->dateAndTime;
+  //insert completed fields from the upload page into the output html report
+  insertInputFieldsIntoHTMLOutput($htmlDocument);
 
-    $fragment = $htmlDocument->createDocumentFragment();
-    if ($fragment->appendXML($server_name)) {
-        $server_name_span->appendChild($fragment);
-    } else {
-        //error
-    }
+  $htmlContent = buildHTMLString($htmlDocument, $global_array);
 
-    $fragment = $htmlDocument->createDocumentFragment();
-    if ($fragment->appendXML($site_name)) {
-        $site_name_span->appendChild($fragment);
-    } else {
-        //error
-    }
-
-    $fragment = $htmlDocument->createDocumentFragment();
-    if ($fragment->appendXML($date)) {
-        $date_span->appendChild($fragment);
-    } else {
-        //error
-    }
-
-    $divElement = $htmlDocument->getElementById('container');
-
-    $htmlContent = buildHTMLString($htmlDocument, $divElement, $global_array);
-    $fragment = $htmlDocument->createDocumentFragment();
-    if ($fragment->appendXML($issuesNumber)) {
-        $issues_number_span->appendChild($fragment);
-    } else {
-        //error
-    }
-
-    //////echo $htmlContent;
-    //$divElement->documentElement->appendChild()
-    //$htmlDocument->saveHTMLFile("../" + $html_output_path);
   $htmlDocument->saveHTMLFile('../'.$html_output_path);
 
-   //echo json_encode($html_output_path);
-    //////echo json_encode($_SERVER['HTTP_HOST']);
-
-   return $html_output_path;
+  return $html_output_path;
 }
 
-function buildHTMLString($htmlDocument, $divElement, $global_array)
+function insertInputFieldsIntoHTMLOutput($htmlDocument)
 {
-    global $risk_priorities, $risk_counters, $badge_collors, $sorted_global_array;
 
-    $html = '';
-    $HTMLCombinedContent = '';
-    $HTMLAcunetixContent = '';
+  global $inputFields, $issuesNumber;
+  $inputFields = json_decode($inputFields);
+
+  //get specified fields where input data will be inserted
+  $server_name_span = $htmlDocument->getElementById('server_name');
+  $site_name_span = $htmlDocument->getElementById('site_name');
+  $date_span = $htmlDocument->getElementById('date_field');
+  $issues_number_span = $htmlDocument->getElementById('issues_number');
+  
+  //extract server name, web URL and date from upload page
+  $server_name = $inputFields->serverNameInput;
+  $site_name = $inputFields->webURLInput;
+  $date = $inputFields->dateAndTime;
+
+  //populate each html field with extracted data
+  $fragment = $htmlDocument->createDocumentFragment();
+  if ($fragment->appendXML($server_name)) {
+    $server_name_span->appendChild($fragment);
+  } 
+
+  $fragment = $htmlDocument->createDocumentFragment();
+  if ($fragment->appendXML($site_name)) {
+    $site_name_span->appendChild($fragment);
+  }
+
+  $fragment = $htmlDocument->createDocumentFragment();
+  if ($fragment->appendXML($date)) {
+    $date_span->appendChild($fragment);
+  } 
+
+  $fragment = $htmlDocument->createDocumentFragment();
+  if ($fragment->appendXML($issuesNumber)) {
+    $issues_number_span->appendChild($fragment);
+  } 
+}
+
+function buildHTMLString($htmlDocument, $global_array)
+{
+  global $risk_priorities, $risk_counters, $badge_collors, $sorted_global_array;
+
+  $divElement = $htmlDocument->getElementById('container');
+
+  $html = '';
+  $HTMLCombinedContent = '';
+  $HTMLAcunetixContent = '';
+  $reportNumber = 0;
+
+  $nr_priorities = count($risk_priorities);
+  if (count($global_array['acunetix']) > 0) {
+    $risk_counters = array();
     $reportNumber = 0;
 
-    $nr_priorities = count($risk_priorities);
-    if (count($global_array['acunetix']) > 0) {
-        $risk_counters = array();
-        $reportNumber = 0;
-       
-
-        //treat acunetix values
+    //treat acunetix values
     for ($i = 0; $i < $nr_priorities; ++$i) {
-        //sorting by alphabet order in each priority type
+      //sorting by alphabet order in each priority type
       $reportPositionInVector=0;
       $report_title = array();
-        foreach ($global_array['acunetix'][$risk_priorities[$i]] as $key => $row) {
-            $report_title[$key] = $row['plugin_name'];
-        }
-        array_multisort($report_title, SORT_ASC | SORT_NATURAL | SORT_FLAG_CASE, $global_array['acunetix'][$risk_priorities[$i]]);
+      foreach ($global_array['acunetix'][$risk_priorities[$i]] as $key => $row) {
+        $report_title[$key] = $row['plugin_name'];
+      }
+      array_multisort($report_title, SORT_ASC | SORT_NATURAL | SORT_FLAG_CASE, $global_array['acunetix'][$risk_priorities[$i]]);
 
 
-        $sorted_global_array = $global_array;
-           
+      $sorted_global_array = $global_array;
+
       foreach ($global_array['acunetix'][$risk_priorities[$i]] as $key_2 => $report) {
-          if (!isset($risk_counters[$risk_priorities[$i]])) {
-              $risk_counters[$risk_priorities[$i]] = 1;
-          } else {
-              ++$risk_counters[$risk_priorities[$i]];
-          }
+        if (!isset($risk_counters[$risk_priorities[$i]])) {
+          $risk_counters[$risk_priorities[$i]] = 1;
+        } else {
+          ++$risk_counters[$risk_priorities[$i]];
+        }
 
-          
-          $fixInformation = '';
-          if (isset($report['information'])) {
-              $fixInformation = $report['information'];
-              $fixInformation = preprocessOutputString($fixInformation);
-          }
-   
+
+        $fixInformation = '';
+        if (isset($report['information'])) {
+          $fixInformation = $report['information'];
+          $fixInformation = preprocessOutputString($fixInformation);
+        }
+
 
         $plugin_name = '';
-          if (isset($report['plugin_name'])) {
-              $plugin_name = $report['plugin_name'];
-              $plugin_name = preprocessOutputString($plugin_name);
-          }
+        if (isset($report['plugin_name'])) {
+          $plugin_name = $report['plugin_name'];
+          $plugin_name = preprocessOutputString($plugin_name);
+        }
 
-          $description = '';
-          if (isset($report['description'])) {
-              $description = $report['description'];
-              $description = preprocessOutputString($description);
-          }
+        $description = '';
+        if (isset($report['description'])) {
+          $description = $report['description'];
+          $description = preprocessOutputString($description);
+        }
 
-          $risk_factor = '';
-          if (isset($report['risk_factor'])) {
-             
+        $risk_factor = '';
+        if (isset($report['risk_factor'])) {
+
           $risk_factor = $risk_priorities[$i];
-              if ($risk_priorities[$i] === 'Information') {
-                  $risk_factor = $risk_priorities[$i].'al';
-              }
-              $risk_factor = preprocessOutputString($risk_factor);
+          if ($risk_priorities[$i] === 'Information') {
+            $risk_factor = $risk_priorities[$i].'al';
           }
+          $risk_factor = preprocessOutputString($risk_factor);
+        }
 
-          $cve_strings = '';
-          if (isset($report['cve'])) {
-              $cve_strings = $report['cve'];
-              $cve_strings = preprocessOutputString($cve_strings);
-          }
+        $cve_strings = '';
+        if (isset($report['cve'])) {
+          $cve_strings = $report['cve'];
+          $cve_strings = preprocessOutputString($cve_strings);
+        }
 
-          $mandatory_item = '';
-          if ($risk_factor == 'Critical' || $risk_factor == 'High' || $risk_factor == 'Medium') {
-              $mandatory_item = 'checked="checked"';
-          }
+        $mandatory_item = '';
+        if ($risk_factor == 'Critical' || $risk_factor == 'High' || $risk_factor == 'Medium') {
+          $mandatory_item = 'checked="checked"';
+        }
 
-          ++$reportNumber;
-          ++$reportPositionInVector;
-          $reportId = 'acunetix'.$reportNumber;
+        ++$reportNumber;
+        ++$reportPositionInVector;
+        $reportId = 'acunetix'.$reportNumber;
 
 
-          $html = "
+        $html = "
         <div class='nodedata'>
          <div class='panel-group'>
           <div class='panel panel-default'>
@@ -248,34 +397,34 @@ function buildHTMLString($htmlDocument, $divElement, $global_array)
      </div>
    </div>';
 
-             
+
    $HTMLAcunetixContent = $HTMLAcunetixContent.$html;
-      }
-    }
+ }
+}
 
-        if (!isset($risk_counters['Critical'])) {
-            $risk_counters['Critical'] = 0;
-        }
+if (!isset($risk_counters['Critical'])) {
+  $risk_counters['Critical'] = 0;
+}
 
-        if (!isset($risk_counters['High'])) {
-            $risk_counters['High'] = 0;
-        }
+if (!isset($risk_counters['High'])) {
+  $risk_counters['High'] = 0;
+}
 
-        if (!isset($risk_counters['Medium'])) {
-            $risk_counters['Medium'] = 0;
-        }
+if (!isset($risk_counters['Medium'])) {
+  $risk_counters['Medium'] = 0;
+}
 
-        if (!isset($risk_counters['Low'])) {
-            $risk_counters['Low'] = 0;
-        }
+if (!isset($risk_counters['Low'])) {
+  $risk_counters['Low'] = 0;
+}
 
-        if (!isset($risk_counters['Information'])) {
-            $risk_counters['Information'] = 0;
-        }
-        $totalNumberOfIssues = $risk_counters['Critical'] + $risk_counters['High'] + $risk_counters['Medium'] + $risk_counters['Low'] + $risk_counters['Information'];
-        global $issuesNumber;
-        $issuesNumber = $issuesNumber + $totalNumberOfIssues;
-        $HTMLAcunetixAntet = '
+if (!isset($risk_counters['Information'])) {
+  $risk_counters['Information'] = 0;
+}
+$totalNumberOfIssues = $risk_counters['Critical'] + $risk_counters['High'] + $risk_counters['Medium'] + $risk_counters['Low'] + $risk_counters['Information'];
+global $issuesNumber;
+$issuesNumber = $issuesNumber + $totalNumberOfIssues;
+$HTMLAcunetixAntet = '
 <div class="alert alert-info" role="alert" style="background: #ECEEEF; border:0;">
   <h3 class="text-center"><strong>Web Application Vulnerabilities</strong></h3>
 </div>
@@ -309,108 +458,108 @@ function buildHTMLString($htmlDocument, $divElement, $global_array)
 //DF0803- red
         //create a fragment (a html fragment) with changed parameters such as
 $fragment = $htmlDocument->createDocumentFragment();
-        if ($fragment->appendXML($HTMLAcunetixAntet)) {
-            /*$divElement->insertBefore($fragment, $divElement->firstChild);*/
+if ($fragment->appendXML($HTMLAcunetixAntet)) {
+  /*$divElement->insertBefore($fragment, $divElement->firstChild);*/
   $divElement->appendChild($fragment);
-        } else {
+} else {
             ////echo $HTMLAcunetixAntet;
             ////echo $plugin_name."<br>";
-        }
+}
         //create a fragment (a html fragment) with changed parameters such as
 $fragment = $htmlDocument->createDocumentFragment();
-        if ($fragment->appendXML($HTMLAcunetixContent)) {
+if ($fragment->appendXML($HTMLAcunetixContent)) {
 
   $divElement->appendChild($fragment);
-        } else {
-        
-        }
+} else {
 
-      
-    }
+}
 
-    if (count($global_array['combined'])) {
-        $risk_counters = array();
+
+}
+
+if (count($global_array['combined'])) {
+  $risk_counters = array();
       //display values after the defined risk priorities
   for ($i = 0; $i < $nr_priorities; ++$i) {
       //sorting by alphabet order in each priority type
     $reportPositionInVector=0;
     $report_title = array();
-      foreach ($global_array['combined'][$risk_priorities[$i]] as $key => $row) {
-          $report_title[$key] = $row['plugin_name'];
-      }
-      array_multisort($report_title, SORT_ASC | SORT_NATURAL | SORT_FLAG_CASE, $global_array['combined'][$risk_priorities[$i]]);
+    foreach ($global_array['combined'][$risk_priorities[$i]] as $key => $row) {
+      $report_title[$key] = $row['plugin_name'];
+    }
+    array_multisort($report_title, SORT_ASC | SORT_NATURAL | SORT_FLAG_CASE, $global_array['combined'][$risk_priorities[$i]]);
 
-  $sorted_global_array = $global_array;
+    $sorted_global_array = $global_array;
 
         //treat all combined values from applications: nessus, retina, nmap
     foreach ($global_array['combined'][$risk_priorities[$i]] as $key_2 => $report) {
-        if (!isset($risk_counters[$risk_priorities[$i]])) {
-            $risk_counters[$risk_priorities[$i]] = 1;
-        } else {
-            ++$risk_counters[$risk_priorities[$i]];
-        }
+      if (!isset($risk_counters[$risk_priorities[$i]])) {
+        $risk_counters[$risk_priorities[$i]] = 1;
+      } else {
+        ++$risk_counters[$risk_priorities[$i]];
+      }
 
-        $fixInformation = '';
-        if (isset($report['information'])) {
-            $fixInformation = $report['information'];
-            $fixInformation = preprocessOutputString($fixInformation);
-        }
+      $fixInformation = '';
+      if (isset($report['information'])) {
+        $fixInformation = $report['information'];
+        $fixInformation = preprocessOutputString($fixInformation);
+      }
 
 
-        $exploit = '';
-        if (isset($report['exploit'])) {
-            $exploit = $report['exploit'];
+      $exploit = '';
+      if (isset($report['exploit'])) {
+        $exploit = $report['exploit'];
 
-            $exploit = preprocessOutputString($exploit);
-        }
-        if ($exploit == '') {
-            $exploit = '---';
-        }
-        
-        if ($fixInformation == '') {
-            if (isset($report['solution'])) {
-                $fixInformation = $report['solution'];
-                $fixInformation = preprocessOutputString($fixInformation);
-            }
-        }
+        $exploit = preprocessOutputString($exploit);
+      }
+      if ($exploit == '') {
+        $exploit = '---';
+      }
 
-        $plugin_name = '';
-        if (isset($report['plugin_name'])) {
-            $plugin_name = $report['plugin_name'];
-            $plugin_name = preprocessOutputString($plugin_name);
+      if ($fixInformation == '') {
+        if (isset($report['solution'])) {
+          $fixInformation = $report['solution'];
+          $fixInformation = preprocessOutputString($fixInformation);
         }
+      }
 
-        $description = '';
-        if (isset($report['description'])) {
-            $description = $report['description'];
-            $description = preprocessOutputString($description);
-        }
+      $plugin_name = '';
+      if (isset($report['plugin_name'])) {
+        $plugin_name = $report['plugin_name'];
+        $plugin_name = preprocessOutputString($plugin_name);
+      }
 
-        $risk_factor = '';
-        if (isset($report['risk_factor'])) {
+      $description = '';
+      if (isset($report['description'])) {
+        $description = $report['description'];
+        $description = preprocessOutputString($description);
+      }
+
+      $risk_factor = '';
+      if (isset($report['risk_factor'])) {
             //$risk_factor = $report["risk_factor"];
         $risk_factor = $risk_priorities[$i];
-            if ($risk_priorities[$i] === 'Information') {
-                $risk_factor = $risk_priorities[$i].'al';
-            }
-            $risk_factor = preprocessOutputString($risk_factor);
+        if ($risk_priorities[$i] === 'Information') {
+          $risk_factor = $risk_priorities[$i].'al';
         }
+        $risk_factor = preprocessOutputString($risk_factor);
+      }
 
-        $cve_strings = '';
-        if (isset($report['cve'])) {
-            $cve_strings = $report['cve'];
-            $cve_strings = preprocessOutputString($cve_strings);
-        }
-        ++$reportNumber;
-        ++$reportPositionInVector;
-        $mandatory_item = '';
-        if ($risk_factor == 'Critical' || $risk_factor == 'High' || $risk_factor == 'Medium') {
-            $mandatory_item = 'checked="checked"';
-        }
+      $cve_strings = '';
+      if (isset($report['cve'])) {
+        $cve_strings = $report['cve'];
+        $cve_strings = preprocessOutputString($cve_strings);
+      }
+      ++$reportNumber;
+      ++$reportPositionInVector;
+      $mandatory_item = '';
+      if ($risk_factor == 'Critical' || $risk_factor == 'High' || $risk_factor == 'Medium') {
+        $mandatory_item = 'checked="checked"';
+      }
 
 
-        $reportId = 'combined'.$reportNumber;
-        $html = "
+      $reportId = 'combined'.$reportNumber;
+      $html = "
       <div class='nodedata'>
        <div class='panel-group'>
         <div class='panel panel-default'>
@@ -446,37 +595,37 @@ $fragment = $htmlDocument->createDocumentFragment();
      </div>
    </div>
  </div>';
-        $HTMLCombinedContent = $HTMLCombinedContent.$html;
+ $HTMLCombinedContent = $HTMLCombinedContent.$html;
             //////echo $html;
-    }
-  }
+}
+}
 
-        if (!isset($risk_counters['Critical'])) {
-            $risk_counters['Critical'] = 0;
-        }
+if (!isset($risk_counters['Critical'])) {
+  $risk_counters['Critical'] = 0;
+}
 
-        if (!isset($risk_counters['High'])) {
-            $risk_counters['High'] = 0;
-        }
+if (!isset($risk_counters['High'])) {
+  $risk_counters['High'] = 0;
+}
 
-        if (!isset($risk_counters['Medium'])) {
-            $risk_counters['Medium'] = 0;
-        }
+if (!isset($risk_counters['Medium'])) {
+  $risk_counters['Medium'] = 0;
+}
 
-        if (!isset($risk_counters['Low'])) {
-            $risk_counters['Low'] = 0;
-        }
+if (!isset($risk_counters['Low'])) {
+  $risk_counters['Low'] = 0;
+}
 
-        if (!isset($risk_counters['Information'])) {
-            $risk_counters['Information'] = 0;
-        }
+if (!isset($risk_counters['Information'])) {
+  $risk_counters['Information'] = 0;
+}
 
-        $totalNumberOfIssues = $risk_counters['Critical'] + $risk_counters['High'] + $risk_counters['Medium'] + $risk_counters['Low'] + $risk_counters['Information'];
-        global $issuesNumber;
-        $issuesNumber = $issuesNumber + $totalNumberOfIssues;
+$totalNumberOfIssues = $risk_counters['Critical'] + $risk_counters['High'] + $risk_counters['Medium'] + $risk_counters['Low'] + $risk_counters['Information'];
+global $issuesNumber;
+$issuesNumber = $issuesNumber + $totalNumberOfIssues;
 
-        if (count($global_array['combined']) > 0) {
-            $HTMLCombinedAntet = '
+if (count($global_array['combined']) > 0) {
+  $HTMLCombinedAntet = '
   <div class="alert alert-info" role="alert" style="background: #ECEEEF; border:0;">
     <h3 class="text-center"><strong>Infrastructure Vulnerabilities</strong></h3>
   </div>
@@ -511,378 +660,197 @@ $fragment = $htmlDocument->createDocumentFragment();
   '
 
 
-;
+  ;
         //create a fragment (a html fragment) with changed parameters such as
   $fragment = $htmlDocument->createDocumentFragment();
-            if ($fragment->appendXML($HTMLCombinedAntet)) {
-                $divElement->appendChild($fragment);
-            } else {
-            }
+  if ($fragment->appendXML($HTMLCombinedAntet)) {
+    $divElement->appendChild($fragment);
+  } else {
+  }
         //create a fragment (a html fragment) with changed parameters such as
   $fragment = $htmlDocument->createDocumentFragment();
-            if ($fragment->appendXML($HTMLCombinedContent)) {
-                $divElement->appendChild($fragment);
-            } else {
-            }
-        }
+  if ($fragment->appendXML($HTMLCombinedContent)) {
+    $divElement->appendChild($fragment);
+  } else {
+  }
+}
 
     //display the risk counters
 // console_log($risk_counters);
-    }
-
-    return $html;
 }
 
-function sortItemsByRisk($vector)
-{
-    $result = array();
-
-    $result['combined'] = array();
-    $result['acunetix'] = array();
-
-    if (count($vector['combined']) > 0) {
-        if (!isset($result['combined']['High'])) {
-            $result['combined']['High'] = array();
-        }
-
-        if (!isset($result['combined']['Medium'])) {
-            $result['combined']['Medium'] = array();
-        }
-
-        if (!isset($result['combined']['Low'])) {
-            $result['combined']['Low'] = array();
-        }
-
-        if (!isset($result['combined']['Information'])) {
-            $result['combined']['Information'] = array();
-        }
-
-        if (!isset($result['combined']['Critical'])) {
-            $result['combined']['Critical'] = array();
-        }
-
-        foreach ($vector['combined'] as $key => $value) {
-            if (isset($value['risk_factor'])) {
-                //////echo $value["risk_factor"]."<br>";
-      switch ($value['risk_factor']) {
-        case 'Critical':
-        array_push($result['combined']['Critical'], $value);
-        break;
-
-        case 'High':
-        array_push($result['combined']['High'], $value);
-        break;
-
-        case 'Medium':
-        array_push($result['combined']['Medium'], $value);
-        break;
-
-        case 'Low':
-        array_push($result['combined']['Low'], $value);
-        break;
-
-        case 'Information':
-        array_push($result['combined']['Information'], $value);
-        break;
-
-        case 'None':
-        array_push($result['combined']['Information'], $value);
-        break;
-      }
-            }
-        }
-    }
-
-    if (count($vector['acunetix']) > 0) {
-        //acunetix
-  if (!isset($result['acunetix']['High'])) {
-      $result['acunetix']['High'] = array();
-  }
-
-        if (!isset($result['acunetix']['Medium'])) {
-            $result['acunetix']['Medium'] = array();
-        }
-
-        if (!isset($result['acunetix']['Low'])) {
-            $result['acunetix']['Low'] = array();
-        }
-
-        if (!isset($result['acunetix']['Information'])) {
-            $result['acunetix']['Information'] = array();
-        }
-
-        if (!isset($result['acunetix']['Critical'])) {
-            $result['acunetix']['Critical'] = array();
-        }
-
-        foreach ($vector['acunetix'] as $key => $value) {
-            if (isset($value['risk_factor'])) {
-                ////echo $value["risk_factor"]."<br>";
-      switch ($value['risk_factor']) {
-
-        case 'high':
-        array_push($result['acunetix']['High'], $value);
-        break;
-
-        case 'medium':
-        array_push($result['acunetix']['Medium'], $value);
-        break;
-
-        case 'low':
-        array_push($result['acunetix']['Low'], $value);
-        break;
-
-        case 'info':
-        array_push($result['acunetix']['Information'], $value);
-        break;
-      }
-            }
-        }
-    }
-
-    //console_log($vector);
-
-return $result;
+return $html;
 }
 
-function console_log($data)
-{
-    // echo "<script>";
-    // echo "console.log(". json_encode( $data ) .")";
-    // echo "</script>";
-}
 
-function test_diff($item)
-{
-    foreach ($secondArray as $key => $value) {
-        $pattern = '/\s+/';
-        $first_cve = preg_replace($pattern, '', strtolower($item['cve']));
-        $second_cve = preg_replace($pattern, '', strtolower($value['cve']));
-
-        $first_desc = preg_replace($pattern, '', strtolower($item['description']));
-        $second_desc = preg_replace($pattern, '', strtolower($value['description']));
-
-        if ((strcmp($first_desc, $second_desc) == 0 && strcmp($first_cve, $second_cve) == 0)) {
-            return false;
-        }
-    }
-}
-
+//function responsible to verify whether is the element '$val' 
+//inserted in the array '$vector'
 function isInsertedAlready($vector, $val)
 {
-    foreach ($vector as $key => $item) {
-        // code...
-    $pattern = '/\s+/';
-        $first_cve = preg_replace($pattern, '', strtolower($val['cve']));
-        $second_cve = preg_replace($pattern, '', strtolower($item['cve']));
-
-        $first_desc = preg_replace($pattern, '', strtolower($val['description']));
-        $second_desc = preg_replace($pattern, '', strtolower($item['description']));
-
-        if (strcmp($first_desc, $second_desc) == 0 && strcmp($first_cve, $second_cve) == 0) {
-
-            //echo "<br>";
-            /*
-            //echo $val['plugin_name']."<br>";
-            //echo $first_desc."<br>";
-            //echo $second_desc."<br>";
-
-            //echo $first_cve."<br>";
-            //echo $second_cve."<br>";*/
-            //echo "<br>";
-            return true;
-        }
-    }
-
-    return false;
-}
-      function reunion2($firstArray, $secondArray)
-      {
-          $result = array();
-          $unique_elements_map = array();
-
-          if (count($firstArray) >= count($secondArray)) {
-              //echo "count(firstArray) >= count(secondArray) <br>";
-          foreach ($firstArray as $key => $value) {
-              $pattern = '/\s+/';
-              $first_cve = preg_replace($pattern, '', strtolower($value['cve']));
-              $first_desc = preg_replace($pattern, '', strtolower($value['description']));
-
-              $entry_key = $first_cve.'_'.$first_desc;
-              if (!isset($unique_elements_map[$entry_key])) {
-                  $unique_elements_map[$entry_key] = $value;
-              }
-          }
-
-              foreach ($secondArray as $key => $value) {
-                  $pattern = '/\s+/';
-                  $second_cve = preg_replace($pattern, '', strtolower($value['cve']));
-                  $second_desc = preg_replace($pattern, '', strtolower($value['description']));
-
-                  $entry_key = $second_cve.'_'.$second_desc;
-                  if (!isset($unique_elements_map[$entry_key])) {
-                      $unique_elements_map[$entry_key] = $value;
-                  }
-              }
-          } else {
-              //echo "count(firstArray) < count(secondArray) <br>";
-          foreach ($secondArray as $key => $value) {
-              $pattern = '/\s+/';
-              $first_cve = preg_replace($pattern, '', strtolower($value['cve']));
-              $first_desc = preg_replace($pattern, '', strtolower($value['description']));
-
-              $entry_key = $first_cve.'_'.$first_desc;
-
-              if (!isset($unique_elements_map[$entry_key])) {
-                  $unique_elements_map[$entry_key] = $value;
-              }
-          }
-
-              foreach ($firstArray as $key => $value) {
-                  $pattern = '/\s+/';
-                  $second_cve = preg_replace($pattern, '', strtolower($value['cve']));
-                  $second_desc = preg_replace($pattern, '', strtolower($value['description']));
-
-                  $entry_key = $second_cve + '_' + $second_desc;
-                  if (!isset($unique_elements_map[$entry_key])) {
-                      $unique_elements_map[$entry_key] = $value;
-                  }
-              }
-          }
-
-    /*  console_log("unique_elements_map");
-    console_log($unique_elements_map);
-    console_log("unique_elements_map");*/
-
-    //copying elements from unique_elements_map to result array
-    foreach ($unique_elements_map as $key => $value) {
-        array_push($result, $value);
-    }
-
-          return $result;
-      }
-
-  function reunion($firstArray, $secondArray)
+  foreach ($vector as $key => $item) 
   {
-      $result = array();
+    $pattern = '/\s+/';
+    $first_cve = preg_replace($pattern, '', strtolower($val['cve']));
+    $second_cve = preg_replace($pattern, '', strtolower($item['cve']));
 
-      if (count($firstArray) >= count($secondArray)) {
-          $result = $firstArray;
-          foreach ($secondArray as $key => $value) {
-              if (!isInsertedAlready($result, $value)) {
-                  array_push($result, $value);
-              }
-          }
-      } else {
-          $result = $secondArray;
-          foreach ($firstArray as $key => $value) {
-              if (!isInsertedAlready($result, $value)) {
-                  array_push($result, $value);
-              }
-          }
-      }
+    $first_desc = preg_replace($pattern, '', strtolower($val['description']));
+    $second_desc = preg_replace($pattern, '', strtolower($item['description']));
 
-      return $result;
+    if (strcmp($first_desc, $second_desc) == 0 && strcmp($first_cve, $second_cve) == 0) 
+    {        
+      return true;
+    }
   }
 
+  return false;
+}
+
+
+
+      //function responsible with generating the reunion of two arrays
+      //after their matching 'cve' and 'description' components
+function reunion($firstArray, $secondArray)
+{
+        //the stored reunion result
+  $result = array();
+  $unique_elements_map = array();
+
+  if (count($firstArray) >= count($secondArray)) {        
+
+          //first array has more items than second array
+
+          //adding all first array's elements into the final result, eliminating
+          //progressively duplicates from it by making a unique key from the 
+          //preprocessed cve and description fields
+    foreach ($firstArray as $key => $value) {
+
+            //building the unique key
+      $pattern = '/\s+/';
+      $first_cve = preg_replace($pattern, '', strtolower($value['cve']));
+      $first_desc = preg_replace($pattern, '', strtolower($value['description']));
+
+      $entry_key = $first_cve.'_'.$first_desc;
+
+            //if built key does not exist, add coresponding value to the result
+            //else do nothing (duplicate item)            
+      if (!isset($unique_elements_map[$entry_key])) {
+        $unique_elements_map[$entry_key] = $value;
+      }
+    }
+
+          //add each element of second array to the result by the same technique described above
+    foreach ($secondArray as $key => $value) {
+      $pattern = '/\s+/';
+      $second_cve = preg_replace($pattern, '', strtolower($value['cve']));
+      $second_desc = preg_replace($pattern, '', strtolower($value['description']));
+
+      $entry_key = $second_cve.'_'.$second_desc;
+
+            //if current key already existed, it is not added to the result 
+      if (!isset($unique_elements_map[$entry_key])) {
+        $unique_elements_map[$entry_key] = $value;
+      }
+    }
+  } else {
+
+          //case when the second array has more elements than the first one
+    foreach ($secondArray as $key => $value) {
+      $pattern = '/\s+/';
+      $first_cve = preg_replace($pattern, '', strtolower($value['cve']));
+      $first_desc = preg_replace($pattern, '', strtolower($value['description']));
+
+      $entry_key = $first_cve.'_'.$first_desc;
+
+      if (!isset($unique_elements_map[$entry_key])) {
+        $unique_elements_map[$entry_key] = $value;
+      }
+    }
+
+    foreach ($firstArray as $key => $value) {
+      $pattern = '/\s+/';
+      $second_cve = preg_replace($pattern, '', strtolower($value['cve']));
+      $second_desc = preg_replace($pattern, '', strtolower($value['description']));
+
+      $entry_key = $second_cve + '_' + $second_desc;
+      if (!isset($unique_elements_map[$entry_key])) {
+        $unique_elements_map[$entry_key] = $value;
+      }
+    }
+  }
+
+    //copying elements from unique_elements_map to result array
+  foreach ($unique_elements_map as $key => $value) {
+    array_push($result, $value);
+  }
+
+  return $result;
+}
+
+  //function responsible with eliminating the duplicates from a single array
   function removeDuplicatesFromArray($vector)
   {
-      $result = array();
+    $result = array();
 
-      foreach ($vector as $key => $value) {
-          if (!isInsertedAlready($result, $value)) {
-              array_push($result, $value);
-          }
+    //iterates over all array elements and adds them into the result array
+    //only if they were not already inserted
+    foreach ($vector as $key => $value) {
+      if (!isInsertedAlready($result, $value)) {
+        array_push($result, $value);
       }
+    }
 
-      return $result;
+    return $result;
   }
 
   function removeDuplicates($global_array)
   {
-      $result = array();
-      $result['combined'] = array();
+    //the result map with eliminated duplicates
+    $result = array();
+    //the coresponding result for all xml files combined without acunetix
+    $result['combined'] = array();
 
     //remove duplicates for nessus and retina by making a reunion
-    //between two of them
-    $unique_elements_map_combined = array();
-    //$result["combined"] = reunion2($result["combined"], $global_array['nessus']);
+    //between two of them    
     foreach ($global_array as $key => $value) {
-        if ($key !== 'acunetix') {
-            $result['combined'] = reunion2($result['combined'], $value);
-        }
+      if ($key !== 'acunetix') {
+        $result['combined'] = reunion($result['combined'], $value);
+      }
     }
 
     //remove duplicates for acunetix
     $result['acunetix'] = array();
-      $duplicates = array();
+    $eliminated_duplicates_array = array();
 
-      if (isset($global_array['acunetix'])) {
-          $duplicates = removeDuplicatesFromArray($global_array['acunetix']);
-      }
+    if (isset($global_array['acunetix'])) {
+      $eliminated_duplicates_array = removeDuplicatesFromArray($global_array['acunetix']);
+    }
 
-      $result['acunetix'] = $duplicates;
+    //append the accunetix data with removed duplicates to the resulted array
+    $result['acunetix'] = $eliminated_duplicates_array;
 
-      // console_log('removeDuplicates');
-      // console_log($result);
-      // console_log('removeDuplicates');
-
-      return $result;
+    return $result;
   }
 
   function preprocessOutputString($output)
   {
-      $result = str_replace('"', "'", $output);
-      $result = htmlspecialchars($result);
+    $result = str_replace('"', "'", $output);
+    $result = htmlspecialchars($result);
 
-      return $result;
+    return $result;
   }
-
-//TODO
-//////echo the path to built html file
-
-  function process_xml_input_file($file)
-  {
-      $uploadfile = $file;
-
-    /*$uploaddir = $_POST['upload_path'];
-    $filename = $_POST['filename'];
-    $uploadfile = "../".$uploaddir."/".$filename;*/
-
-    //load coresponding xml file
-    $xmlDoc = simplexml_load_file($uploadfile);
-            if (!$xmlDoc) {
-                die('Error while reading XML file '.$uploadfile);
-            }
-
-                  //check type of uploaded XML, and calling its parser
-                  if (isset($xmlDoc->hosts->host->audit)) {
-                      //Call retina XML file parser if file Retina app output
-                    retinaXMLFileParser($uploadfile);
-                      //$global_array[]
-                  } elseif (isset($xmlDoc->Report->ReportHost->ReportItem)) {
-                      //Call retina XML file parser if file Nessus app output
-                    nessusXMLFileParser($uploadfile);
-                      //array_push($global_array, "nessus");
-                  } elseif (isset($xmlDoc->Scan->ReportItems->ReportItem)) {
-                      //Call retina XML file parser if file Acunetix app output
-                    acunetixXMLFileParser($uploadfile);
-              //array_push($global_array, "acunetix");
-          }
-        }
 
   function nessusXMLFileParser($uploadfile)
   {
-      global $global_array;
+    global $global_array;
 
     //load coresponding xml file
     $xmlDoc = simplexml_load_file($uploadfile);
-      if (!$xmlDoc) {
-          die('Error while reading nessus XML file '.$uploadfile);
-      }
+    if (!$xmlDoc) {
+      die('Error while reading nessus XML file '.$uploadfile);
+    }
     //array where are stored items from xml file
     $data = array();
-      $parsed_data_array = array();
+    $parsed_data_array = array();
 
     //Cve form from description script
     $cveInitials = 'CVE-';
@@ -890,7 +858,7 @@ function isInsertedAlready($vector, $val)
     $cveLength = 13;
     //iterating through nessus XML file structure
     foreach ($xmlDoc->Report->ReportHost->ReportItem as $reportItemElement) {
-        $data[] = $reportItemElement;
+      $data[] = $reportItemElement;
     }
 
     //iterate through all the data loaded from xml file
@@ -911,30 +879,30 @@ function isInsertedAlready($vector, $val)
         //setting Description
       $parsed_data_line_format['solution'] = strip_tags((string) $x->solution);
 
-        $lastPos = 0;
-        $positions = array();
+      $lastPos = 0;
+      $positions = array();
 
         //finding all CVE entries in description string and pushing them into an array
       while (($lastPos = strpos($x->description, $cveInitials, $lastPos)) !== false) {
-          $positions[] = $lastPos;
-          $lastPos = $lastPos + strlen($cveInitials);
+        $positions[] = $lastPos;
+        $lastPos = $lastPos + strlen($cveInitials);
       }
-        $finalCVE = '';
-        foreach ($positions as $value) {
-            $cveOutput = '';
-            $posOfCveStartOffset = $value;
-            $posOfCveStopOffset = 0;
+      $finalCVE = '';
+      foreach ($positions as $value) {
+        $cveOutput = '';
+        $posOfCveStartOffset = $value;
+        $posOfCveStopOffset = 0;
 
-            $cveOutput = substr($x->description, $posOfCveStartOffset);
-            $cveOutput = substr($cveOutput, 0, $cveLength);
+        $cveOutput = substr($x->description, $posOfCveStartOffset);
+        $cveOutput = substr($cveOutput, 0, $cveLength);
             //pushing cve into array
         $finalCVE = $finalCVE.' '.$cveOutput;
-        }
+      }
         //Setting Cve
       $parsed_data_line_format['cve'] = $finalCVE;
-        if ($parsed_data_line_format['cve'] == 'N/A' || $parsed_data_line_format['cve'] == '') {
-            $parsed_data_line_format['cve'] = 'None';
-        }
+      if ($parsed_data_line_format['cve'] == 'N/A' || $parsed_data_line_format['cve'] == '') {
+        $parsed_data_line_format['cve'] = 'None';
+      }
 
         //inserting data about each Report into main array
       array_push($parsed_data_array, $parsed_data_line_format);
@@ -949,21 +917,21 @@ function isInsertedAlready($vector, $val)
 
   function retinaXMLFileParser($uploadfile)
   {
-      global $global_array;
+    global $global_array;
 
     //load coresponding xml file
     $xmlDoc = simplexml_load_file($uploadfile);
-      if (!$xmlDoc) {
-          die('Error while reading retina XML file '.$uploadfile);
-      }
+    if (!$xmlDoc) {
+      die('Error while reading retina XML file '.$uploadfile);
+    }
 
     //array where are stored items from xml file(filename)
     $data = array();
-      $parsed_data_array = array();
+    $parsed_data_array = array();
 
     //iterating through retina XML file structure
     foreach ($xmlDoc->hosts->host->audit as $auditElement) {
-        $data[] = $auditElement;
+      $data[] = $auditElement;
     }
 
     //iterate through all the data loaded from xml file
@@ -980,9 +948,9 @@ function isInsertedAlready($vector, $val)
         //setting CVE
 
       $parsed_data_line_format['cve'] = strip_tags((string) $x->cve);
-        if ($parsed_data_line_format['cve'] == 'N/A' || $parsed_data_line_format['cve'] == '') {
-            $parsed_data_line_format['cve'] = 'None';
-        }
+      if ($parsed_data_line_format['cve'] == 'N/A' || $parsed_data_line_format['cve'] == '') {
+        $parsed_data_line_format['cve'] = 'None';
+      }
         //setting Exploit
       $parsed_data_line_format['exploit'] = strip_tags((string) $x->exploit);
         //setting Description
@@ -990,33 +958,31 @@ function isInsertedAlready($vector, $val)
         //setting Fix information
       $parsed_data_line_format['information'] = strip_tags((string) $x->fixInformation);
 
-     
-
         //inserting data about each Report into main array
       array_push($parsed_data_array, $parsed_data_line_format);
     }
-    //passing data to Javascript
 
+    //passing data to Javascript
     $global_array['retina'] = $parsed_data_array;
   }
 
   function acunetixXMLFileParser($uploadfile)
   {
-      global $global_array;
+    global $global_array;
 
     //load coresponding xml file
     $xmlDoc = simplexml_load_file($uploadfile);
-      if (!$xmlDoc) {
-          die('Error while reading acunetix XML file '.$uploadfile);
-      }
+    if (!$xmlDoc) {
+      die('Error while reading acunetix XML file '.$uploadfile);
+    }
 
     //array where are stored items from xml file
     $data = array();
-      $parsed_data_array = array();
+    $parsed_data_array = array();
 
     //iterating through retina XML file structure
     foreach ($xmlDoc->Scan->ReportItems->ReportItem as $auditElement) {
-        $data[] = $auditElement;
+      $data[] = $auditElement;
     }
 
     //iterate through all the data loaded from xml file
@@ -1041,10 +1007,5 @@ function isInsertedAlready($vector, $val)
       array_push($parsed_data_array, $parsed_data_line_format);
     }
 
-    //////echo json_encode($parsed_data_array);
-    //array_push($global_array,$parsed_data_array);
     $global_array['acunetix'] = $parsed_data_array;
   }
-
-//echo json_encode("output_html/generated_output2.html");
-;

@@ -40,6 +40,7 @@ $badge_collors   = array(
   );
 //array with number of each type of report 
 $risk_counters = array();
+$text_output_path = '../downloads/TextReport.txt';
 
 main();
 //main function that starts HTML generator and return a link to output file
@@ -49,10 +50,29 @@ function main()
   global $risk_counters;
   global $php_response;
   global $inputFields;
+  global $text_output_path;
+
+  if(file_exists($text_output_path))
+  {
+  	unlink($text_output_path);
+  }
 
   $url_to_html_output = buildHTMLPageWithContent($global_array);
 
+
+
   echo json_encode($url_to_html_output);
+}
+
+function writeToFile($filename, $textContent)
+{
+	//$myfile = fopen($filename, "w");
+
+	$myfile = file_put_contents($filename, $textContent.PHP_EOL , FILE_APPEND | LOCK_EX);
+
+	//fwrite($myfile, $textContent);
+
+	//fclose($myfile);
 }
 
 //function that builds html content out of global array
@@ -61,13 +81,13 @@ function buildHTMLPageWithContent($global_array)
   global $inputFields;
   global $issuesNumber;
   global $total_issues;
+  global $text_output_path;
 
   $htmlDocument = new DOMDocument();
 
   $html_input_path  = '../output_html/simpleHTMLReportStructure.html';
   $html_output_path = '../downloads/HTMLReport.html';
-  $text_output_path = '../downloads/TextReport.txt';
-
+  
     //load the index.php file without displaying warnings
   libxml_use_internal_errors(true);
   $htmlDocument->loadHTMLFile($html_input_path);
@@ -104,7 +124,7 @@ function buildHTMLPageWithContent($global_array)
 //Inserting acunetix selected reports into final HTML file
   if(isset($_POST['acunetix']))
   {
-    $htmlContent = buildAcunetixHTMLString($htmlDocument, $divElement, $global_array);
+    $htmlContent = buildAcunetixHTMLString($htmlDocument, $divElement, $global_array, $text_output_path);
     $fragment    = $htmlDocument->createDocumentFragment();
     if ($fragment->appendXML($htmlContent)) {
       $divElement->appendChild($fragment);
@@ -114,7 +134,7 @@ function buildHTMLPageWithContent($global_array)
 //Inserting combined(retina+nessus) selected reports into final HTML file
   if(isset($_POST['combined']))
   {
-    $htmlContent = buildCombinedHTMLString($htmlDocument, $divElement, $global_array);
+    $htmlContent = buildCombinedHTMLString($htmlDocument, $divElement, $global_array, $text_output_path);
     $fragment    = $htmlDocument->createDocumentFragment();
     if ($fragment->appendXML($htmlContent)) {
       $divElement->appendChild($fragment);
@@ -127,11 +147,8 @@ $fragment = $htmlDocument->createDocumentFragment();
     $divElement->appendChild($fragment);
   } 
 
-
 //writing all data to new file
   $htmlDocument->saveHTMLFile('../downloads/' . $html_output_path);
-
-
 
   return $html_output_path;
 }
@@ -208,10 +225,10 @@ function appendCombinedTableHeader($htmlDocument, $divElement, $risk_counters)
         <td id="Informational" style="background: #337AB7; font-weight: bold; font-size: 160%;">' .$risk_counters['Information'].'</td>
         <td id="Total" class="table-active" style="font-size: 160%; font-weight: bold;" >' .$total_risks.'</td>
       </tr>
-
     </tbody>
   </table>
   ';
+
 
 
   $fragment = $htmlDocument->createDocumentFragment();
@@ -253,13 +270,14 @@ return $risk_counters;
 
 
 
-function buildAcunetixHTMLString($htmlDocument, $divElement, $global_array)
+function buildAcunetixHTMLString($htmlDocument, $divElement, $global_array, $filename)
 {
   global $risk_priorities, $risk_counters, $badge_collors, $acunetix, $total_issues;
 
-
   $html                = '';
+  $text = '';
   $HTMLAcunetixContent = '';
+  $AcunetixTextContent = '';
   $reportNumber        = 0;
 
   foreach ($acunetix as $key => $value) 
@@ -304,6 +322,13 @@ function buildAcunetixHTMLString($htmlDocument, $divElement, $global_array)
     ++$reportNumber;
     $reportId = 'acunetix' . $reportNumber;
 
+	$text = "Plugin name: ".$plugin_name.$mandatory."\n";
+	$text = $text. "Risk factor: ".$risk_factor."\n";
+	$text = $text. "Description: ".$description."\n";
+	$text = $text. "Fix Information: ".$fixInformation."\n";
+	$text = $text. "CVE: ".$cve_strings."\n\n";
+
+
     $html = "
     <div class='nodedata'>
      <div class='panel-group'>
@@ -340,16 +365,30 @@ function buildAcunetixHTMLString($htmlDocument, $divElement, $global_array)
 </div>';
 
 $HTMLAcunetixContent = $HTMLAcunetixContent.$html;
+$AcunetixTextContent = $AcunetixTextContent.$text;
 
 }
 }   
 appendAcunetixTableHeader($htmlDocument, $divElement, $risk_counters);
+
+$total_risks = array_sum($risk_counters);
+
+//append header text to the output text file
+$header_text_info = "High: ".$risk_counters['High']." || ";
+$header_text_info = $header_text_info."Medium: ".$risk_counters['Medium']." || ";
+$header_text_info = $header_text_info."Low: ".$risk_counters['Low']." || ";
+$header_text_info = $header_text_info."Information: ".$risk_counters['Information']." || ";
+$header_text_info = $header_text_info."Total risks: ".$total_risks." ||\n\n";
+
+$AcunetixTextContent = $header_text_info .$AcunetixTextContent;
+writeToFile($filename,$AcunetixTextContent);
+
 return $HTMLAcunetixContent;
 }
 
 
 
-function buildCombinedHTMLString($htmlDocument, $divElement, $global_array)
+function buildCombinedHTMLString($htmlDocument, $divElement, $global_array, $filename)
 {
 
   global $risk_priorities, $risk_counters, $badge_collors, $combined, $total_issues;
@@ -359,6 +398,8 @@ function buildCombinedHTMLString($htmlDocument, $divElement, $global_array)
     $html                = '';
   $HTMLCombinedContent = '';
   $reportNumber        = 0;
+  $text = '';
+  $CombinedTextContent = '';
 
   //echo json_encode($combined);
 
@@ -438,6 +479,14 @@ function buildCombinedHTMLString($htmlDocument, $divElement, $global_array)
 
     $reportId = 'combined' . $reportNumber;
 
+    $text = "Plugin name: ".$plugin_name.$mandatory."\n";
+	$text = $text. "Risk factor: ".$risk_factor."\n";
+	$text = $text. "Description: ".$description."\n";
+	$text = $text. "Fix Information: ".$fixInformation."\n";
+	$text = $text. "Exploit: ".$exploit."\n";
+	$text = $text. "CVE: ".$cve_strings."\n\n";
+
+
     $html = "
     <div class='nodedata'>
      <div class='panel-group'>
@@ -476,10 +525,25 @@ function buildCombinedHTMLString($htmlDocument, $divElement, $global_array)
 </div>';
 
 $HTMLCombinedContent = $HTMLCombinedContent.$html;
+$CombinedTextContent = $CombinedTextContent.$text;
 
 }
 }   
 appendCombinedTableHeader($htmlDocument, $divElement, $risk_counters);
+
+
+$total_risks = array_sum($risk_counters);
+
+//append header text to the output text file
+$header_text_info = "Critical: ".$risk_counters['Critical']." || ";
+$header_text_info = $header_text_info."High: ".$risk_counters['High']." || ";
+$header_text_info = $header_text_info."Medium: ".$risk_counters['Medium']." || ";
+$header_text_info = $header_text_info."Low: ".$risk_counters['Low']." || ";
+$header_text_info = $header_text_info."Information: ".$risk_counters['Information']." || ";
+$header_text_info = $header_text_info."Total risks: ".$total_risks." ||\n\n";
+
+$CombinedTextContent = $header_text_info .$CombinedTextContent;
+writeToFile($filename,$CombinedTextContent);
 
 return $HTMLCombinedContent;
 }
