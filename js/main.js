@@ -1,159 +1,160 @@
-function startProcessing(inputArgument)
-{
+/**
+ * DHTML date validation script for dd/mm/yyyy. Courtesy of SmartWebby.com (http://www.smartwebby.com/dhtml/datevalidation.asp)
+ */
+// Declaring valid date character, minimum year and maximum year
+var dtCh = "/";
+var minYear = 1900;
+var maxYear = 2100;
 
-    var input_fields= JSON.stringify(inputArgument);
-
-	$.ajax({
-		type: "POST",
-		url: "./php/process_files_and_generate_output.php",
-		data: {
-
-            files_map:uploaded_files_map,
-            input: input_fields
-        }
-	})
-	.done(function( msg ) {
-				
-
-
-
-		var url = JSON.parse(msg);
-        console.log("From PHP");
-		console.log(msg);
-        console.log("From PHP");
-		//displayContent(msg);
-
-		// //displayContent(msg);
-		
-		 window.location.href = url;
-
-
-	});
- }
-
-function populatePageWithParsedData(parsedData)
-{
-	var accordion = document.getElementById("accordion");
-	var html = "";
-
-	for(report in parsedData)
-	{
-		html += 
-	"<div class='card'>" +  
-    "<div class='card-header' role='tab' id='headingOne'>" + 
-      "<h5 class='mb-0'>" + 
-        "<a data-toggle='collapse' data-parent='#accordion' href='#collapseOne' aria-expanded='true' aria-controls='collapseOne'>" + 
-          "Collapsible Group Item #1" + 
-        "</a>" + 
-      "</h5>" + 
-    "</div>" + 
-    "<div id='collapseOne' class='collapse in' role='tabpanel' aria-labelledby='headingOne'>" + 
-      "<div class='card-block'>" + 
-        "sustainable VHS." + 
-      "</div>" + 
-    "</div>" + 
-  "</div>";
-	}
-
-	
-
-  accordion.innerHTML = html;
-
+function isInteger(s) {
+    var i;
+    for (i = 0; i < s.length; i++) {
+        // Check that current character is number.
+        var c = s.charAt(i);
+        if (((c < "0") || (c > "9"))) return false;
+    }
+    // All characters are numbers.
+    return true;
 }
 
+function stripCharsInBag(s, bag) {
+    var i;
+    var returnString = "";
+    // Search through string's characters one by one.
+    // If character is not in bag, append to returnString.
+    for (i = 0; i < s.length; i++) {
+        var c = s.charAt(i);
+        if (bag.indexOf(c) == -1) returnString += c;
+    }
+    return returnString;
+}
+
+function daysInFebruary(year) {
+    // February has 29 days in any year evenly divisible by four,
+    // EXCEPT for centurial years which are not also divisible by 400.
+    return (((year % 4 == 0) && ((!(year % 100 == 0)) || (year % 400 == 0))) ? 29 : 28);
+}
+
+function DaysArray(n) {
+    for (var i = 1; i <= n; i++) {
+        this[i] = 31
+        if (i == 4 || i == 6 || i == 9 || i == 11) {
+            this[i] = 30
+        }
+        if (i == 2) {
+            this[i] = 29
+        }
+    }
+    return this
+}
+
+function isDate(dtStr) {
+    var daysInMonth = DaysArray(12)
+    var pos1 = dtStr.indexOf(dtCh)
+    var pos2 = dtStr.indexOf(dtCh, pos1 + 1)
+    var strDay = dtStr.substring(0, pos1)
+    var strMonth = dtStr.substring(pos1 + 1, pos2)
+    var strYear = dtStr.substring(pos2 + 1)
+    strYr = strYear
+    if (strDay.charAt(0) == "0" && strDay.length > 1) strDay = strDay.substring(1)
+    if (strMonth.charAt(0) == "0" && strMonth.length > 1) strMonth = strMonth.substring(1)
+    for (var i = 1; i <= 3; i++) {
+        if (strYr.charAt(0) == "0" && strYr.length > 1) strYr = strYr.substring(1)
+    }
+    month = parseInt(strMonth)
+    day = parseInt(strDay)
+    year = parseInt(strYr)
+    if (pos1 == -1 || pos2 == -1) {
+        alert("The date format should be : dd/mm/yyyy")
+        return false
+    }
+    if (strMonth.length < 1 || month < 1 || month > 12) {
+        alert("Please enter a valid month")
+        return false
+    }
+    if (strDay.length < 1 || day < 1 || day > 31 || (month == 2 && day > daysInFebruary(year)) || day > daysInMonth[month]) {
+        alert("Please enter a valid day")
+        return false
+    }
+    if (strYear.length != 4 || year == 0 || year < minYear || year > maxYear) {
+        alert("Please enter a valid 4 digit year between " + minYear + " and " + maxYear)
+        return false
+    }
+    if (dtStr.indexOf(dtCh, pos2 + 1) != -1 || isInteger(stripCharsInBag(dtStr, dtCh)) == false) {
+        alert("Please enter a valid date")
+        return false
+    }
+    return true
+}
+
+function ValidateForm() {
+    var inputFields = new Object();
+
+    var dateAndTimeField = document.getElementById("dateInput");
+    var serverNameField = document.getElementById("serverNameInput");
+    var webURLField = document.getElementById("webURLInput");
+
+    if (serverNameField.value == "" || serverNameField.value.length < 3) {
+        alert("Server Name must be at least 3 characters long");
+        serverNameField.focus();
+        return false;
+    } else {
+        inputFields["serverNameInput"] = serverNameField.value;
+    }
+
+    if (webURLField.value == "" || webURLField.value.length < 3) {
+
+        inputFields["webURLInput"] = "Not Set";
+    } else {
+        inputFields["webURLInput"] = webURLField.value;
+    }
+
+    if (isDate(dateAndTimeField.value) == false) {
+        dateAndTimeField.focus();
+        return false;
+    } else {
+        inputFields["dateAndTime"] = dateAndTimeField.value;
+    }
+
+    startProcessing(inputFields);
+    return true
+}
+
+function startProcessing(inputArgument) {
+
+    var input_fields = JSON.stringify(inputArgument);
+
+    $.ajax({
+            type: "POST",
+            url: "./php/process_files_and_generate_output.php",
+            data: {
+
+                files_map: uploaded_files_map,
+                input: input_fields
+            }
+        })
+        .done(function(msg) {
+
+            var url = JSON.parse(msg);
+            console.log("From PHP");
+            console.log(msg);
+            console.log("From PHP");
 
 
+            window.location.href = url;
 
- function displayContent(msg)
- {
-
- 	//var dataInContainer="<pre>********************************************************************************************************";
-
-    	var dataContainer=document.getElementById("parseResults");
-    	var objects= JSON.parse(msg);
-
-
-    	//iterating trough all objects
-    	for (obj in objects)
-    	{
-    		for(object in obj)
-    		{
-    			dataInContainer+="<br>Report number : "+object+"----------------------------------------------------------------------------------------<br>";
-    		//Cve value from object
-    		var objCVE="";
-    		//Description value from object
-    		var objDescription="";
-    		//Exploit value from object
-    		var objExploit="";
-    		//Name value from object
-    		var objName="";
-    		//Risk Factor value from object
-    		var objRisk="";	
-    		//Information value from object
-			var objInfo="";
-
-			//setting Cve for current report
-    		objCVE=objects[object].cve;
-    		if(objCVE=="")
-    			objCVE="none";
-
-			//setting Description for current report
-    		objDescription+=objects[object].description;
-    		if(objDescription=="")
-    			objDescription="none";
-
-			//setting Exploit for current report
-    		objExploit+=objects[object].exploit;
-    		if(objExploit=="")
-    			objExploit="none";
-    		
-			//setting Name for current report
-    		objName+=objects[object].plugin_name;
-    		if(objName=="")
-    			objName="none";
-
-			//setting Risk Factor for current report
-    		objRisk+=objects[object].risk_factor;
-    		if(objRisk=="")
-    			objRisk="none";
-
-
-			//setting Information for current report
-    		objInfo=objects[object].information;
-    		if(objInfo=="")
-    			objInfo="none";
-
-
-    		//temporar display
-    		dataInContainer+="Name : "+objName+"<br>";
-    		dataInContainer+="Risk : "+objRisk+"<br>";
-    		dataInContainer+="Description : "+objDescription+"<br>";
-    		dataInContainer+="Cve : "+objCVE+"<br>";
-    		dataInContainer+="Exploit : "+objExploit+"<br>";
-    		dataInContainer+="Information : "+objInfo+"<br>";
-    		}
-    	
-		}
-
-       //appdending data to main report container {temporar}
-		dataContainer.innerHTML=dataInContainer+"</pre><br><br><br>"+dataContainer.innerHTML;
-		
- }
-
+        });
+}
 
 // prevent Start Processing button from triggering upload file window
-function preventDefaultFunction(event)
-{   
-    clickOnMainAreaFlag=true; 
+function preventDefaultFunction(event) {
+    clickOnMainAreaFlag = true;
     event.preventDefault();
 
-    if(uploaded_files_map.length > 0)
-    {
+    if (uploaded_files_map.length > 0) {
         ValidateForm();
-    }
-    else
-    {
+    } else {
         alert("Please add at least one XML file!");
     }
-        
+
 }
