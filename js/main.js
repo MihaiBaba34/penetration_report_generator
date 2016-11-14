@@ -29,6 +29,7 @@ function stripCharsInBag(s, bag) {
     return returnString;
 }
 
+
 function daysInFebruary(year) {
     // February has 29 days in any year evenly divisible by four,
     // EXCEPT for centurial years which are not also divisible by 400.
@@ -47,6 +48,7 @@ function DaysArray(n) {
     }
     return this
 }
+
 
 function isDate(dtStr) {
     var daysInMonth = DaysArray(12)
@@ -122,7 +124,8 @@ function ValidateForm() {
 
 function startProcessing(inputArgument) {
 
-    var input_fields = JSON.stringify(inputArgument);
+      var input_fields= JSON.stringify(inputArgument);
+    localStorage.setItem("input_fields",input_fields);
 
     $.ajax({
             type: "POST",
@@ -132,19 +135,24 @@ function startProcessing(inputArgument) {
                 files_map: uploaded_files_map,
                 input: input_fields
             }
-        })
-        .done(function(msg) {
-
-            var url = JSON.parse(msg);
-            console.log("From PHP");
-            console.log(msg);
-            console.log("From PHP");
+   	})
+	.done(function( msg ) {
+				
 
 
-            window.location.href = url;
+		var received_data = JSON.parse(msg);
+        var url = received_data.url_to_html_output;
 
-        });
-}
+        //save the global array received from php in order
+        //to access it globally
+        var storage_array = JSON.stringify(received_data.global_array);
+        localStorage.setItem("global_array",storage_array);
+
+		window.location.href = url;
+
+	});
+ }
+
 
 // prevent Start Processing button from triggering upload file window
 function preventDefaultFunction(event) {

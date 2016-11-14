@@ -134,54 +134,118 @@
 		</div>
 		<script type="text/javascript">
 			
+
+
+			/*window.onload = console.log(JSON.parse(localStorage.getItem("global_array")));*/
+
+
 			function collectSelectedReports()
 			{
 				var acunetixLeftCheckboxClass="acunetixLeftCheckbox";
 				var acunetixRightCheckboxClass="acunetixRightCheckbox";
 				var combinedLeftCheckboxClass="combinedLeftCheckbox";
 				var combinedRightCheckboxClass="combinedRightCheckbox";
-				var acL=0;
-				var acR=0;
-				var coL=0;
-				var coR=0;
+				var acunetix;
+				var combined;				
+				 
+				acunetix = getReportByCheckboxClass(acunetixLeftCheckboxClass,acunetixRightCheckboxClass);
+				combined = getReportByCheckboxClass(combinedLeftCheckboxClass,combinedRightCheckboxClass);
 
-				acL=getReportByCheckboxClass(acunetixLeftCheckboxClass);
-				acR=getReportByCheckboxClass(acunetixRightCheckboxClass);
-				coL=getReportByCheckboxClass(combinedLeftCheckboxClass);
-				coR=getReportByCheckboxClass(combinedRightCheckboxClass);
-
-
-				alert("You have selected: "+acL+" Web Application Vulnerabilities "+acR+" of them are mandatory "
-					+coL+" Infrastructure Vulnerabilities "+coR+"-mandatory" );
-
-				
+				//get the global array of items from local storage
+				var global_array = JSON.parse(localStorage.getItem("global_array"));
+				console.log(global_array);
+				var input_fields = JSON.parse(localStorage.getItem("input_fields"));
 
 
+				$.ajax({
+					type: "POST",
+					url: "../php/process_files_and_generate_final_output.php",
+					data: {
+						acunetix: acunetix,				
+						combined: combined,
+						input_fields: input_fields,
+						global_array: global_array
+					}
+				})
+				.done(function( msg ) {
+
+					console.log("*********");
+					console.log(msg);
+					console.log("*********");
+					var url = JSON.parse(msg);
+					console.log("*********");
+					console.log(url);
+					console.log("*********");
+
+					
+					window.location.href = url;
+
+					/*var received_data = JSON.parse(msg);
+					var url = received_data.url_to_html_output;
+
+			        //save the global array received from php in order
+			        //to access it globally
+			        var storage_array = JSON.stringify(received_data.global_array);
+			        localStorage.setItem("global_array",storage_array);
+
+			        window.location.href = url;*/
+    			});	
 
 
-				function getReportByCheckboxClass(checkboxClass)
-				{
-					var checkboxes = document.getElementsByClassName(checkboxClass);
-					var checkboxesChecked = [];
 
 
-				  // loop over them all
-				  for (var i=0; i<checkboxes.length; i++) {
-				     // And stick the checked ones onto an array...
-				     if (checkboxes[i].checked) {
-				     	var reportInfo= {};
-				     	reportInfo["riskLevel"]=checkboxes[i].value;
-				     	reportInfo["positionInRiskVector"]=checkboxes[i].name;
-
-				     	checkboxesChecked.push(reportInfo);
-				     }
-				 }
 
 
-				 //console.log(checkboxesChecked);
-				 return checkboxesChecked.length;
+		function getReportByCheckboxClass(LeftCheckbox,RightCheckbox)
+        {
 
-				}
+          var leftCheckBoxes = document.getElementsByClassName(LeftCheckbox);
+          var rightCheckBoxes = document.getElementsByClassName(RightCheckbox);
+          var checkBoxArray=[];
+          
+          for (var i=0; i<leftCheckBoxes.length; i++) {
+
+              var leftReportInfo= {};
+              var rightReportInfo= {};
+              var reportCheckboxesInfo={};
+
+              leftReportInfo["riskLevel"]=leftCheckBoxes[i].value;
+              leftReportInfo["positionInRiskVector"]=leftCheckBoxes[i].name;
+             if( leftCheckBoxes[i].checked == true)
+			  {
+			  	leftReportInfo["checked"]= "checked";	
+			  }
+			  else
+			  {
+			  	leftReportInfo["checked"]= "unchecked";		
+			  }
+              
+
+              rightReportInfo["riskLevel"]=rightCheckBoxes[i].value;
+              rightReportInfo["positionInRiskVector"]=rightCheckBoxes[i].name;
+              
+			  if( rightCheckBoxes[i].checked == true)
+			  {
+			  	rightReportInfo["checked"]= "checked";	
+			  }
+			  else
+			  {
+			  	rightReportInfo["checked"]= "unchecked";		
+			  }
+              
+
+              reportCheckboxesInfo["left"]=leftReportInfo;
+              reportCheckboxesInfo["right"]=rightReportInfo;
+
+              checkBoxArray.push(reportCheckboxesInfo);
+             
+         }            
+
+
+         //console.log(checkboxesChecked);
+         return checkBoxArray;
+
+        }
 
 
 				
