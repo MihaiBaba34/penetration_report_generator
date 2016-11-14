@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Penetration Report Generator</title>
+	<script src="https://www.atlasestateagents.co.uk/javascript/tether.min.js"></script><!-- Tether for Bootstrap -->
+	<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="http://code.jquery.com/jquery-3.1.0.min.js" crossorigin="anonymous"></script>
+	<!-- Latest compiled and minified JavaScript -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+	<!-- Latest compiled and minified JavaScript -->
+
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/css/bootstrap.min.css" >
+
+	<style type="text/css">
+
+		.table td {
+			text-align: center;   
+		}
+		.table th {
+			text-align: center;   
+		}
+		a {
+			
+			text-decoration: none !important;
+		}  
+
+		* {
+			-webkit-border-radius: 0 !important;
+			-moz-border-radius: 0 !important;
+			border-radius: 0 !important;
+		}
+		.label-default {
+			background-color: #E99F54 !important;
+		}
+		.label-warning {
+			background-color: #FF4D00 !important;
+		}
+		.label-primary {
+			background-color: #008800 !important;
+		}
+		.label-success {
+			background-color: #337AB7 !important;
+		}
+
+		.label-info {
+			background-color: #DF0803 !important;
+		}
+
+
+
+	}
+
+</style>
+</head>
+
+
+<body>
+
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2">
+			<div class="jumbotron jumbotron-fluid">
+				<div class="container">
+
+
+					<h4 class="display-4">
+						<div class="row">
+							<div class="col-md-6">
+								<b>Vulnerability Report</b>
+							</div>
+						</div>
+					</h4>
+
+
+					<h4 class="display-5">
+						<div class="row">
+							<div class="col-md-4 " style="margin-left: 3%;">
+								<b>Issues Found:</b>
+								<span id="issues_number"></span> 
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-md-6" style="margin-left: 3%;">
+								<b>Server Name:</b>
+								<span id="server_name"></span> 
+							</div>
+						</div>
+
+						<div class="row">
+							<div class="col-md-4 " style="margin-left: 3%;">
+								<b>Site Name:</b>
+								<span id="site_name"></span> 
+							</div>
+						</div>
+
+					</h4>
+
+
+					<h4 class="display-6">
+						<div class="row">
+							<div class="col-md-6" style="margin-left: 3%;">
+								<b>Date:</b> 
+								<span id="date_field"></span>
+							</div>
+						</div>
+					</h4>
+					<h4 class="display-6">
+						<div id="download_div" class="row">
+							<div class="col-md-6" style="margin-left: 3%;">
+							
+								<b><a  href="HTMLReport.html" download="HTMLReport.html">Download HTML File</a></b> 
+								<br/>
+								<b><a href="HTMLReport.html" download="HTMLReport.html">Download Text File</a></b> 
+							</font>
+							</div>
+						</div>
+					</h4>
+					
+					
+
+					
+				</div>
+			</div>
+
+		</div>
+
+	</div>
+
+	<div class="row">
+
+
+		<div id = "container" class="col-md-8 col-md-offset-2">
+
+
+		</div>
+
+	</div>
+	
+	<script type="text/javascript">
+		var currentURL = document.URL;
+		var path="/downloads/HTMLReport.html";
+	
+			if(currentURL.indexOf(path) == -1)
+			{
+				document.getElementById("download_div").style.display="none";
+			}
+
+	</script>
+
+	
+	</body>
+	</html>
