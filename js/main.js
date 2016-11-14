@@ -2,6 +2,7 @@ function startProcessing(inputArgument)
 {
 
     var input_fields= JSON.stringify(inputArgument);
+    localStorage.setItem("input_fields",input_fields);
 
 	$.ajax({
 		type: "POST",
@@ -16,17 +17,15 @@ function startProcessing(inputArgument)
 				
 
 
+		var received_data = JSON.parse(msg);
+        var url = received_data.url_to_html_output;
 
-		var url = JSON.parse(msg);
-        console.log("From PHP");
-		console.log(msg);
-        console.log("From PHP");
-		//displayContent(msg);
+        //save the global array received from php in order
+        //to access it globally
+        var storage_array = JSON.stringify(received_data.global_array);
+        localStorage.setItem("global_array",storage_array);
 
-		// //displayContent(msg);
-		
-		 window.location.href = url;
-
+		window.location.href = url;
 
 	});
  }

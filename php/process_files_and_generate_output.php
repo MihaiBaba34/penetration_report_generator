@@ -2,17 +2,13 @@
 
 
 $inputFields = $_POST['input'];
-//echo json_encode($inputFields);
-
 $uploaded_files = $_POST['files_map'];
 
 $global_array = array();
 $issuesNumber = 0;
+$php_response = array();
+$sorted_global_array = array();
 
-/*$uploaded_files = array();
-array_push($uploaded_files,"../test/testphp.vulnweb_retina.xml");
-array_push($uploaded_files,"../test/testphp_vulnweb_nessus.xml");
-array_push($uploaded_files,"../test/testphp.vulnweb_acunetix.xml");*/
 
 for ($i = 0; $i < count($uploaded_files); ++$i) {
     $uploaded_files[$i] = '../uploads/'.$uploaded_files[$i];
@@ -44,6 +40,8 @@ function main()
     global $global_array;
     global $uploaded_files;
     global $risk_counters;
+    global $php_response;
+    global $sorted_global_array;
 
     //extract xml files content
   foreach ($uploaded_files as $key => $value) {
@@ -57,9 +55,13 @@ function main()
   $sorted_array = sortItemsByRisk($processed_array);
 
     //generate html report output
-  buildHTMLPageWithContent($sorted_array);
+  $url_to_html_output = buildHTMLPageWithContent($sorted_array);
 
-    //console_log($risk_counters);
+    //build response to ajax call
+  $php_response["url_to_html_output"] = $url_to_html_output;
+  $php_response["global_array"] = $sorted_global_array;
+
+  echo json_encode($php_response);
 }
 
 function buildHTMLPageWithContent($global_array)
@@ -122,13 +124,15 @@ function buildHTMLPageWithContent($global_array)
     //$htmlDocument->saveHTMLFile("../" + $html_output_path);
   $htmlDocument->saveHTMLFile('../'.$html_output_path);
 
-   echo json_encode($html_output_path);
+   //echo json_encode($html_output_path);
     //////echo json_encode($_SERVER['HTTP_HOST']);
+
+   return $html_output_path;
 }
 
 function buildHTMLString($htmlDocument, $divElement, $global_array)
 {
-    global $risk_priorities, $risk_counters, $badge_collors;
+    global $risk_priorities, $risk_counters, $badge_collors, $sorted_global_array;
 
     $html = '';
     $HTMLCombinedContent = '';
@@ -152,6 +156,7 @@ function buildHTMLString($htmlDocument, $divElement, $global_array)
         array_multisort($report_title, SORT_ASC | SORT_NATURAL | SORT_FLAG_CASE, $global_array['acunetix'][$risk_priorities[$i]]);
 
 
+        $sorted_global_array = $global_array;
            
       foreach ($global_array['acunetix'][$risk_priorities[$i]] as $key_2 => $report) {
           if (!isset($risk_counters[$risk_priorities[$i]])) {
@@ -160,6 +165,7 @@ function buildHTMLString($htmlDocument, $divElement, $global_array)
               ++$risk_counters[$risk_priorities[$i]];
           }
 
+          
           $fixInformation = '';
           if (isset($report['information'])) {
               $fixInformation = $report['information'];
@@ -275,7 +281,7 @@ function buildHTMLString($htmlDocument, $divElement, $global_array)
 </div>
 <br />
 <table class="table ">
-  <thead >
+  <thead>
     <tr>
       <th style="background: #FF4D00;">High</th>
       <th style="background: #E99F54;">Medium</th>
@@ -313,14 +319,13 @@ $fragment = $htmlDocument->createDocumentFragment();
         //create a fragment (a html fragment) with changed parameters such as
 $fragment = $htmlDocument->createDocumentFragment();
         if ($fragment->appendXML($HTMLAcunetixContent)) {
-            /*$divElement->insertBefore($fragment, $divElement->firstChild);*/
+
   $divElement->appendChild($fragment);
         } else {
-            ////echo $HTMLAcunetixContent;
-            ////echo $plugin_name."<br>";
+        
         }
 
-        // console_log($risk_counters);
+      
     }
 
     if (count($global_array['combined'])) {
@@ -335,6 +340,8 @@ $fragment = $htmlDocument->createDocumentFragment();
       }
       array_multisort($report_title, SORT_ASC | SORT_NATURAL | SORT_FLAG_CASE, $global_array['combined'][$risk_priorities[$i]]);
 
+  $sorted_global_array = $global_array;
+
         //treat all combined values from applications: nessus, retina, nmap
     foreach ($global_array['combined'][$risk_priorities[$i]] as $key_2 => $report) {
         if (!isset($risk_counters[$risk_priorities[$i]])) {
@@ -348,6 +355,8 @@ $fragment = $htmlDocument->createDocumentFragment();
             $fixInformation = $report['information'];
             $fixInformation = preprocessOutputString($fixInformation);
         }
+
+
         $exploit = '';
         if (isset($report['exploit'])) {
             $exploit = $report['exploit'];
@@ -357,6 +366,7 @@ $fragment = $htmlDocument->createDocumentFragment();
         if ($exploit == '') {
             $exploit = '---';
         }
+        
         if ($fixInformation == '') {
             if (isset($report['solution'])) {
                 $fixInformation = $report['solution'];
@@ -1021,7 +1031,7 @@ function isInsertedAlready($vector, $val)
         //setting Risk Factor
       $parsed_data_line_format['risk_factor'] = strip_tags((string) $x->Severity);
         //setting CVE
-                                                $parsed_data_line_format['cve'] = strip_tags((string) $x->CWE);
+      $parsed_data_line_format['cve'] = strip_tags((string) $x->CWE);
         //setting Information
       $parsed_data_line_format['information'] = strip_tags((string) $x->Impact);
         //setting Description
