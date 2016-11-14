@@ -137,8 +137,8 @@ function startProcessing(inputArgument) {
             }
    	})
 	.done(function( msg ) {
-				
-
+				    
+        //console.log(msg);
 
 		var received_data = JSON.parse(msg);
         var url = received_data.url_to_html_output;
@@ -149,7 +149,6 @@ function startProcessing(inputArgument) {
         localStorage.setItem("global_array",storage_array);
 
 		window.location.href = url;
-
 	});
  }
 
@@ -164,5 +163,4 @@ function preventDefaultFunction(event) {
     } else {
         alert("Please add at least one XML file!");
     }
-
 }
