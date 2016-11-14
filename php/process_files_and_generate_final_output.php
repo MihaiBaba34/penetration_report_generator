@@ -19,6 +19,9 @@ if(isset($_POST['combined']))
 //response from HTML generator (URL to new HTML)
 $php_response = array();
 
+//total number of issues found
+$total_issues=0;
+
 //array with risk badge names
 $risk_priorities = array(
   'Critical',
@@ -39,7 +42,7 @@ $badge_collors   = array(
 $risk_counters = array();
 
 main();
-
+//main function that starts HTML generator and return a link to output file
 function main()
 {
   global $global_array;
@@ -52,15 +55,18 @@ function main()
   echo json_encode($url_to_html_output);
 }
 
+//function that builds html content out of global array
 function buildHTMLPageWithContent($global_array)
 {
   global $inputFields;
   global $issuesNumber;
+  global $total_issues;
 
   $htmlDocument = new DOMDocument();
 
-  $html_input_path  = '../output_html/generated_output.html';
-  $html_output_path = 'generated_output3.html';
+  $html_input_path  = '../output_html/simpleHTMLReportStructure.html';
+  $html_output_path = '../downloads/HTMLReport.html';
+  $text_output_path = '../downloads/TextReport.txt';
 
     //load the index.php file without displaying warnings
   libxml_use_internal_errors(true);
@@ -81,26 +87,19 @@ function buildHTMLPageWithContent($global_array)
   $fragment = $htmlDocument->createDocumentFragment();
   if ($fragment->appendXML($server_name)) {
     $server_name_span->appendChild($fragment);        
-  } else {
-        //error
-  }
+  } 
 
   $fragment = $htmlDocument->createDocumentFragment();
   if ($fragment->appendXML($site_name)) {
     $site_name_span->appendChild($fragment);
-  } else {
-        //error
-  }
+  } 
 
   $fragment = $htmlDocument->createDocumentFragment();
   if ($fragment->appendXML($date)) {
     $date_span->appendChild($fragment);
-  } else {
-        //error
   }
 
   $divElement = $htmlDocument->getElementById('container');
-
 
 //Inserting acunetix selected reports into final HTML file
   if(isset($_POST['acunetix']))
@@ -122,14 +121,23 @@ function buildHTMLPageWithContent($global_array)
     } 
   }
 
+$divElement=$htmlDocument->getElementById("issues_number");
+$fragment = $htmlDocument->createDocumentFragment();
+  if ($fragment->appendXML($total_issues)) {
+    $divElement->appendChild($fragment);
+  } 
+
+
 //writing all data to new file
-  $htmlDocument->saveHTMLFile('../output_html/' . $html_output_path);
+  $htmlDocument->saveHTMLFile('../downloads/' . $html_output_path);
+
+
 
   return $html_output_path;
 }
 
 
-
+//function to create html for header content out of Acunetix reports
 function appendAcunetixTableHeader($htmlDocument, $divElement, $risk_counters)
 {
 
@@ -163,21 +171,17 @@ function appendAcunetixTableHeader($htmlDocument, $divElement, $risk_counters)
     </tbody>
   </table>
   ';
-//DF0803- red
-        //create a fragment (a html fragment) with changed parameters such as
+        //create a fragment (a html fragment) 
   $fragment = $htmlDocument->createDocumentFragment();
   if ($fragment->appendXML($HTMLAcunetixAntet)) {
-    /*$divElement->insertBefore($fragment, $divElement->firstChild);*/
     $divElement->appendChild($fragment);
-  } else {
-            ////echo $HTMLAcunetixAntet;
-            ////echo $plugin_name."<br>";
-  }
+  } 
 }
 
+//function to create html for header content out of combined reports(retina+nessus)
 function appendCombinedTableHeader($htmlDocument, $divElement, $risk_counters)
 {
-  
+
   $total_risks = array_sum($risk_counters);
   $HTMLCombinedAntet = '
   <div class="alert alert-info" role="alert" style="background: #ECEEEF; border:0;">
@@ -214,8 +218,12 @@ function appendCombinedTableHeader($htmlDocument, $divElement, $risk_counters)
   if ($fragment->appendXML($HTMLCombinedAntet)) {
     $divElement->appendChild($fragment);
   } 
+
 }
 
+
+
+//initialize couters variables with 0
 function setCountersToZero()
 {
 
@@ -239,24 +247,21 @@ if(!isset($risk_counters['Information']))
 {
   $risk_counters['Information']=0;
 }
-
 return $risk_counters;
 }
 
 
+
+
 function buildAcunetixHTMLString($htmlDocument, $divElement, $global_array)
 {
-  global $risk_priorities, $risk_counters, $badge_collors, $acunetix;
+  global $risk_priorities, $risk_counters, $badge_collors, $acunetix, $total_issues;
 
 
   $html                = '';
   $HTMLAcunetixContent = '';
   $reportNumber        = 0;
 
-
-    //echo json_encode($acunetix);
-
-    //acunetix
   foreach ($acunetix as $key => $value) 
   {
     if ($value["left"]["checked"] == "checked" || $value["right"]["checked"] == "checked") 
@@ -272,7 +277,6 @@ function buildAcunetixHTMLString($htmlDocument, $divElement, $global_array)
      } else {
       ++ $risk_counters[$risk_priorities[$value["left"]["riskLevel"]]];
     }            
-
 
     $fixInformation = '';
     $fixInformation = $element_from_specific_report['information'];
@@ -293,10 +297,10 @@ function buildAcunetixHTMLString($htmlDocument, $divElement, $global_array)
     $mandatory = "";
     if($value["right"]["checked"] == "checked")
     {
-      $mandatory = "[--MANDATORY--]";
+      $mandatory = "<font color=\"red\">[--MANDATORY--]</font>";
     }
 
-
+    ++$total_issues;
     ++$reportNumber;
     $reportId = 'acunetix' . $reportNumber;
 
@@ -339,18 +343,16 @@ $HTMLAcunetixContent = $HTMLAcunetixContent.$html;
 
 }
 }   
-
-
 appendAcunetixTableHeader($htmlDocument, $divElement, $risk_counters);
-
-
 return $HTMLAcunetixContent;
 }
+
+
 
 function buildCombinedHTMLString($htmlDocument, $divElement, $global_array)
 {
 
-  global $risk_priorities, $risk_counters, $badge_collors, $combined;
+  global $risk_priorities, $risk_counters, $badge_collors, $combined, $total_issues;
 
 
   $risk_counters=setCountersToZero();
@@ -386,7 +388,7 @@ function buildCombinedHTMLString($htmlDocument, $divElement, $global_array)
     $mandatory = "";
     if($value["right"]["checked"] == "checked")
     {
-      $mandatory = "[--MANDATORY--]";
+      $mandatory = "<font color=\"red\">[--MANDATORY--]</font>";
     }
 
     $fixInformation = '';
@@ -395,7 +397,6 @@ function buildCombinedHTMLString($htmlDocument, $divElement, $global_array)
       $fixInformation = $element_from_specific_report['information'];
       $fixInformation = preprocessOutputString($fixInformation);
     }
-
 
     if ($fixInformation == '') {
 
@@ -406,7 +407,6 @@ function buildCombinedHTMLString($htmlDocument, $divElement, $global_array)
       }
     }
 
-
     $exploit = '';
     if (isset($element_from_specific_report['exploit'])) {
       $exploit = $element_from_specific_report['exploit'];
@@ -415,7 +415,6 @@ function buildCombinedHTMLString($htmlDocument, $divElement, $global_array)
     if ($exploit == '') {
       $exploit = '---';
     }
-
 
     $plugin_name = '';
     if (isset($element_from_specific_report['plugin_name'])) {
@@ -434,7 +433,7 @@ function buildCombinedHTMLString($htmlDocument, $divElement, $global_array)
       $cve_strings = $element_from_specific_report['cve'];
       $cve_strings = preprocessOutputString($cve_strings);
     }
-
+    ++$total_issues;
     ++$reportNumber;
 
     $reportId = 'combined' . $reportNumber;
@@ -480,24 +479,12 @@ $HTMLCombinedContent = $HTMLCombinedContent.$html;
 
 }
 }   
-
-
 appendCombinedTableHeader($htmlDocument, $divElement, $risk_counters);
-
 
 return $HTMLCombinedContent;
 }
 
-
-
-
-
-function console_log($data)
-{
-    // echo "<script>";
-    // echo "console.log(". json_encode( $data ) .")";
-    // echo "</script>";
-}
+//remove special chars from string 
 function preprocessOutputString($output)
 {
   $result = str_replace('"', "'", $output);
