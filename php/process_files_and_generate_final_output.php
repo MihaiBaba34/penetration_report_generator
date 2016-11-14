@@ -135,6 +135,7 @@ function appendAcunetixTableHeader($htmlDocument, $divElement, $risk_counters)
 
   $total_risks = array_sum($risk_counters);
 
+
   $HTMLAcunetixAntet = '
   <div class="alert alert-info" role="alert" style="background: #ECEEEF; border:0;">
     <h3 class="text-center"><strong>Web Application Vulnerabilities</strong></h3>
@@ -176,9 +177,8 @@ function appendAcunetixTableHeader($htmlDocument, $divElement, $risk_counters)
 
 function appendCombinedTableHeader($htmlDocument, $divElement, $risk_counters)
 {
-
+  
   $total_risks = array_sum($risk_counters);
-
   $HTMLCombinedAntet = '
   <div class="alert alert-info" role="alert" style="background: #ECEEEF; border:0;">
     <h3 class="text-center"><strong>Web Application Vulnerabilities</strong></h3>
@@ -215,6 +215,34 @@ function appendCombinedTableHeader($htmlDocument, $divElement, $risk_counters)
     $divElement->appendChild($fragment);
   } 
 }
+
+function setCountersToZero()
+{
+
+if(!isset($risk_counters['Critical']))
+{
+  $risk_counters['Critical']=0;
+}
+if(!isset($risk_counters['High']))
+{
+  $risk_counters['High']=0;
+}
+if(!isset($risk_counters['Medium']))
+{
+  $risk_counters['Medium']=0;
+}
+if(!isset($risk_counters['Low']))
+{
+  $risk_counters['Low']=0;
+}
+if(!isset($risk_counters['Information']))
+{
+  $risk_counters['Information']=0;
+}
+
+return $risk_counters;
+}
+
 
 function buildAcunetixHTMLString($htmlDocument, $divElement, $global_array)
 {
@@ -325,8 +353,8 @@ function buildCombinedHTMLString($htmlDocument, $divElement, $global_array)
   global $risk_priorities, $risk_counters, $badge_collors, $combined;
 
 
-  $risk_counters=array();
-  $html                = '';
+  $risk_counters=setCountersToZero();
+    $html                = '';
   $HTMLCombinedContent = '';
   $reportNumber        = 0;
 
