@@ -232,8 +232,14 @@ function buildHTMLOutput($global_array)
   //insert completed fields from the upload page into the output html report
   insertInputFieldsIntoHTMLOutput($htmlDocument);
 
-  $htmlContent = buildHTMLString($htmlDocument, $global_array);
+ $issues_number_span = $htmlDocument->getElementById('issues_number');
 
+  $htmlContent = buildHTMLString($htmlDocument, $global_array);
+  $fragment = $htmlDocument->createDocumentFragment();
+  if ($fragment->appendXML($issuesNumber)) {
+    $issues_number_span->appendChild($fragment);
+  } 
+  
   $htmlDocument->saveHTMLFile('../'.$html_output_path);
 
   return $html_output_path;
@@ -249,7 +255,7 @@ function insertInputFieldsIntoHTMLOutput($htmlDocument)
   $server_name_span = $htmlDocument->getElementById('server_name');
   $site_name_span = $htmlDocument->getElementById('site_name');
   $date_span = $htmlDocument->getElementById('date_field');
-  $issues_number_span = $htmlDocument->getElementById('issues_number');
+ 
   
   //extract server name, web URL and date from upload page
   $server_name = $inputFields->serverNameInput;
@@ -272,10 +278,7 @@ function insertInputFieldsIntoHTMLOutput($htmlDocument)
     $date_span->appendChild($fragment);
   } 
 
-  $fragment = $htmlDocument->createDocumentFragment();
-  if ($fragment->appendXML($issuesNumber)) {
-    $issues_number_span->appendChild($fragment);
-  } 
+
 }
 
 function buildHTMLString($htmlDocument, $global_array)

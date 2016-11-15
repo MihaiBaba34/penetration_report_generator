@@ -315,14 +315,16 @@ function buildAcunetixHTMLString($htmlDocument, $divElement, $global_array, $fil
     $mandatory = "";
     if($value["right"]["checked"] == "checked")
     {
-      $mandatory = "<font color=\"red\">[--MANDATORY--]</font>";
+      $mandatory = "[--MANDATORY--]";
     }
 
     ++$total_issues;
     ++$reportNumber;
     $reportId = 'acunetix' . $reportNumber;
 
-	$text = "Plugin name: ".$plugin_name.$mandatory."\n";
+
+
+	$text = "Plugin name: ".$plugin_name.$mandatory." \n";
 	$text = $text. "Risk factor: ".$risk_factor."\n";
 	$text = $text. "Description: ".$description."\n";
 	$text = $text. "Fix Information: ".$fixInformation."\n";
@@ -336,7 +338,7 @@ function buildAcunetixHTMLString($htmlDocument, $divElement, $global_array, $fil
        <div class='panel-heading'>
         <h4 class='panel-title'>
          <span>
-          <span style='margin-left: 30px;'>" . $plugin_name ."&#160;&#160;&#160;". $mandatory."
+          <span style='margin-left: 30px;'>" . $plugin_name ."&#160;&#160;&#160;<font color=\"red\">".$mandatory."</font>
           </span>
         </span>
         <span class='pull-right'>
@@ -429,7 +431,7 @@ function buildCombinedHTMLString($htmlDocument, $divElement, $global_array, $fil
     $mandatory = "";
     if($value["right"]["checked"] == "checked")
     {
-      $mandatory = "<font color=\"red\">[--MANDATORY--]</font>";
+      $mandatory = "[--MANDATORY--]";
     }
 
     $fixInformation = '';
@@ -494,7 +496,7 @@ function buildCombinedHTMLString($htmlDocument, $divElement, $global_array, $fil
        <div class='panel-heading'>
         <h4 class='panel-title'>
          <span>
-         <span style='margin-left: 30px;'>" . $plugin_name . "&#160;&#160;&#160;".$mandatory."
+         <span style='margin-left: 30px;'>" . $plugin_name . "&#160;&#160;&#160;<font color=\"red\">".$mandatory."</font>
           </span>
         </span>
         <span class='pull-right'>

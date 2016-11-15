@@ -43,7 +43,7 @@
 
 <body>
 
-
+ <input id="reloadValue" type="hidden" name="reloadValue" value="" />
     <div class="row">
         <div class="col-md-4"></div>
         <div class="col-md-4">
@@ -80,11 +80,29 @@
         <input type="file" name="files[]" id="filer_input2" multiple="multiple">
 
     </div>
+  
     <script src="http://code.jquery.com/jquery-3.1.0.min.js" crossorigin="anonymous"></script>
     <script src="js/jquery.filer.min.js" type="text/javascript"></script>
     <script src="js/custom.js" type="text/javascript"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/main.js"></script>
+      <script type="text/javascript">
+        jQuery(document).ready(function()
+        {
+                var d = new Date();
+                d = d.getTime();
+                if (jQuery('#reloadValue').val().length == 0)
+                {
+                        jQuery('#reloadValue').val(d);
+                        jQuery('body').show();
+                }
+                else
+                {
+                        jQuery('#reloadValue').val('');
+                        location.reload();
+                }
+        });
+    </script>
 </body>
 
 </html>
