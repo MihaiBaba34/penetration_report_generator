@@ -52,30 +52,30 @@ function main()
   global $inputFields;
   global $text_output_path;
 
+  //delete the output text file if exists
   if(file_exists($text_output_path))
   {
   	unlink($text_output_path);
   }
 
+  //create final html output
   $url_to_html_output = buildHTMLPageWithContent($global_array);
-
-
 
   echo json_encode($url_to_html_output);
 }
 
 function writeToFile($filename, $textContent)
 {
-	//$myfile = fopen($filename, "w");
-
 	$myfile = file_put_contents($filename, $textContent.PHP_EOL , FILE_APPEND | LOCK_EX);
-
-	//fwrite($myfile, $textContent);
-
-	//fclose($myfile);
 }
 
-//function that builds html content out of global array
+/**
+ * build final html report
+ * 
+ * @param  array $global_array global data to be 
+ *                             displayed to the final html output
+ * @return string              path to the final html output
+ */
 function buildHTMLPageWithContent($global_array)
 {
   global $inputFields;
@@ -85,13 +85,15 @@ function buildHTMLPageWithContent($global_array)
 
   $htmlDocument = new DOMDocument();
 
-  $html_input_path  = '../output_html/simpleHTMLReportStructure.html';
+  $html_input_path  = '../output_html/report_output_template_simple.html';
   $html_output_path = '../downloads/HTMLReport.html';
   
-    //load the index.php file without displaying warnings
+    
   libxml_use_internal_errors(true);
   $htmlDocument->loadHTMLFile($html_input_path);
   libxml_clear_errors();
+  
+  //build the output header containing input fields information from upload page
   $server_name_span   = $htmlDocument->getElementById('server_name');
   $site_name_span     = $htmlDocument->getElementById('site_name');
   $date_span          = $htmlDocument->getElementById('date_field');
@@ -158,78 +160,26 @@ $fragment = $htmlDocument->createDocumentFragment();
 function appendAcunetixTableHeader($htmlDocument, $divElement, $risk_counters)
 {
 
-  $total_risks = array_sum($risk_counters);
+  $totalNumberOfIssues = array_sum($risk_counters);
 
+  //insert acunetix report header
+  include 'html_templates/acunetix_report_header.php';
 
-  $HTMLAcunetixAntet = '
-  <div class="alert alert-info" role="alert" style="background: #ECEEEF; border:0;">
-    <h3 class="text-center"><strong>Web Application Vulnerabilities</strong></h3>
-  </div>
-  <br />
-  <table class="table ">
-    <thead>
-      <tr>
-        <th style="background: #FF4D00;">High</th>
-        <th style="background: #E99F54;">Medium</th>
-        <th style="background: #008800;">Low</th>
-        <th style="background: #337AB7;">Info</th>
-        <th class="table-active">Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td id="High" style="background: #FF4D00;  font-weight: bold; font-size: 160%;">' .$risk_counters['High'].'</td>
-        <td id="Medium" style="background: #E99F54; font-weight: bold; font-size: 160%;">' .$risk_counters['Medium'].'</td>
-        <td id="Low" style="background: #008800;  font-weight: bold; font-size: 160%;">' .$risk_counters['Low'].'</td>
-        <td id="Informational" style="background: #337AB7; font-weight: bold; font-size: 160%;">' .$risk_counters['Information'].'</td>
-        <td id="Total" class="table-active" style="font-size: 160%; font-weight: bold;" >' .$total_risks.'</td>
-      </tr>
-
-    </tbody>
-  </table>
-  ';
-        //create a fragment (a html fragment) 
+  //create a fragment (a html fragment) 
   $fragment = $htmlDocument->createDocumentFragment();
   if ($fragment->appendXML($HTMLAcunetixAntet)) {
     $divElement->appendChild($fragment);
   } 
 }
 
-//function to create html for header content out of combined reports(retina+nessus)
+//create html for header content out of combined reports(retina+nessus)
 function appendCombinedTableHeader($htmlDocument, $divElement, $risk_counters)
 {
 
-  $total_risks = array_sum($risk_counters);
-  $HTMLCombinedAntet = '
-  <div class="alert alert-info" role="alert" style="background: #ECEEEF; border:0;">
-    <h3 class="text-center"><strong>Web Application Vulnerabilities</strong></h3>
-  </div>
-  <br />
-  <table class="table ">
-    <thead>
-      <tr>
-        <th style="background: #DF0803;">Critical</th>
-        <th style="background: #FF4D00;">High</th>
-        <th style="background: #E99F54;">Medium</th>
-        <th style="background: #008800;">Low</th>
-        <th style="background: #337AB7;">Info</th>
-        <th class="table-active">Total</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td id="Critical" style="background: #DF0803;  font-weight: bold; font-size: 160%;">' .$risk_counters['Critical'].'</td>
-        <td id="High" style="background: #FF4D00;  font-weight: bold; font-size: 160%;">' .$risk_counters['High'].'</td>
-        <td id="Medium" style="background: #E99F54; font-weight: bold; font-size: 160%;">' .$risk_counters['Medium'].'</td>
-        <td id="Low" style="background: #008800;  font-weight: bold; font-size: 160%;">' .$risk_counters['Low'].'</td>
-        <td id="Informational" style="background: #337AB7; font-weight: bold; font-size: 160%;">' .$risk_counters['Information'].'</td>
-        <td id="Total" class="table-active" style="font-size: 160%; font-weight: bold;" >' .$total_risks.'</td>
-      </tr>
-    </tbody>
-  </table>
-  ';
+  $totalNumberOfIssues = array_sum($risk_counters);
 
-
+  //insert combined files data header to the final output
+  include 'html_templates/combined_report_header.php';
 
   $fragment = $htmlDocument->createDocumentFragment();
   if ($fragment->appendXML($HTMLCombinedAntet)) {
@@ -269,7 +219,15 @@ return $risk_counters;
 
 
 
-
+/**
+ * 
+ * @param  DOMDocument $htmlDocument handle to the 
+ *                                   parsed html DOM structure
+ * @param  DOMElement $divElement   container div element
+ * @param  array $global_array global data
+ * @param  string $filename     output text file name
+ * @return string               html content for the acunetix report
+ */
 function buildAcunetixHTMLString($htmlDocument, $divElement, $global_array, $filename)
 {
   global $risk_priorities, $risk_counters, $badge_collors, $acunetix, $total_issues;
@@ -284,7 +242,7 @@ function buildAcunetixHTMLString($htmlDocument, $divElement, $global_array, $fil
   {
     if ($value["left"]["checked"] == "checked" || $value["right"]["checked"] == "checked") 
     {           
-            //display element with the current checkbox checked
+      //display element with the current checkbox checked
       $report                       = $global_array['acunetix'];
       $report_with_risk_priority    = $report[$risk_priorities[$value["left"]["riskLevel"]]];
       $element_from_specific_report = $report_with_risk_priority[$value["left"]["positionInRiskVector"] - 1];
@@ -330,41 +288,7 @@ function buildAcunetixHTMLString($htmlDocument, $divElement, $global_array, $fil
 	$text = $text. "Fix Information: ".$fixInformation."\n";
 	$text = $text. "CVE: ".$cve_strings."\n\n";
 
-
-    $html = "
-    <div class='nodedata'>
-     <div class='panel-group'>
-      <div class='panel panel-default'>
-       <div class='panel-heading'>
-        <h4 class='panel-title'>
-         <span>
-          <span style='margin-left: 30px;'>" . $plugin_name ."&#160;&#160;&#160;<font color=\"red\">".$mandatory."</font>
-          </span>
-        </span>
-        <span class='pull-right'>
-          <span class=\"" . $badge_collors[$value["left"]["riskLevel"]] . '">' . $risk_factor . "
-          </span>
-          <a style=\"color:black\" data-toggle='collapse' href='#" . $reportId . "' class='' aria-expanded='true'> &#160;Extend  &#160;<span style=\"color:black\" class=\"glyphicon glyphicon-menu-hamburger\"></span> </a>
-        </span>
-
-      </h4>
-    </div>
-
-
-    <div id='" . $reportId . "' class='panel-collapse collapse ' aria-expanded='false'>
-      <ul class='list-group'>
-       <li class='list-group-item'>
-        <input type='checkbox' style='display:none;' name='result[0][description]' value=\"" . $description . '" /><strong>Description: </strong> ' . $description . " </li>
-        <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][fixInformation]' value=\"" . $fixInformation . '" /><strong>
-         Information:&#160;  </strong>' . $fixInformation . "<br />  </li>
-
-         <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][cve]' value=\"" . $cve_strings . '" /><strong>CVE:&#160;</strong>' . $cve_strings . '
-         </li>
-       </ul>
-     </div>
-   </div>
- </div>
-</div>';
+  include 'html_templates/acunetix_report_line_final_template.php';
 
 $HTMLAcunetixContent = $HTMLAcunetixContent.$html;
 $AcunetixTextContent = $AcunetixTextContent.$text;
@@ -389,7 +313,15 @@ return $HTMLAcunetixContent;
 }
 
 
-
+/**
+ * 
+ * @param  DOMDocument $htmlDocument handle to the 
+ *                                   parsed html DOM structure
+ * @param  DOMElement $divElement   container div element
+ * @param  array $global_array global data
+ * @param  string $filename     output text file name
+ * @return string               html content for the combined files report
+ */
 function buildCombinedHTMLString($htmlDocument, $divElement, $global_array, $filename)
 {
 
@@ -403,13 +335,13 @@ function buildCombinedHTMLString($htmlDocument, $divElement, $global_array, $fil
   $text = '';
   $CombinedTextContent = '';
 
-  //echo json_encode($combined);
+
 
   foreach ($combined as $key => $value) 
   {
     if ($value["left"]["checked"] == "checked" || $value["right"]["checked"] == "checked") 
     {   
-            //display element with the current checkbox checked
+      //display element with the current checkbox checked
       $report                       = $global_array['combined'];
       $report_with_risk_priority    = $report[$risk_priorities[$value["left"]["riskLevel"]]];
       $element_from_specific_report = $report_with_risk_priority[$value["left"]["positionInRiskVector"] - 1];
@@ -488,43 +420,7 @@ function buildCombinedHTMLString($htmlDocument, $divElement, $global_array, $fil
 	$text = $text. "Exploit: ".$exploit."\n";
 	$text = $text. "CVE: ".$cve_strings."\n\n";
 
-
-    $html = "
-    <div class='nodedata'>
-     <div class='panel-group'>
-      <div class='panel panel-default'>
-       <div class='panel-heading'>
-        <h4 class='panel-title'>
-         <span>
-         <span style='margin-left: 30px;'>" . $plugin_name . "&#160;&#160;&#160;<font color=\"red\">".$mandatory."</font>
-          </span>
-        </span>
-        <span class='pull-right'>
-          <span class=\"" . $badge_collors[$value["left"]["riskLevel"]] . '">' . $risk_factor . "
-          </span>
-          <a style=\"color:black\" data-toggle='collapse' href='#" . $reportId . "' class='' aria-expanded='true'> &#160;Extend  &#160;<span style=\"color:black\" class=\"glyphicon glyphicon-menu-hamburger\"></span> </a>
-        </span>
-
-      </h4>
-    </div>
-
-
-    <div id='" . $reportId . "' class='panel-collapse collapse ' aria-expanded='false'>
-      <ul class='list-group'>
-       <li class='list-group-item'>
-        <input type='checkbox' style='display:none;' name='result[0][description]' value=\"" . $description . '" /><strong>Description: </strong> ' . $description . " </li>
-        <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][fixInformation]' value=\"" . $fixInformation . '" /><strong>
-         Fix Information:&#160;  </strong>' . $fixInformation . "<br />  </li>
-         <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][cve]' value=\"" .$exploit.'" /><strong>Exploit: &#160;</strong>'.$exploit."
-         </li>
-
-         <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][cve]' value=\"" . $cve_strings . '" /><strong>CVE:&#160;</strong>' . $cve_strings . '
-         </li>
-       </ul>
-     </div>
-   </div>
- </div>
-</div>';
+  include 'html_templates/combined_report_line_final_template.php';
 
 $HTMLCombinedContent = $HTMLCombinedContent.$html;
 $CombinedTextContent = $CombinedTextContent.$text;
