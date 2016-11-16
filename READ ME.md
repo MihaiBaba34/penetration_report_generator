@@ -14,8 +14,7 @@ GENERAL USAGE NOTES
 -Left checkboxes are for selecting items that will be present in final report, those from
  the right side are for making a issue mandatory to fix.
 
--Reports are divided in Web Application Vulnerabilities (Acunetix XML) 
- and Infrastructure Vulnerabilities (Nessus and Retina XML)
+-Reports are divided in Web Application Vulnerabilities (Acunetix XML) and Infrastructure Vulnerabilities (Nessus and Retina XML)
 ----------------------------------------------------------------------------------------------------------
 
 INSTALLING 
