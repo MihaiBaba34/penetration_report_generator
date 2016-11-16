@@ -17,9 +17,7 @@ GENERAL USAGE NOTES
 
 INSTALLING 
 ----------------------------------------------------------------------------------------------------------
--Please set:  post_Max_size 20M
-	      upload_Max_filesize 10 M
-	      Max_input_vars = 5000
+-Please set: Max_input_vars = 5000
  in php.ini to avoid problems with parsing large files
 
 -the application was developed and tested in SCOTCH BOX 2.5 under Vagrant
