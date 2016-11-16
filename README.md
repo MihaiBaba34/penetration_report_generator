@@ -9,8 +9,11 @@ GENERAL USAGE NOTES
 	Retina XML
 
 -It has one HTML and one TXT file as output with unique reports from input XML files
+
 -The reports from the output are sorted by risk from highest to lowest and by alphabet inside one risk group
+
 -Left checkboxes are for selecting items that will be present in final report, those from the right side are for making a issue mandatory to fix
+
 -Reports are divided in Web Application Vulnerabilities (Acunetix XML) and Infrastructure Vulnerabilities (Nessus and Retina XML)
 
 INSTALLING 
