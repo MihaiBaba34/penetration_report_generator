@@ -1,199 +1,635 @@
-High: 4 || Medium: 4 || Low: 7 || Information: 1 || Total risks: 16 ||
+Critical: 3 || High: 11 || Medium: 40 || Low: 8 || Information: 55 || Total risks: 117 ||
 
-Plugin name: Cross site scripting (verified) 
+Plugin name: PHP 5.3.x &lt; 5.3.15 Multiple Vulnerabilities[--MANDATORY--]
+Risk factor: Critical
+Description: According to its banner, the version of PHP installed on the remote host is 5.3.x earlier than 5.3.15, and is, therefore, potentially affected by the following vulnerabilities : 
+
+  - An unspecified overflow vulnerability exists in the     function '_php_stream_scandir' in the file     'main/streams/streams.c'. (CVE-2012-2688)
+
+  - An unspecified error exists that can allow the     'open_basedir' constraint to be bypassed.
+    (CVE-2012-3365)
+Fix Information: Upgrade to PHP version 5.3.15 or later.
+Exploit: Exploits are available
+CVE:  CVE-2012-2688 CVE-2012-3365
+
+Plugin name: PHP Unsupported Version Detection[--MANDATORY--]
+Risk factor: Critical
+Description: According to its version, the installation of PHP on the remote host is no longer supported.
+
+Lack of support implies that no new security patches for the product will be released by the vendor. As a result, it is likely to contain security vulnerabilities.
+Fix Information: Upgrade to a version of PHP that is currently supported.
+Exploit: ---
+CVE: None
+
+Plugin name: Unsupported Unix Operating System[--MANDATORY--]
+Risk factor: Critical
+Description: According to its self-reported version number, the Unix operating system running on the remote host is no longer supported.
+
+Lack of support implies that no new security patches for the product will be released by the vendor. As a result, it is likely to contain security vulnerabilities.
+Fix Information: Upgrade to a version of the Unix operating system that is currently supported.
+Exploit: ---
+CVE: None
+
+Plugin name: OpenSSL DROWN Vulnerability Detected[--MANDATORY--]
 Risk factor: High
-Description: This script is possibly vulnerable to Cross Site Scripting (XSS) attacks.
-Cross site scripting (also referred to as XSS) is a vulnerability that allows an attacker to send malicious code (usually in the form of Javascript) to another user.
-Because a browser cannot know if the script should be trusted or not, it will execute the script in the user context allowing the attacker to access any cookies or session tokens retained by the browser.
-Fix Information: Malicious users may inject JavaScript, VBScript, ActiveX, HTML or Flash into a vulnerable application to fool a user in order to gather data from them.
-An attacker can steal the session cookie and take over the account, impersonating the user.
-It is also possible to modify the content of the page presented to the user.
-CVE: CWE-79
-
-Plugin name: nginx SPDY heap buffer overflow 
-Risk factor: High
-Description: A heap-based buffer overflow in the SPDY implementation in nginx 1.3.15 before 1.4.7 and 1.5.x before 1.5.12 allows remote attackers to execute arbitrary code via a crafted request. The problem affects nginx compiled with the ngx_http_spdy_module module (which is not compiled by default) and without --with-debug configure option, if the &quot;spdy&quot; option of the &quot;listen&quot; directive is used in a configuration file.
-Fix Information: An attacker can cause a heap memory buffer overflow in a worker process by using a specially crafted request, potentially
-resulting in arbitrary code execution 
-CVE: CWE-122
-
-Plugin name: Weak password 
-Risk factor: High
-Description: This page is using a weak password. Acunetix WVS was able to guess the credentials required to access this page. A weak password is short, common, a system default, or something that could be rapidly guessed by executing a brute force attack using a subset of all possible passwords, such as words in the dictionary, proper names, words based on the user name or common variations on these themes.
-Fix Information: An attacker may access the contents of the password-protected page.
-CVE: CWE-200
-
-Plugin name: XML external entity injection 
-Risk factor: High
-Description: XML supports a facility known as &quot;external entities&quot;, which instruct an XML processor to retrieve and perform an inline include of XML located at a particular  URI. An external XML entity can be used to append or modify the document type declaration (DTD) associated with an XML document.  An  external XML entity can also be used to include XML within the  content of an XML document. Now assume that the XML processor parses data originating from a source under attacker control. Most of the time the processor will not be validating, but it MAY include the replacement text thus initiating an unexpected file open operation, or HTTP transfer, or whatever system ids the XML
- processor knows how to access. below is a sample XML document that will use this functionality to include the contents of a local file (/etc/passwd)
-
-&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-&lt;!DOCTYPE acunetix [
-  &lt;!ENTITY acunetixent SYSTEM &quot;file:///etc/passwd&quot;&gt;
-]&gt;
-&lt;xxx&gt;&amp;acunetixent;&lt;/xxx&gt;
-
-Fix Information: Attacks can include disclosing local files, which may contain sensitive data such as passwords or private user data, using file: schemes or relative paths in the system identifier. Since the attack occurs relative to the application processing the XML document, an attacker may use this trusted application to pivot to other internal systems, possibly disclosing other internal content via http(s) requests.
-CVE: CWE-611
-
-Plugin name: Basic authentication over HTTP[--MANDATORY--] 
-Risk factor: Medium
-Description: In the context of an HTTP transaction, basic access authentication is a method for an HTTP user agent to provide a user name and password when making a request. 
-
-This directory is protected using Basic Authentication over an HTTP connection. With Basic Authentication the user credentials are sent as cleartext and because HTTPS is not used, they are vulnerable to packet sniffing.
-Fix Information: User credentials are sent as cleartext and are vulnerable to packet sniffing.
-CVE: CWE-16
-
-Plugin name: HTML form without CSRF protection[--MANDATORY--] 
-Risk factor: Medium
-Description:  This alert may be a false positive, manual confirmation is required.
-Cross-site request forgery, also known as a one-click attack or session riding and abbreviated as CSRF or XSRF, is a type of malicious exploit of a website whereby unauthorized commands are transmitted from a user that the website trusts.
-
-Acunetix WVS found a HTML form with no apparent CSRF protection implemented. Consult details for more information about the affected HTML form.
-Fix Information: An attacker may force the users of a web application to execute actions of the attacker''s choosing. A successful CSRF exploit can compromise end user data and operation in case of normal user. If the targeted end user is the administrator account, this can compromise the entire web application.
-CVE: CWE-352
-
-Plugin name: User credentials are sent in clear text[--MANDATORY--] 
-Risk factor: Medium
-Description: User credentials are transmitted over an unencrypted channel. This information should always be transferred via an encrypted channel (HTTPS) to avoid being intercepted by malicious users.
-Fix Information: A third party may be able to read the user credentials by intercepting an unencrypted HTTP connection.
-CVE: CWE-310
-
-Plugin name: Vulnerable Javascript library[--MANDATORY--] 
-Risk factor: Medium
-Description: You are using a vulnerable Javascript library. One or more vulnerabilities were reported for this version of the Javascript library. Consult Attack details and Web References for more information about the affected library and the vulnerabilities that were reported.
-Fix Information: Consult Web References for more information.
-CVE: CWE-16
-
-Plugin name: Clickjacking: X-Frame-Options header missing 
-Risk factor: Low
-Description: Clickjacking (User Interface redress attack, UI redress attack, UI redressing) is a malicious technique of tricking a Web user into clicking on something different from what the user perceives they are clicking on, thus potentially revealing confidential information or taking control of their computer while clicking on seemingly innocuous web pages. 
-The server didn't return an X-Frame-Options header which means that this website could be at risk of a clickjacking attack. The X-Frame-Options HTTP response header can be used to indicate whether or not a browser should be allowed to render a page inside a frame or iframe. Sites can use this to avoid clickjacking attacks, by ensuring that their content is not embedded into other sites.
-
-Fix Information: The impact depends on the affected web application. 
-CVE: CWE-693
-
-Plugin name: Cookie(s) without HttpOnly flag set 
-Risk factor: Low
-Description: This cookie does not have the HTTPOnly flag set. When a cookie is set with the HTTPOnly flag, it instructs the browser that the cookie can only be accessed by the server and not by client-side scripts. This is an important security protection for session cookies.
-Fix Information: None
-CVE: CWE-16
-
-Plugin name: Insecure response with wildcard '*' in Access-Control-Allow-Origin 
-Risk factor: Low
-Description: Cross-origin resource sharing (CORS) is a mechanism that allows restricted resources (e.g. fonts) on a web page to be requested from another domain outside the domain from which the resource originated. The Access-Control-Allow-Origin header indicates whether a resource can be shared based by returning the value of the Origin request header, &quot;*&quot;, or &quot;null&quot; in the response. 
-If a website responds with Access-Control-Allow-Origin: * the requested resource allows sharing with every origin. Therefore, any website can make XHR (XMLHTTPRequest) requests to your site and access the responses. It's not recommended to use the Access-Control-Allow-Origin: * header.
-Fix Information: Any website can make XHR requests to your site and access the responses.
-CVE: CWE-16
-
-Plugin name: Login page password-guessing attack 
-Risk factor: Low
-Description: A common threat web developers face is a password-guessing attack known as a brute force attack. A brute-force attack is an attempt to discover a password by systematically trying every possible combination of letters, numbers, and symbols until you discover the one correct combination that works. 
-
-This login page doesn't have any protection against password-guessing attacks (brute force attacks). It's recommended to implement some type of account lockout after a defined number of incorrect password attempts. Consult Web references for more information about fixing this problem.
-Fix Information: An attacker may attempt to discover a weak password by systematically trying every possible combination of letters, numbers, and symbols until it discovers the one correct combination that works.
-CVE: CWE-307
-
-Plugin name: OPTIONS method is enabled 
-Risk factor: Low
-Description: HTTP OPTIONS method is enabled on this web server. The OPTIONS method provides a list of the methods that are supported by the web server, it represents a request for information about the communication options available on the request/response chain identified by the Request-URI.
-Fix Information: The OPTIONS method may expose sensitive information that may help an malicious user to prepare more advanced attacks.
-CVE: CWE-200
-
-Plugin name: Possible sensitive directories 
-Risk factor: Low
-Description: A possible sensitive directory has been found. This directory is not directly linked from the website.This check looks for common sensitive resources like backup directories, database dumps, administration pages, temporary directories. Each one of these directories could help an attacker to learn more about his target.
-Fix Information: This directory may expose sensitive information that could help a malicious user to prepare more advanced attacks.
-CVE: CWE-200
-
-Plugin name: Possible virtual host found 
-Risk factor: Low
-Description: Virtual hosting is a method for hosting multiple domain names (with separate handling of each name) on a single server (or pool of servers). This allows one server to share its resources, such as memory and processor cycles, without requiring all services provided to use the same host name. 
-This web server is responding differently when the Host header is manipulated and various common virtual hosts are tested. This could indicate there is a Virtual Host present.
-Fix Information: Possible sensitive information disclosure.
-CVE: CWE-200
-
-Plugin name: Password type input with auto-complete enabled 
-Risk factor: Informational
-Description: When a new name and password is entered in a form and the form is submitted, the browser asks if the password should be saved.Thereafter when the form is displayed, the name and password are filled in automatically or are completed as the name is entered. An attacker with local access could obtain the cleartext password from the browser cache.
-Fix Information: Possible sensitive information disclosure.
-CVE: CWE-200
-
-
-Critical: 0 || High: 4 || Medium: 2 || Low: 3 || Information: 16 || Total risks: 25 ||
-
-Plugin name: Samba 3.0.0 &lt; 4.3.3 Multiple Vulnerabilities[--MANDATORY--]
-Risk factor: High
-Description: Samba contains multiple vulnerabilities that can allow remote attackers to launch a denial of service attack, access files, mount a man-in-the-middle attack, and read memory. Note - this is a remote, unauthenticated check and may produce false positives.
-Fix Information: Update to Samba version 4.3.3 or later.
+Description: Retina has detected that the targeted service accepts connections for SSLv2 which can allow remote attackers to perform a “Decrypting RSA with Obsolete and Weakened eNcryption” (DROWN) attack.
+Fix Information: Disable SSLv2 support on the affected target.
 Exploit: No
-CVE: CVE-2015-5299,CVE-2015-3223,CVE-2015-5296,CVE-2015-8467,CVE-2015-5252,CVE-2015-7540,CVE-2015-5330
+CVE: CVE-2016-0703,CVE-2016-0800,CVE-2016-0798,CVE-2016-0797,CVE-2016-0704,CVE-2016-0705,CVE-2016-0702,CVE-2016-0799
 
-Plugin name: Samba Multiple Vulnerabilities (20120410)[--MANDATORY--]
+Plugin name: PHP 5.3.x &lt; 5.3.13 CGI Query String Code Execution[--MANDATORY--]
 Risk factor: High
-Description: Samba contains a vulnerability when handling crafted RPC calls.  Successful exploitation could allow unauthenticated attackers to remotely execute arbitrary code as root.
-Fix Information: Upgrade Samba to version 3.6.4, 3.5.14, 3.4.16, or newer.
-Exploit: Yes
-CVE: CVE-2012-1182
+Description: According to its banner, the version of PHP installed on the remote host is 5.3.x earlier than 5.3.13 and, as such, is potentially affected by a remote code execution and information disclosure vulnerability.
 
-Plugin name: Samba Multiple Vulnerabilities (20131213) - Remote[--MANDATORY--]
+The fix for CVE-2012-1823 does not completely correct the CGI query vulnerability. Disclosure of PHP source code and code execution via query parameters are still possible.
+
+Note that this vulnerability is exploitable only when PHP is used in CGI-based configurations.  Apache with 'mod_php' is not an exploitable configuration.
+Fix Information: Upgrade to PHP version 5.3.13 or later.  A 'mod_rewrite' workaround is available as well.
+Exploit: Exploits are available
+CVE:  CVE-2012-1823
+
+Plugin name: PHP 5.3.x &lt; 5.3.14 Multiple Vulnerabilities[--MANDATORY--]
 Risk factor: High
-Description: Samba contains multiple vulnerabilities including: a bypass vulnerability within 'winbind_name_list_to_sid_string_list()' which may be exploited by a remote attacker to access configuration files, a buffer overflow within 'dcerpc_read_ncacn_packet_done' which may be exploited via a crafted fragment length to possibly execute arbitrary code. Note - this is a remote, unauthenticated check and may cause false positives.
-Fix Information: Update Samba to versions 4.1.3, 4.0.13, 3.6.22, or newer.
-Exploit: No
-CVE: CVE-2013-4408,CVE-2012-6150
+Description: According to its banner, the version of PHP installed on the remote host is 5.3.x earlier than 5.3.14, and is, therefore, potentially affected the following vulnerabilities :
 
-Plugin name: Samba SID Parsing Buffer Overflow[--MANDATORY--]
+  - An integer overflow error exists in the function     'phar_parse_tarfile' in the file 'ext/phar/tar.c'. This     error can lead to a heap-based buffer overflow when     handling a maliciously crafted TAR file. Arbitrary code     execution is possible due to this error. (CVE-2012-2386)
+
+  - A weakness exists in the 'crypt' function related to     the DES implementation that can allow brute-force     attacks. (CVE-2012-2143)
+
+  - Several design errors involving the incorrect parsing     of PHP PDO prepared statements could lead to disclosure     of sensitive information or denial of service.
+    (CVE-2012-3450)
+
+  - A variable initialization error exists in the file     'ext/openssl/openssl.c' that can allow process memory     contents to be disclosed when input data is of length     zero. (CVE-2012-6113)
+Fix Information: Upgrade to PHP version 5.3.14 or later.
+Exploit: Exploits are available
+CVE:  CVE-2012-2386 CVE-2012-2143 CVE-2012-3450 CVE-2012-6113
+
+Plugin name: PHP 5.3.x &lt; 5.3.26 Multiple Vulnerabilities[--MANDATORY--]
 Risk factor: High
-Description: Samba contains a stack-based buffer overflow when parsing crafted, client-supplied file share SIDs.  Successful exploitation could allow execution of arbitrary code or could cause a denial of service.Note: This audit may report false findings on systems running backported versions of Samba.
-Fix Information: Upgrade Samba to version 3.5.5, 3.4.9, 3.3.14, or newer; or install updated packages from appropriate vendor.
-Exploit: No
-CVE: CVE-2010-3069
+Description: According to its banner, the version of PHP 5.3.x installed on the remote host is prior to 5.3.26.  It is, therefore, potentially affected by the following vulnerabilities:
 
-Plugin name: Samba FD_SET Stack Corruption Denial of Service[--MANDATORY--]
-Risk factor: Medium
-Description: Samba contains a vulnerability in the FD_SET macro when handling file descriptors.  Attackers that are able to establish a connection to a file share could exploit this vulnerability to corrupt stack memory and thus cause a denial of service condition.
-Fix Information: Upgrade Samba to version 3.3.15, 3.4.12, 3.5.7, or newer; or install updated packages from appropriate vendor.
-Exploit: No
-CVE: CVE-2011-0719
+  - An error exists in the function 'php_quot_print_encode'     in the file 'ext/standard/quot_print.c' that could allow     a heap-based buffer overflow when attempting to parse     certain strings (Bug #64879)
 
-Plugin name: Samba Remote Security Bypass (20120430)[--MANDATORY--]
-Risk factor: Medium
-Description: Samba contains a vulnerability when handling certain LSA RPC procedures (i.e. CreateAccount, OpenAccount, AddAccountRights, and RemoveAccountRights).  Successful exploitation could allow authenticated attackers to grant themselves the 'take ownership' privilege on arbitrary files and directories.
-Fix Information: Upgrade Samba to version 3.6.5, 3.5.15, 3.4.17, or newer.
-Exploit: No
-CVE: CVE-2012-2111
+  - An integer overflow error exists related to the value     of 'JEWISH_SDN_MAX' in the file 'ext/calendar/jewish.c'     that could allow denial of service attacks. (Bug #64895)
 
-Plugin name: Apache Default Page Detected
-Risk factor: Low
-Description: Retina has detected the default Apache page in the webroot of the server.  This may be an indication of a misconfigured web server.
-Fix Information: This is an informational check.
+Note that this plugin does not attempt to exploit these vulnerabilities, but instead relies only on PHP's self-reported version number.
+Fix Information: Apply the vendor patch or upgrade to PHP version 5.3.26 or later.
+Exploit: No known exploits are available
+CVE: None
+
+Plugin name: PHP 5.3.x &lt; 5.3.27 Multiple Vulnerabilities[--MANDATORY--]
+Risk factor: High
+Description: According to its banner, the version of PHP 5.3.x installed on the remote host is prior to 5.3.27.  It is, therefore, potentially affected by the following vulnerabilities:
+
+ - A buffer overflow error exists in the function    '_pdo_pgsql_error'. (Bug #64949)
+
+ - A heap corruption error exists in numerous functions    in the file 'ext/xml/xml.c'. (CVE-2013-4113 / Bug #65236)
+
+Note that this plugin does not attempt to exploit these vulnerabilities, but instead relies only on PHP's self-reported version number.
+Fix Information: Apply the vendor patch or upgrade to PHP version 5.3.27 or later.
+Exploit: Exploits are available
+CVE:  CVE-2013-4113
+
+Plugin name: PHP 5.3.x &lt; 5.3.29 Multiple Vulnerabilities[--MANDATORY--]
+Risk factor: High
+Description: According to its banner, the version of PHP installed on the remote host is 5.3.x prior to 5.3.29. It is, therefore, affected by the following vulnerabilities :
+
+  - A heap-based buffer overflow error exists in the file     'ext/date/lib/parse_iso_intervals.c' related to handling     DateInterval objects that allows denial of service     attacks. (CVE-2013-6712)
+
+  - A boundary checking error exists related to the Fileinfo     extension, Composite Document Format (CDF) handling, and     the function 'cdf_read_short_sector'. (CVE-2014-0207)
+
+  - A flaw exists with the 'cdf_unpack_summary_info()'     function within 'src/cdf.c' where multiple file_printf     calls occur when handling specially crafted CDF files.
+    This could allow a context dependent attacker to crash     the web application using PHP. (CVE-2014-0237)
+
+  - A flaw exists with the 'cdf_read_property_info()'     function within 'src/cdf.c' where an infinite loop     occurs when handling specially crafted CDF files. This     could allow a context dependent attacker to crash the     web application using PHP. (CVE-2014-0238)
+
+  - A type-confusion error exists related to the Standard     PHP Library (SPL) extension and the function     'unserialize'. (CVE-2014-3515)
+
+  - An error exists related to configuration scripts and     temporary file handling that could allow insecure file     usage. (CVE-2014-3981)
+
+  - A heap-based buffer overflow error exists related to the     function 'dns_get_record' that could allow execution of     arbitrary code. (CVE-2014-4049)
+
+  - An out-of-bounds read exists in printf. (Bug #67249)
+
+Note that Nessus has not attempted to exploit these issues, but has instead relied only on the application's self-reported version number.
+
+Additionally, note that version 5.3.29 marks the end of support for the PHP 5.3.x branch.
+Fix Information: Upgrade to PHP version 5.3.29 or later.
+Exploit: No known exploits are available
+CVE:  CVE-2013-6712 CVE-2014-0207 CVE-2014-0237 CVE-2014-0238 CVE-2014-3515 CVE-2014-3981 CVE-2014-4049
+
+Plugin name: PHP &lt; 5.3.11 Multiple Vulnerabilities[--MANDATORY--]
+Risk factor: High
+Description: According to its banner, the version of PHP installed on the remote host is earlier than 5.3.11, and as such is potentially affected by multiple vulnerabilities :
+
+ - During the import of environment variables, temporary    changes to the 'magic_quotes_gpc' directive are not    handled properly. This can lower the difficulty for    SQL injection attacks. (CVE-2012-0831)
+
+ - The '$_FILES' variable can be corrupted because the    names of uploaded files are not properly validated.
+   (CVE-2012-1172)
+
+ - The 'open_basedir' directive is not properly handled by    the functions 'readline_write_history' and    'readline_read_history'.
+
+  - The 'header()' function does not detect multi-line     headers with a CR. (Bug #60227 / CVE-2011-1398)
+Fix Information: Upgrade to PHP version 5.3.11 or later.
+Exploit: Exploits are available
+CVE:  CVE-2012-0831 CVE-2012-1172 CVE-2011-1398
+
+Plugin name: PHP &lt; 5.3.12 / 5.4.2 CGI Query String Code Execution[--MANDATORY--]
+Risk factor: High
+Description: According to its banner, the version of PHP installed on the remote host is earlier than 5.3.12 / 5.4.2, and as such is potentially affected by a remote code execution and information disclosure vulnerability. 
+
+An error in the file 'sapi/cgi/cgi_main.c' can allow a remote attacker to obtain PHP source code from the web server or to potentially execute arbitrary code.  In vulnerable configurations, PHP treats certain query string parameters as command line arguments including switches such as '-s', '-d', and '-c'. 
+
+Note that this vulnerability is exploitable only when PHP is used in CGI-based configurations.  Apache with 'mod_php' is not an exploitable configuration.
+Fix Information: Upgrade to PHP version 5.3.12 / 5.4.2 or later.  A 'mod_rewrite' workaround is available as well.
+Exploit: Exploits are available
+CVE: None
+
+Plugin name: PHP Multiple Vulnerabilities (20140724)[--MANDATORY--]
+Risk factor: High
+Description: PHP version prior to 5.5.15 have multiple vulnerabilities that can be found on their change log.
+Fix Information: Upgrade to PHP version 5.5.15
+Exploit: No
+CVE: CVE-2014-4670,CVE-2014-4698
+
+Plugin name: PHP Multiple Vulnerabilities (20140814)[--MANDATORY--]
+Risk factor: High
+Description: PHP version prior to 5.3.29, 5.4.32 and 5.5.16 have multiple vulnerabilities that can be found on their change log.
+Fix Information: Upgrade to PHP version 5.3.29, 5.4.32, 5.5.16.
+Exploit: No
+CVE: CVE-2014-0238,CVE-2014-3597,CVE-2014-3587,CVE-2014-0207,CVE-2014-2497,CVE-2013-6712,CVE-2014-3515,CVE-2014-4670,CVE-2014-5120,CVE-2014-4049,CVE-2014-4698,CVE-2014-0237,CVE-2014-3981
+
+Plugin name: PHP Multiple Vulnerabilities (20140919)[--MANDATORY--]
+Risk factor: High
+Description: PHP version prior to 5.4.33 and 5.5.17 have multiple vulnerabilities that can be found on their change log.
+Fix Information: Upgrade to PHP version 5.4.33, 5.5.17.
 Exploit: No
 CVE: None
 
-Plugin name: Password History
-Risk factor: Low
-Description: Password History is the number of passwords Windows NT will remember so that users cannot use the same password twice. It is recommended that you set the history length to 24.  Note: Linux/Unix based systems running Samba are also affected by this notification.
-Fix Information: For Windows:
-Set the Password History to 24 or appropriate value:
-Open the Group Policy Editor.
-Within Computer Configuration policy, navigate to Windows Settings &gt; Security Settings &gt; Account Policies &gt; Password Policy.
-Double-click on the setting named 'Enforce password history' to edit the Properties.
-Enter the amount of passwords to be remembered (Recommended 24 or greater).
-
-For Samba:
-Samba implementations vary depending on operating system.  However, a generalized guide on configuring Samba can be found at:
-http://dp.samba.org/samba/docs/man/Samba-HOWTO-Collection/
+Plugin name: FreeBSD: nginx &lt; 1.10.1 DoS[--MANDATORY--]
+Risk factor: Medium
+Description: A problem was identified in nginx code responsible for saving client request body to a temporary file. A specially crafted request might result in worker process crash while writing client request body to a temporary file.
+Fix Information: Update to version 1.11.1 or 1.10.1
 Exploit: No
-CVE: CVE-1999-0535
+CVE: CVE-2016-4450
 
-Plugin name: VSFTP Denial of Service
+Plugin name: Insecure FTP Communication Detected[--MANDATORY--]
+Risk factor: Medium
+Description: This FTP server does not support 'AUTH TLS'. Applications that don't encrypt network communications are at risk of exposing information to attackers. An attacker might be able to gain access to clear-text data during transmission, potentially revealing authentication credentials, credit card information, and other sensitive data.
+Fix Information: Encrypt all communications, especially those that transmit sensitive data.
+Exploit: No
+CVE: None
+
+Plugin name: nginx SSL session cache error[--MANDATORY--]
+Risk factor: Medium
+Description: It is possible to reuse cached SSL sessions in nginux in unrelated contexts. An attacker in a privileged network position can use this to cause confusion for the system.
+Fix Information: Upgrade to nginx 1.6.2, 1.7.5 or later.
+Exploit: No
+CVE: CVE-2014-3616
+
+Plugin name: nginx URI Verification Bypass Vulnerability (20131120) - Remote[--MANDATORY--]
+Risk factor: Medium
+Description: nginx does not properly verify request URIs containing unescaped space characters.  Successful exploitation may result in information leakage.
+Fix Information: Upgrade to nginx 1.4.4, 1.5.7, or later.
+Exploit: No
+CVE: CVE-2013-4547
+
+Plugin name: PHP 5.3.x &lt; 5.3.22 Multiple Vulnerabilities[--MANDATORY--]
+Risk factor: Medium
+Description: According to its banner, the version of PHP 5.3.x installed on the remote host is prior to 5.3.22.  It is, therefore, potentially affected by the following vulnerabilities :
+
+  - An error exists in the file 'ext/soap/soap.c'     related to the 'soap.wsdl_cache_dir' configuration     directive and writing cache files that could allow     remote 'wsdl' files to be written to arbitrary     locations. (CVE-2013-1635)
+
+  - An error exists in the file 'ext/soap/php_xml.c'     related to parsing SOAP 'wsdl' files and external     entities that could cause PHP to parse remote XML     documents defined by an attacker. This could allow     access to arbitrary files. (CVE-2013-1643)
+
+Note that this plugin does not attempt to exploit the vulnerabilities but, instead relies only on PHP's self-reported version number.
+Fix Information: Upgrade to PHP version 5.3.22 or later.
+Exploit: Exploits are available
+CVE:  CVE-2013-1635 CVE-2013-1643
+
+Plugin name: PHP 5.3.x &lt; 5.3.23 Information Disclosure[--MANDATORY--]
+Risk factor: Medium
+Description: According to its banner, the version of PHP 5.3.x installed on the remote host is prior to 5.3.23.  It is, therefore, potentially affected by an information disclosure vulnerability. 
+
+The fix for CVE-2013-1643 was incomplete and an error still exists in the files 'ext/soap/php_xml.c' and 'ext/libxml/libxml.c' related to handling external entities.  This error could cause PHP to parse remote XML documents defined by an attacker and could allow access to arbitrary files. 
+
+Note that this plugin does not attempt to exploit the vulnerability, but instead relies only on PHP's self-reported version number.
+Fix Information: Upgrade to PHP version 5.3.23 or later.
+Exploit: Exploits are available
+CVE:  CVE-2013-1643
+
+Plugin name: PHP 5.3.x &lt; 5.3.28 Multiple OpenSSL Vulnerabilities[--MANDATORY--]
+Risk factor: Medium
+Description: According to its banner, the version of PHP installed on the remote host is 5.3.x prior to 5.3.28.  It is, therefore, potentially affected by the following vulnerabilities :
+
+  - A flaw exists in the PHP OpenSSL extension's hostname     identity check when handling certificates that contain     hostnames with NULL bytes. An attacker could potentially     exploit this flaw to conduct man-in-the-middle attacks     to spoof SSL servers. Note that to exploit this issue,     an attacker would need to obtain a carefully-crafted     certificate signed by an authority that the client     trusts. (CVE-2013-4073)
+
+  - A memory corruption flaw exists in the way the     openssl_x509_parse() function of the PHP OpenSSL     extension parsed X.509 certificates. A remote attacker     could use this flaw to provide a malicious, self-signed     certificate or a certificate signed by a trusted     authority to a PHP application using the aforementioned     function. This could cause the application to crash or     possibly allow the attacker to execute arbitrary code     with the privileges of the user running the PHP     interpreter. (CVE-2013-6420)
+
+Note that this plugin does not attempt to exploit these vulnerabilities, but instead relies only on PHP's self-reported version number.
+Fix Information: Upgrade to PHP version 5.3.28 or later.
+Exploit: Exploits are available
+CVE:  CVE-2013-4073 CVE-2013-6420
+
+Plugin name: PHP &lt; 5.5.12 / 5.4.28 privilege escalation[--MANDATORY--]
+Risk factor: Medium
+Description: PHP contains a vulnerability within its default configuration which can lead to privilege escalation.
+Fix Information: Update to PHP version 5.5.12, 5.4.28 or later.
+Exploit: No
+CVE: CVE-2014-0185
+
+Plugin name: PHP Buffer Overflow Vulnerability (20130606) - Remote[--MANDATORY--]
+Risk factor: Medium
+Description: PHP before 5.4.16 and 5.3.26 contains a heap-based buffer overflow in the 'php_quot_print_encode()' function when parsing passed strings. Successful exploitation may result in execution of arbitrary code or a denial of service condition.
+Fix Information: Upgrade to PHP 5.4.16, 5.3.26 or newer.
+Exploit: No
+CVE: CVE-2013-2110
+
+Plugin name: PHP Multiple Vulnerabilities (20120723) - Banner[--MANDATORY--]
+Risk factor: Medium
+Description: PHP contains a vulnerability when processing arguments to open_basedir in its SQLite module. Successful exploitation may result in a security bypass of the safe mode open_basedir protection setting.
+Fix Information: Update PHP to version 5.3.15, 5.4.5 or newer.
+Exploit: No
+CVE: CVE-2012-2688,CVE-2012-3365
+
+Plugin name: PHP Multiple Vulnerabilities (20130221) - Banner[--MANDATORY--]
+Risk factor: Medium
+Description: PHP contains multiple vulnerabilities when validating the relationship between the soap.wsdl_cache_dir directive and the oopen_basedir directive, and when handling crafted SOAP WSDL files containing an XML external entity declaration.  Successful exploitation may allow an attacker to read arbitrary files or privilege escalation.
+Fix Information: Update PHP to version 5.4.13, 5.3.23, or newer.
+Exploit: No
+CVE: CVE-2013-1643,CVE-2013-1635,CVE-2013-1824
+
+Plugin name: PHP Multiple Vulnerabilities (20130819)[--MANDATORY--]
+Risk factor: Medium
+Description: PHP before 5.5.2 contains a session fixation vulnerability and a spoofing vulnerability in the openssl_x509_parse function.  Successful exploitation may result in arbitrary SSL servers spoofing or session hijacking.
+Fix Information: Upgrade to PHP 5.5.2 or later.
+Exploit: No
+CVE: CVE-2013-4248,CVE-2011-4718
+
+Plugin name: PHP Multiple Vulnerabilities (20140214) - Remote[--MANDATORY--]
+Risk factor: Medium
+Description: PHP does not properly check return values, does not properly check data types, contains an integer overflow and signedness errors in the 'gdImageCrop' function, and does not properly restrict access to the libxml RSHUTDOWN function.  Successful exploitation may result in a denial of service condition or information leakage.
+Fix Information: Upgrade to PHP 5.4.25, 5.5.9, or later.
+Exploit: No
+CVE: CVE-2013-7327,CVE-2014-2270,CVE-2013-7226,CVE-2013-7328,CVE-2014-2020,CVE-2014-1943,CVE-2012-1171
+
+Plugin name: PHP Multiple Vulnerabilities (20140529)[--MANDATORY--]
+Risk factor: Medium
+Description: PHP versions 5.5.13, 5.4.29, and prior contain multiple vulnerabilities which can lead to excessive CPU resource consumption via a specially crafted CDF file. Successful exploitation may result in a denial of service condition.
+Fix Information: Update PHP to version 5.5.13, 5.4.29, or newer.
+Exploit: No
+CVE: CVE-2014-0238,CVE-2014-0237
+
+Plugin name: PHP Multiple Vulnerabilities (20140725)[--MANDATORY--]
+Risk factor: Medium
+Description: PHP version prior to 5.4.31 have multiple vulnerabilities that can be found on their change log.
+Fix Information: Upgrade to PHP version 5.4.31
+Exploit: No
+CVE: None
+
+Plugin name: PHP Multiple Vulnerabilities (20141020)[--MANDATORY--]
+Risk factor: Medium
+Description: PHP versions prior to 5.4.34, 5.5.18 and 5.6.2 are prone to buffer overflows and denial of service conditions.
+Fix Information: Upgrade to PHP version 5.4.34, 5.5.18 or 5.6.2.
+Exploit: No
+CVE: CVE-2014-3669,CVE-2014-3668,CVE-2014-3670
+
+Plugin name: PHP PHP_RSHUTDOWN_FUNCTION Security Bypass[--MANDATORY--]
+Risk factor: Medium
+Description: According to its banner, the version of PHP 5.x installed on the remote host is 5.x prior to 5.3.11 or 5.4.x prior to 5.4.1 and thus, is potentially affected by a security bypass vulnerability.
+
+An error exists related to the function 'PHP_RSHUTDOWN_FUNCTION' in the libxml extension and the 'stream_close' method that could allow a remote attacker to bypass 'open_basedir' protections and obtain sensitive information.
+
+Note that this plugin has not attempted to exploit this issue, but has instead relied only on PHP's self-reported version number.
+Fix Information: Upgrade to PHP version 5.3.11 / 5.4.1 or later.
+Exploit: Exploits are available
+CVE: None
+
+Plugin name: PHP XML Parsing Vulnerability (20130712) - Banner[--MANDATORY--]
+Risk factor: Medium
+Description: PHP contains a vulnerability in xml.c when handling a crafted document that's processed by the 'xml_parse_into-struct' function.  Successful exploitation may allow a remote attacker to create denial-of-service conditions or execute arbitrary code via a heap-based buffer overflow.
+Fix Information: Update 5.3.x versions of PHP to 5.3.27 or newer and 5.4.x versions of PHP to 5.4.16 or newer.
+Exploit: No
+CVE: CVE-2013-4113
+
+Plugin name: SSH Weak Algorithms Supported[--MANDATORY--]
+Risk factor: Medium
+Description: Nessus has detected that the remote SSH server is configured to use the Arcfour stream cipher or no cipher at all. RFC 4253 advises against using Arcfour due to an issue with weak keys.
+Fix Information: Contact the vendor or consult product documentation to remove the weak ciphers.
+Exploit: ---
+CVE: None
+
+Plugin name: SSL/TLS EXPORT_RSA [--MANDATORY--]
+Risk factor: Medium
+Description: The remote host supports EXPORT_RSA cipher suites with keys less than or equal to 512 bits. An attacker can factor a 512-bit RSA modulus in a short amount of time.
+
+A man-in-the middle attacker may be able to downgrade the session to use EXPORT_RSA cipher suites (e.g. CVE-2015-0204). Thus, it is recommended to remove support for weak cipher suites.
+Fix Information: Reconfigure the service to remove support for EXPORT_RSA cipher suites.
+Exploit: Exploits are available
+CVE:  CVE-2015-0204
+
+Plugin name: SSL/TLS EXPORT_RSA [--MANDATORY--]
+Risk factor: Medium
+Description: This vulnerability, also known as the FREAK vulnerability, indicates that the remote host supports EXPORT_RSA cipher suites with keys 
+Fix Information: Reconfigure the service to remove support for EXPORT_RSA cipher suites.
+Exploit: No
+CVE: CVE-2015-0204
+
+Plugin name: SSL/TLS RC4 Cipher Suites Supported[--MANDATORY--]
+Risk factor: Medium
+Description: The remote host allows the use of RC4 cipher suites. The RC4 cipher generation of a pseudo-random stream of bytes is flawed to allow small biases into the stream, decreasing its randomness. If plaintext is encrypted over and over and an attacker is able to obtain millions of ciphertexts, the attacker may be able to retrieve the plaintext from the stream.
+Fix Information: If possible, disable the use of RC4 ciphers in the application or its host operating system.
+Exploit: No
+CVE: CVE-2013-2566
+
+Plugin name: SSL Certificate Cannot Be Trusted[--MANDATORY--]
+Risk factor: Medium
+Description: The server's X.509 certificate does not have a signature from a known public certificate authority.  This situation can occur in three different ways, each of which results in a break in the chain below which certificates cannot be trusted. 
+
+First, the top of the certificate chain sent by the server might not be descended from a known public certificate authority.  This can occur either when the top of the chain is an unrecognized, self-signed certificate, or when intermediate certificates are missing that would connect the top of the certificate chain to a known public certificate authority. 
+
+Second, the certificate chain may contain a certificate that is not valid at the time of the scan.  This can occur either when the scan occurs before one of the certificate's 'notBefore' dates, or after one of the certificate's 'notAfter' dates. 
+
+Third, the certificate chain may contain a signature that either didn't match the certificate's information, or could not be verified.  Bad signatures can be fixed by getting the certificate with the bad signature to be re-signed by its issuer.  Signatures that could not be verified are the result of the certificate's issuer using a signing algorithm that Nessus either does not support or does not recognize. 
+
+If the remote host is a public host in production, any break in the chain makes it more difficult for users to verify the authenticity and identity of the web server. This could make it easier to carry out man-in-the-middle attacks against the remote host.
+Fix Information: Purchase or generate a proper certificate for this service.
+Exploit: ---
+CVE: None
+
+Plugin name: SSL Certificate Expires Within One-to-Three Months[--MANDATORY--]
+Risk factor: Medium
+Description: Retina has detected that the targeted SSL service is using a certificate that expires within three months.
+Fix Information: Remove and/or replace the existing certificate with a renewed certificate from a trusted certificate authority.  Ensure that the renewed certificate is used on its proper date of validity (i.e. ValidFrom date).
+Exploit: No
+CVE: None
+
+Plugin name: SSL Certificate Expires Within Six-to-Nine Months[--MANDATORY--]
+Risk factor: Medium
+Description: Retina has detected that the targeted SSL service is using a certificate that expires within Six-to-Nine months.
+Fix Information: Remove and/or replace the existing certificate with a renewed certificate from a trusted certificate authority.  Ensure that the renewed certificate is used on its proper date of validity (i.e. ValidFrom date).
+Exploit: No
+CVE: None
+
+Plugin name: SSL Certificate Expires Within Three-to-Six Months[--MANDATORY--]
+Risk factor: Medium
+Description: Retina has detected that the targeted SSL service is using a certificate that expires within three-to-six months.
+Fix Information: Remove and/or replace the existing certificate with a renewed certificate from a trusted certificate authority.  Ensure that the renewed certificate is used on its proper date of validity (i.e. ValidFrom date).
+Exploit: No
+CVE: None
+
+Plugin name: SSL Certificate Expiry[--MANDATORY--]
+Risk factor: Medium
+Description: This plugin checks expiry dates of certificates associated with SSL- enabled services on the target and reports whether any have already expired.
+Fix Information: Purchase or generate a new SSL certificate to replace the existing one.
+Exploit: ---
+CVE: None
+
+Plugin name: SSL Certificate Invalid Date[--MANDATORY--]
+Risk factor: Medium
+Description: Retina has detected that the targeted SSL service is using a certificate that has reached its expiration date (i.e. ValidTo date) or has not yet reached its date of validity (i.e. ValidFrom date).
+Fix Information: Remove and/or replace the existing certificate with a renewed certificate from a trusted certificate authority.  Ensure that the renewed certificate is used on its proper date of validity (i.e. ValidFrom date).
+Exploit: No
+CVE: None
+
+Plugin name: SSL Certificate Self-Signed[--MANDATORY--]
+Risk factor: Medium
+Description: Retina has detected that the certificate on target is self-signed.  Self-signed certificates can provide underlying cryptographic functionality, but cannot guarantee the origin of the certificate is trusted.
+Fix Information: Verify the certificate is trusted to ensure the confidentiality and integrity of prior encrypted communications.  Replace the current self-signed certificate with one signed by a trusted root certificate authority (CA).
+Exploit: No
+CVE: None
+
+Plugin name: SSL Certificate with Wrong Hostname[--MANDATORY--]
+Risk factor: Medium
+Description: The commonName (CN) of the SSL certificate presented on this service is for a different machine.
+Fix Information: Purchase or generate a proper certificate for this service.
+Exploit: ---
+CVE: None
+
+Plugin name: SSL DROWN Attack Vulnerability (Decrypting RSA with Obsolete and Weakened eNcryption)[--MANDATORY--]
+Risk factor: Medium
+Description: The remote host supports SSLv2 and therefore may be affected by a vulnerability that allows a cross-protocol Bleichenbacher padding oracle attack known as DROWN (Decrypting RSA with Obsolete and Weakened eNcryption). This vulnerability exists due to a flaw in the Secure Sockets Layer Version 2 (SSLv2) implementation, and it allows captured TLS traffic to be decrypted. A man-in-the-middle attacker can exploit this to decrypt the TLS connection by utilizing previously captured traffic and weak cryptography along with a series of specially crafted connections to an SSLv2 server that uses the same private key.
+Fix Information: Disable SSLv2 and export grade cryptography cipher suites. Ensure that private keys are not used anywhere with server software that supports SSLv2 connections.
+Exploit: Exploits are available
+CVE: None
+
+Plugin name: SSL Self-Signed Certificate[--MANDATORY--]
+Risk factor: Medium
+Description: The X.509 certificate chain for this service is not signed by a recognized certificate authority.  If the remote host is a public host in production, this nullifies the use of SSL as anyone could establish a man-in-the-middle attack against the remote host. 
+
+Note that this plugin does not check for certificate chains that end in a certificate that is not self-signed, but is signed by an unrecognized certificate authority.
+Fix Information: Purchase or generate a proper certificate for this service.
+Exploit: ---
+CVE: None
+
+Plugin name: SSLv2 Detected[--MANDATORY--]
+Risk factor: Medium
+Description: Secure Sockets Layer (SSL) version 2 has been detected.  This protocol is known to have cryptographic weaknesses as well as other exploitable vulnerabilities.
+Fix Information: Ensure that applications or services are configured to reject SSL version 2 communications.
+
+Note:  Most implementations of SSL will provide support for all versions of the protocol.  It is up to the application to decide what versions of the protocol it will support and/or refuse. When an SSL connection is negotiated, the client first asks the server application if it will support a certain version of the protocol.  This is known as the 'handshake'. If the server responds that the version is supported, then credentials/keys are exchanged to complete the connection.
+
+Some server applications, such as IIS, will reject the initial handshake based on its protocol configuration. Other server applications attempt to exchange keys before determining if it will support the requested version of the SSL protocol. 
+
+Since SSLv2 exploits are normally based on the initial handshake, Retina relies on the response from the handshake request to ascertain a potential vulnerability. Because of this, an application that is configured to reject SSLv2 could still report as vulnerable.
+Exploit: No
+CVE: None
+
+Plugin name: SSLv3 Fallback Vulnerability (POODLE)[--MANDATORY--]
+Risk factor: Medium
+Description: The SSL protocol 3.0 uses nondeterministic CBC padding, which makes it easier for man-in-the-middle attackers to obtain cleartext data via a padding-oracle attack, aka the 'POODLE' issue.
+Fix Information: Disable the use of the SSLv3 protocol if possible. If compatibility with legacy systems is an issue, attempt to update your TLS implementation to one which can leverage TLS_FALLBACK_SCSV, if available.
+Exploit: No
+CVE: CVE-2014-3566
+
+Plugin name: SSLv3 Padding Oracle On Downgraded Legacy Encryption Vulnerability (POODLE)[--MANDATORY--]
+Risk factor: Medium
+Description: The remote host is affected by a man-in-the-middle (MitM) information disclosure vulnerability known as POODLE. The vulnerability is due to the way SSL 3.0 handles padding bytes when decrypting messages encrypted using block ciphers in cipher block chaining (CBC) mode.
+MitM attackers can decrypt a selected byte of a cipher text in as few as 256 tries if they are able to force a victim application to repeatedly send the same data over newly created SSL 3.0 connections.
+
+As long as a client and service both support SSLv3, a connection can be 'rolled back' to SSLv3, even if TLSv1 or newer is supported by the client and service.
+
+The TLS Fallback SCSV mechanism prevents 'version rollback' attacks without impacting legacy clients; however, it can only protect connections when the client and service support the mechanism. Sites that cannot disable SSLv3 immediately should enable this mechanism.
+
+This is a vulnerability in the SSLv3 specification, not in any particular SSL implementation. Disabling SSLv3 is the only way to completely mitigate the vulnerability.
+Fix Information: Disable SSLv3.
+
+Services that must support SSLv3 should enable the TLS Fallback SCSV mechanism until SSLv3 can be disabled.
+Exploit: Exploits are available
+CVE: None
+
+Plugin name: SSL Version 2 and 3 Protocol Detection[--MANDATORY--]
+Risk factor: Medium
+Description: The remote service accepts connections encrypted using SSL 2.0 and/or SSL 3.0. These versions of SSL are affected by several cryptographic flaws. An attacker can exploit these flaws to conduct man-in-the-middle attacks or to decrypt communications between the affected service and clients.
+
+NIST has determined that SSL 3.0 is no longer acceptable for secure communications. As of the date of enforcement found in PCI DSS v3.1, any version of SSL will not meet the PCI SSC'S definition of 'strong cryptography'.
+Fix Information: Consult the application's documentation to disable SSL 2.0 and 3.0.
+Use TLS 1.1 (with approved cipher suites) or higher instead.
+Exploit: ---
+CVE: None
+
+Plugin name: SSL Weak Cipher Suite Encryption Algorithm Key Length Supported[--MANDATORY--]
+Risk factor: Medium
+Description: Retina has detected that the targeted SSL service supports a cipher suite that uses an encryption algorithm with a short key length.  An attacker may be able to leverage weaknesses in these cipher suites to gain access to sensitive information.
+Fix Information: Disable cipher suites that support less than a 128-bit encryption algorithm key length.  Reconfigure the affected application to use a high-grade encryption cipher suite.
+Exploit: No
+CVE: None
+
+Plugin name: SSL Weak Cipher Suites Supported[--MANDATORY--]
+Risk factor: Medium
+Description: The remote host supports the use of SSL ciphers that offer weak encryption. 
+
+Note: This is considerably easier to exploit if the attacker is on the same physical network.
+Fix Information: Reconfigure the affected application, if possible to avoid the use of weak ciphers.
+Exploit: ---
+CVE: None
+
+Plugin name: SSL Weak Cipher Suite Supported[--MANDATORY--]
+Risk factor: Medium
+Description: Retina has detected that the targeted SSL service supports cryptographically weak cipher suites. An attacker may be able to leverage weaknesses in the encryption ciphers to gain access to sensitive information.
+Fix Information: Reconfigure the affected application to use a high-grade cipher suite.
+Exploit: No
+CVE: None
+
+Plugin name: SSL Weak Protocol Version Supported[--MANDATORY--]
+Risk factor: Medium
+Description: Retina has detected that the targeted service accepts connections for cryptographically weak SSL protocol versions (e.g. SSLv3).  Such protocols are known to have cryptographic weaknesses as well as other exploitable vulnerabilities.
+Fix Information: Ensure that applications or services are configured to reject SSLv3 and SSLv2 communications. Disabling weak protocols is a defense-in-depth measure against vulnerabilities that could allow SSL version downgrade attacks (e.g. CVE-2014-3566).
+Exploit: No
+CVE: CVE-2014-3566
+
+Plugin name: PHP Expose_PHP Information Leak
 Risk factor: Low
-Description: VSFTP server before 2.3.3 is prone to a remote denial-of-service vulnerability. Successfully exploiting this issue allows remote attackers to crash the affected application, denying service to legitimate users. Note: this is a remote, unauthenticated check which may cause false positives with vendor specific backported versions. Ensure that the system is properly patched.
-Fix Information: Upgrade to VSFTP 2.3.3 or later.
-Exploit: Yes
-CVE: CVE-2011-0762
+Description: PHP contains several Easter eggs that could expose potentially sensitive information.  The PHP Easter eggs are controlled by the 'expose_php' variable in the php.ini configuration file, and are enabled by default.
+Fix Information: In the php.ini file set 'expose_php' to 'Off', then restart the web server process.
+Exploit: No
+CVE: None
+
+Plugin name: POP3 Cleartext Logins Permitted
+Risk factor: Low
+Description: The remote host is running a POP3 daemon that allows cleartext logins over unencrypted connections. An attacker can uncover user names and passwords by sniffing traffic to the POP3 daemon if a less secure authentication mechanism (eg, USER command, AUTH PLAIN, AUTH LOGIN) is used.
+Fix Information: Contact your vendor for a fix or encrypt traffic with SSL / TLS using stunnel.
+Exploit: ---
+CVE: None
+
+Plugin name: SMTP Service Cleartext Login Permitted
+Risk factor: Low
+Description: The remote host is running an SMTP server that advertises that it allows cleartext logins over unencrypted connections.  An attacker may be able to uncover user names and passwords by sniffing traffic to the server if a less secure authentication mechanism (i.e.  LOGIN or PLAIN) is used.
+Fix Information: Configure the service to support less secure authentication mechanisms only over an encrypted channel.
+Exploit: ---
+CVE: None
+
+Plugin name: SSH Server CBC Mode Ciphers Enabled
+Risk factor: Low
+Description: The SSH server is configured to support Cipher Block Chaining (CBC) encryption.  This may allow an attacker to recover the plaintext message from the ciphertext. 
+
+Note that this plugin only checks for the options of the SSH server and does not check for vulnerable software versions.
+Fix Information: Contact the vendor or consult product documentation to disable CBC mode cipher encryption, and enable CTR or GCM cipher mode encryption.
+Exploit: No known exploits are available
+CVE: None
+
+Plugin name: SSH Weak MAC Algorithms Enabled
+Risk factor: Low
+Description: The remote SSH server is configured to allow either MD5 or 96-bit MAC algorithms, both of which are considered weak.
+
+Note that this plugin only checks for the options of the SSH server, and it does not check for vulnerable software versions.
+Fix Information: Contact the vendor or consult product documentation to disable MD5 and 96-bit MAC algorithms.
+Exploit: No known exploits are available
+CVE: None
+
+Plugin name: SSL Anonymous Cipher Suites Supported
+Risk factor: Low
+Description: The remote host supports the use of anonymous SSL ciphers.  While this enables an administrator to set up a service that encrypts traffic without having to generate and configure SSL certificates, it offers no way to verify the remote host's identity and renders the service vulnerable to a man-in-the-middle attack.
+
+Note: This is considerably easier to exploit if the attacker is on the same physical network.
+Fix Information: Reconfigure the affected application if possible to avoid use of weak ciphers.
+Exploit: Exploits are available
+CVE: None
+
+Plugin name: SSL Certificate Domain Name Mismatch
+Risk factor: Low
+Description: Retina has detected the fully-qualified domain name (FQDN) of the target does not match the FQDN of the certificate.  Users that connect to the target will be unable to determine if the certificate is intended for the target or for another server.
+Fix Information: Ensure that the certificate has been applied on the correct host.  Replace the current certificate with one issued for the target's fully-qualified domain name (i.e. common name, CN).
+Exploit: No
+CVE: None
+
+Plugin name: SSL RC4 Cipher Suites Supported (Bar Mitzvah)
+Risk factor: Low
+Description: The remote host supports the use of RC4 in one or more cipher suites.
+The RC4 cipher is flawed in its generation of a pseudo-random stream of bytes so that a wide variety of small biases are introduced into the stream, decreasing its randomness.
+
+If plaintext is repeatedly encrypted (e.g., HTTP cookies), and an attacker is able to obtain many (i.e., tens of millions) ciphertexts, the attacker may be able to derive the plaintext.
+Fix Information: Reconfigure the affected application, if possible, to avoid use of RC4 ciphers. Consider using TLS 1.2 with AES-GCM suites subject to browser and web server support.
+Exploit: No known exploits are available
+CVE: None
+
+Plugin name: Additional DNS Hostnames
+Risk factor: Informational
+Description: Hostnames different from the current hostname have been collected by miscellaneous plugins.  Different web servers may be hosted on name- based virtual hosts.
+Fix Information: If you want to test them, re-scan using the special vhost syntax, such as :
+
+www.example.com[192.0.32.10]
+Exploit: ---
+CVE: None
+
+Plugin name: Backported Security Patch Detection (FTP)
+Risk factor: Informational
+Description: Security patches may have been 'backported' to the remote FTP server without changing its version number. 
+
+Banner-based checks have been disabled to avoid false positives. 
+
+Note that this test is informational only and does not denote any security problem.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: Backported Security Patch Detection (SSH)
+Risk factor: Informational
+Description: Security patches may have been 'backported' to the remote SSH server without changing its version number. 
+
+Banner-based checks have been disabled to avoid false positives. 
+
+Note that this test is informational only and does not denote any security problem.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: Common Platform Enumeration (CPE)
+Risk factor: Informational
+Description: By using information obtained from a Nessus scan, this plugin reports CPE (Common Platform Enumeration) matches for various hardware and software products found on a host. 
+
+Note that if an official CPE is not available for the product, this plugin computes the best possible CPE based on the information available from the scan.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: Device Type
+Risk factor: Informational
+Description: Based on the remote operating system, it is possible to determine what the remote system type is (eg: a printer, router, general-purpose computer, etc).
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: DNS Server Detection
+Risk factor: Informational
+Description: The remote service is a Domain Name System (DNS) server, which provides a mapping between hostnames and IP addresses.
+Fix Information: Disable this service if it is not needed or restrict access to internal hosts only if the service is available externally.
+Exploit: ---
+CVE: None
+
+Plugin name: DNS Server Enabled - TCP
+Risk factor: Informational
+Description: If you are not using your system as a DNS server you should disable this service for best practices. DNS servers are often a target for remote attacks.
+Fix Information: Disable DNS services if they are not required.
+Exploit: No
+CVE: None
+
+Plugin name: DNS Server hostname.bind Map Hostname Disclosure
+Risk factor: Informational
+Description: It is possible to learn the remote host name by querying the remote DNS server for 'hostname.bind' in the CHAOS domain.
+Fix Information: It may be possible to disable this feature.  Consult the vendor's documentation for more information.
+Exploit: ---
+CVE: None
 
 Plugin name: DNS Server Version Detection
 Risk factor: Informational
@@ -204,12 +640,31 @@ Fix Information: n/a
 Exploit: ---
 CVE: None
 
-Plugin name: FTP Server Detected
+Plugin name: FTP Server Detection
 Risk factor: Informational
-Description: A FTP (File Transfer Protocol) server is listening on this port.
-Fix Information: When using FTP, data such as usernames and passwords are transferred in cleartext by default. Attackers may be able to eavesdrop on a FTP session and obtain credentials.
+Description: It is possible to obtain the banner of the remote FTP server by connecting to a remote port.
+Fix Information: n/a
+Exploit: ---
+CVE: None
 
-If possible, switch to SFTP (SSH File Transfer Protocol) or FTPS (FTP Over SSL/TLS) instead. If switching to a secure protocol is not possible in your environment, restrict access to the FTP service as much as possible so that only specifically authorized IP addresses can utilize it.
+Plugin name: Host Accepts TCP SYN FIN Requests
+Risk factor: Informational
+Description: The host appears to accept TCP SYN FIN requests from remote hosts.  This TCP Option combination is often considered malicious and used by remote scanners to detect open TCP ports and services.  These requests should be considered malicious and blocked by a stateful packet inspector or firewall or IPS system.
+Fix Information: Configure the host's firewall, IPS, or stateful packet inspector (hardware or otherwise) to block TCP SYN FIN requests.
+Exploit: Yes
+CVE: CVE-2002-1712,CVE-2004-0230,CVE-2002-2150
+
+Plugin name: Host Fully Qualified Domain Name (FQDN) Resolution
+Risk factor: Informational
+Description: Nessus was able to resolve the FQDN of the remote host.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: HTTP 1.0 Protocol Detected
+Risk factor: Informational
+Description: This is an informational check.  Retina has detected version 1.0 of the HTTP Protocol on the target system.
+Fix Information: This is an informational check.  Retina has detected version 1.0 of the HTTP Protocol on the target system.
 Exploit: No
 CVE: None
 
@@ -220,6 +675,13 @@ Fix Information: This is an informational check.  Retina has detected version 1.
 Exploit: No
 CVE: None
 
+Plugin name: HTTP 404 Not Found Response Detected
+Risk factor: Informational
+Description: Retina has detected that the remote site has responded with a 404 Not Found response
+Fix Information: This is an informational check.
+Exploit: No
+CVE: None
+
 Plugin name: HTTP Gzip Compression Detected
 Risk factor: Informational
 Description: Retina has detected that the targeted system allows gzip content encoding.
@@ -227,32 +689,160 @@ Fix Information: This is an informational check.  Retina has detected that the t
 Exploit: No
 CVE: None
 
-Plugin name: NetBIOS/SMB Information Disclosure
+Plugin name: HTTP Methods Allowed (per directory)
 Risk factor: Informational
-Description: Retina has detected a target running a SMB service which responds to SMB requests with potentially sensitive information about the network.
-Fix Information: This is an informational check.
+Description: By calling the OPTIONS method, it is possible to determine which HTTP methods are allowed on each directory. 
+
+As this list may be incomplete, the plugin also tests - if 'Thorough tests' are enabled or 'Enable web applications tests' is set to 'yes' in the scan policy - various known HTTP methods on each directory and considers them as unsupported if it receives a response code of 400, 403, 405, or 501. 
+
+Note that the plugin output is only informational and does not necessarily indicate the presence of any security vulnerabilities.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: HTTP Server Type and Version
+Risk factor: Informational
+Description: This plugin attempts to determine the type and the version of the remote web server.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: HyperText Transfer Protocol (HTTP) Information
+Risk factor: Informational
+Description: This test gives some information about the remote HTTP protocol - the version used, whether HTTP Keep-Alive and HTTP pipelining are enabled, etc... 
+
+This test is informational only and does not denote any security problem.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: IMAP Service Banner Retrieval
+Risk factor: Informational
+Description: An IMAP (Internet Message Access Protocol) server is installed and running on the remote host.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: IMAP Service STARTTLS Command Support
+Risk factor: Informational
+Description: The remote IMAP service supports the use of the 'STARTTLS' command to switch from a cleartext to an encrypted communications channel.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: Nessus Scan Information
+Risk factor: Informational
+Description: This plugin displays, for each tested host, information about the scan itself :
+
+  - The version of the plugin set.
+  - The type of scanner (Nessus or Nessus Home).
+  - The version of the Nessus Engine.
+  - The port scanner(s) used.
+  - The port range scanned.
+  - Whether credentialed or third-party patch management     checks are possible.
+  - The date of the scan.
+  - The duration of the scan.
+  - The number of hosts scanned in parallel.
+  - The number of checks done in parallel.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: Nessus SYN scanner
+Risk factor: Informational
+Description: This plugin is a SYN 'half-open' port scanner.  It shall be reasonably quick even against a firewalled target. 
+
+Note that SYN scans are less intrusive than TCP (full connect) scans against broken services, but they might cause problems for less robust firewalls and also leave unclosed connections on the remote target, if the network is loaded.
+Fix Information: Protect your target with an IP filter.
+Exploit: ---
+CVE: None
+
+Plugin name: OpenSSL Detection
+Risk factor: Informational
+Description: Based on its response to a TLS request with a specially crafted server name extension, it seems that the remote service is using the OpenSSL library to encrypt traffic.
+
+Note that this plugin can only detect OpenSSL implementations that have enabled support for TLS extensions (RFC 4366).
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: OS Identification
+Risk factor: Informational
+Description: Using a combination of remote probes (e.g., TCP/IP, SMB, HTTP, NTP, SNMP, etc.), it is possible to guess the name of the remote operating system in use. It is also possible sometimes to guess the version of the operating system.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: Patch Report
+Risk factor: Informational
+Description: The remote host is missing one or more security patches. This plugin lists the newest version of each patch to install to make sure the remote host is up-to-date.
+Fix Information: Install the patches listed below.
+Exploit: ---
+CVE: None
+
+Plugin name: PHP Version
+Risk factor: Informational
+Description: This plugin attempts to determine the version of PHP available on the remote web server.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: POP3 Service Detected
+Risk factor: Informational
+Description: Retina has detected a Post Office Protocol version 3 (POP3) service listening on the target system.  POP3 is inherently insecure as it transmits all usernames, passwords, and data unencrypted (i.e. plain-text).
+Fix Information: If POP3 is not necessary on the target, disable it.  Consult your user's manual or system help files for information on how to disable your POP3 service. If no user's manual or help file exists, contact your system vendor.
 Exploit: No
 CVE: None
 
-Plugin name: Samba Server Detected
+Plugin name: POP3 Service STLS Command Support
 Risk factor: Informational
-Description: Retina has detected an instance of a UNIX / Linux Samba server.
-Fix Information: This is an informational check.
-Exploit: No
+Description: The remote POP3 service supports the use of the 'STLS' command to switch from a cleartext to an encrypted communications channel.
+Fix Information: n/a
+Exploit: ---
 CVE: None
 
-Plugin name: SMB/CIFS Server Detected
+Plugin name: POP Server Detection
 Risk factor: Informational
-Description: Retina has detected a Server Message Block (SMB) or Common Internet File System (CIFS) protocol server.  This service is used to allow access to shared files/printers on a network.
-Fix Information: This is an informational check. No action is required.
-Exploit: No
+Description: The remote host is running a server that understands the Post Office Protocol (POP), used by email clients to retrieve messages from a server, possibly across a network link.
+Fix Information: Disable this service if you do not use it.
+Exploit: ---
 CVE: None
 
-Plugin name: SMTP Server Detected
+Plugin name: Service Detection
 Risk factor: Informational
-Description: A SMTP server is listening on this port.
-Fix Information: SMTP servers are often targeted by spammers and phishers and should be disabled if they are not being used. If they are being used, consider filtering incoming traffic to this port.
-Exploit: No
+Description: Nessus was able to identify the remote service by its banner or by looking at the error message it sends when it receives an HTTP request.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: SMTP Authentication Methods
+Risk factor: Informational
+Description: The remote SMTP server advertises that it supports authentication.
+Fix Information: Review the list of methods and whether they're available over an encrypted channel.
+Exploit: ---
+CVE: None
+
+Plugin name: SMTP Server Detection
+Risk factor: Informational
+Description: The remote host is running a mail (SMTP) server on this port. 
+
+Since SMTP servers are the targets of spammers, it is recommended you disable it if you do not use it.
+Fix Information: Disable this service if you do not use it, or filter incoming traffic to this port.
+Exploit: ---
+CVE: None
+
+Plugin name: SMTP Service STARTTLS Command Support
+Risk factor: Informational
+Description: The remote SMTP service supports the use of the 'STARTTLS' command to switch from a cleartext to an encrypted communications channel.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: SSH Algorithms and Languages Supported
+Risk factor: Informational
+Description: This script detects which algorithms and languages are supported by the remote service for encrypting communications.
+Fix Information: n/a
+Exploit: ---
 CVE: None
 
 Plugin name: SSH Local Access Not Available
@@ -260,6 +850,20 @@ Risk factor: Informational
 Description: Retina was unable to login to the remote system via SSH.
 Fix Information: Please verify your login credentials are correct.
 Exploit: No
+CVE: None
+
+Plugin name: SSH Protocol Versions Supported
+Risk factor: Informational
+Description: This plugin determines the versions of the SSH protocol supported by the remote SSH daemon.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: SSH Server Type and Version Information
+Risk factor: Informational
+Description: It is possible to obtain information about the remote SSH server by sending an empty authentication request.
+Fix Information: n/a
+Exploit: ---
 CVE: None
 
 Plugin name: SSL/TLS Cipher Block Chaining Cipher Suites Supported
@@ -276,11 +880,39 @@ Fix Information: This is an informational check. No action is necessary.
 Exploit: No
 CVE: None
 
+Plugin name: SSL / TLS Versions Supported
+Risk factor: Informational
+Description: This plugin detects which SSL and TLS versions are supported by the remote service for encrypting communications.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
 Plugin name: SSL/TLS Versions Supported
 Risk factor: Informational
 Description: This finding detects which SSL and TLS protocol versions are supported by the remote service for encrypting communications.
 Fix Information: This is an informational check. No action is required.
 Exploit: No
+CVE: None
+
+Plugin name: SSL Certificate commonName Mismatch
+Risk factor: Informational
+Description: Retina has detected that an SSL certificate provided by the remote host contains a mismatch in the commonName.
+Fix Information: This is an informational check.
+Exploit: No
+CVE: None
+
+Plugin name: SSL Certificate commonName Mismatch
+Risk factor: Informational
+Description: This service presents an SSL certificate for which the 'commonName' (CN) does not match the host name on which the service listens.
+Fix Information: If the machine has several names, make sure that users connect to the service through the DNS host name that matches the common name in the certificate.
+Exploit: ---
+CVE: None
+
+Plugin name: SSL Certificate Information
+Risk factor: Informational
+Description: This plugin connects to every SSL-related port and attempts to extract and dump the X.509 certificate.
+Fix Information: n/a
+Exploit: ---
 CVE: None
 
 Plugin name: SSL Certificate Public Key Algorithm
@@ -297,34 +929,60 @@ Fix Information: This is an informational check.  Ensure the certificate is usin
 Exploit: No
 CVE: None
 
-Plugin name: User Never Logged On
+Plugin name: SSL Cipher Block Chaining Cipher Suites Supported
 Risk factor: Informational
-Description: It is suggested that you review this user account. If it is not needed or was not created by an administrator of your network, it is suggested that you disable or delete it.
-Fix Information: To delete the account
-For Windows:
-  1. Open User Manager
-  2. Select the account to delete
-  3. Press the 'Delete' key
-  4. Click 'Ok'
-  
-  To disable the account (non-built-in accounts only):
-  1. Open User Manager
-  2. Select the account to disable
-  3. Select Properties from the User menu
-  4. Check 'Account Disabled'
-  5. Click 'Ok'
-
-For Samba:
-Samba implementations vary depending on operating system.  However, a generalized guide on configuring Samba can be found at:
-http://dp.samba.org/samba/docs/man/Samba-HOWTO-Collection/
-Exploit: No
+Description: The remote host supports the use of SSL ciphers that operate in Cipher Block Chaining (CBC) mode.  These cipher suites offer additional security over Electronic Codebook (ECB) mode, but have the potential to leak information if used improperly.
+Fix Information: n/a
+Exploit: ---
 CVE: None
 
-Plugin name: Web Server Default Install Page Detected - Apache
+Plugin name: SSL Cipher Suites Supported
 Risk factor: Informational
-Description: Retina has detected a web server's default install page.
-Fix Information: Configure the web server or disable if not needed.
-Exploit: No
+Description: This plugin detects which SSL ciphers are supported by the remote service for encrypting communications.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: SSL Perfect Forward Secrecy Cipher Suites Supported
+Risk factor: Informational
+Description: The remote host supports the use of SSL ciphers that offer Perfect Forward Secrecy (PFS) encryption.  These cipher suites ensure that recorded SSL traffic cannot be broken at a future date if the server's private key is compromised.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: SSL Session Resume Supported
+Risk factor: Informational
+Description: This script detects whether a host allows resuming SSL sessions by performing a full SSL handshake to receive a session ID, and then reconnecting with the previously used session ID.  If the server accepts the session ID in the second connection, the server maintains a cache of sessions that can be resumed.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: TCP/IP Timestamps Supported
+Risk factor: Informational
+Description: The remote host implements TCP timestamps, as defined by RFC1323.  A side effect of this feature is that the uptime of the remote host can sometimes be computed.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: Traceroute Information
+Risk factor: Informational
+Description: Makes a traceroute to the remote host.
+Fix Information: n/a
+Exploit: ---
+CVE: None
+
+Plugin name: Web Site Client Access Policy File Detection
+Risk factor: Informational
+Description: The remote web server contains a client access policy file.  This is a simple XML file used by Microsoft Silverlight to allow access to services that reside outside the exact web domain from which a Silverlight control originated.
+Fix Information: Review the contents of the policy file carefully.  Improper policies, especially an unrestricted one with just '*', could allow for cross- site request forgery or other attacks against the web server.
+Exploit: ---
+CVE: None
+
+Plugin name: Web Site Cross-Domain Policy File Detection
+Risk factor: Informational
+Description: The remote web server contains a cross-domain policy file.  This is a simple XML file used by Adobe's Flash Player to allow access to data that resides outside the exact web domain from which a Flash movie file originated.
+Fix Information: Review the contents of the policy file carefully.  Improper policies, especially an unrestricted one with just '*', could allow for cross- site request forgery and cross-site scripting attacks against the web server.
+Exploit: ---
 CVE: None
 
 

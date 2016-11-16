@@ -137,11 +137,10 @@ function startProcessing(inputArgument) {
             }
    	})
 	.done(function( msg ) {
-				    
-        //console.log(msg);
+
 
 		var received_data = JSON.parse(msg);
-        var url = received_data.url_to_html_output;
+        var url = received_data.url_to_html_output;        
 
         //save the global array received from php in order
         //to access it globally
