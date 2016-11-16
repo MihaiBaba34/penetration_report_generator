@@ -80,6 +80,7 @@
         <input type="file" name="files[]" id="filer_input2" multiple="multiple">
 
     </div>
+ 
   
     <script src="http://code.jquery.com/jquery-3.1.0.min.js" crossorigin="anonymous"></script>
     <script src="js/jquery.filer.min.js" type="text/javascript"></script>
