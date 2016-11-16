@@ -20,8 +20,7 @@ INSTALLING
 
 -the application was developed and tested in SCOTCH BOX 2.5 under Vagrant
 
-----------------------------------------------------------------------------------------------------------
 CONTACT INFORMATION
-
+----------------------------------------------------------------------------------------------------------
 GitHub: https://github.com/dorinbujor/penetration_report_generator/
 e-mail: dor-in@mail.ru
