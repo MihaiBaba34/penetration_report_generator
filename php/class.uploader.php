@@ -10,7 +10,7 @@
 #  Information: Please don't forget to check your php.ini file for "upload_max_filesize", "post_max_size", "max_file_uploads"
 #
 # ======================================================================== #
-
+date_default_timezone_set("Australia/Brisbane");
 class Uploader {
 
     public $options = array(
