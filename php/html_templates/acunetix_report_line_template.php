@@ -8,7 +8,7 @@ $html = "
             <h4 class='panel-title'>
              <span>
               <input id='supplied' class='checkrecord acunetixLeftCheckbox' type='checkbox' value=\"" . $i . "\" name=\"" . $reportPositionInVector . "\" checked=\"checked\" />
-              <span style='margin-left: 30px;'>" . $plugin_name . $reportPositionInVector . "
+              <span style='margin-left: 30px;'>" . $plugin_name . "
               </span>
             </span>
             <span class='pull-right'>
@@ -31,6 +31,7 @@ $html = "
 
              <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][cve]' value=\"" . $cve_strings . '" /><strong>CVE:&#160;</strong>' . $cve_strings . '
              </li>
+             <li class=\'list-group-item\'><strong>Commentaries:  </strong><input type=\'text\'></input> </li>
            </ul>
          </div>
        </div>

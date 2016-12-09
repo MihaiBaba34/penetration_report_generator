@@ -154,6 +154,7 @@
 				//get the global array of items from local storage
 				var global_array = JSON.parse(localStorage.getItem("global_array"));
 				console.log(global_array);
+				
 				var input_fields = JSON.parse(localStorage.getItem("input_fields"));
 
 
@@ -169,16 +170,16 @@
 				})
 				.done(function( msg ) {
 
-					console.log("*********");
-					console.log(msg);
-					console.log("*********");
-					var url = JSON.parse(msg);
-					console.log("*********");
-					console.log(url);
-					console.log("*********");
+					// console.log("*********");
+					// console.log(msg);
+					// console.log("*********");
+					// var url = JSON.parse(msg);
+					// console.log("*********");
+					// console.log(url);
+					// console.log("*********");
 
 					
-					window.location.href = url;
+					//window.location.href = url;
 
 					/*var received_data = JSON.parse(msg);
 					var url = received_data.url_to_html_output;

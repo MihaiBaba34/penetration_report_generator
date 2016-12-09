@@ -1,5 +1,5 @@
 <?php
-
+global $risk_counters;
 $HTMLAcunetixAntet = '
 <div class="alert alert-info" role="alert" style="background: #ECEEEF; border:0;">
   <h3 class="text-center"><strong>Web Application Vulnerabilities</strong></h3>
