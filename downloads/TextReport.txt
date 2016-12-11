@@ -1,4 +1,41 @@
-High: 0 || Medium: 4 || Low: 7 || Information: 1 || Total risks: 12 ||
+High: 4 || Medium: 4 || Low: 7 || Information: 1 || Total risks: 16 ||
+
+Plugin name: nginx SPDY heap buffer overflow[--MANDATORY--] 
+Risk factor: High
+Description: A heap-based buffer overflow in the SPDY implementation in nginx 1.3.15 before 1.4.7 and 1.5.x before 1.5.12 allows remote attackers to execute arbitrary code via a crafted request. The problem affects nginx compiled with the ngx_http_spdy_module module (which is not compiled by default) and without --with-debug configure option, if the &quot;spdy&quot; option of the &quot;listen&quot; directive is used in a configuration file.
+Fix Information: An attacker can cause a heap memory buffer overflow in a worker process by using a specially crafted request, potentially
+resulting in arbitrary code execution 
+CVE: CWE-122
+
+Plugin name: Cross site scripting (verified)[--MANDATORY--] 
+Risk factor: High
+Description: This script is possibly vulnerable to Cross Site Scripting (XSS) attacks.
+Cross site scripting (also referred to as XSS) is a vulnerability that allows an attacker to send malicious code (usually in the form of Javascript) to another user.
+Because a browser cannot know if the script should be trusted or not, it will execute the script in the user context allowing the attacker to access any cookies or session tokens retained by the browser.
+Fix Information: Malicious users may inject JavaScript, VBScript, ActiveX, HTML or Flash into a vulnerable application to fool a user in order to gather data from them.
+An attacker can steal the session cookie and take over the account, impersonating the user.
+It is also possible to modify the content of the page presented to the user.
+CVE: CWE-79
+
+Plugin name: XML external entity injection[--MANDATORY--] 
+Risk factor: High
+Description: XML supports a facility known as &quot;external entities&quot;, which instruct an XML processor to retrieve and perform an inline include of XML located at a particular  URI. An external XML entity can be used to append or modify the document type declaration (DTD) associated with an XML document.  An  external XML entity can also be used to include XML within the  content of an XML document. Now assume that the XML processor parses data originating from a source under attacker control. Most of the time the processor will not be validating, but it MAY include the replacement text thus initiating an unexpected file open operation, or HTTP transfer, or whatever system ids the XML
+ processor knows how to access. below is a sample XML document that will use this functionality to include the contents of a local file (/etc/passwd)
+
+&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;!DOCTYPE acunetix [
+  &lt;!ENTITY acunetixent SYSTEM &quot;file:///etc/passwd&quot;&gt;
+]&gt;
+&lt;xxx&gt;&amp;acunetixent;&lt;/xxx&gt;
+
+Fix Information: Attacks can include disclosing local files, which may contain sensitive data such as passwords or private user data, using file: schemes or relative paths in the system identifier. Since the attack occurs relative to the application processing the XML document, an attacker may use this trusted application to pivot to other internal systems, possibly disclosing other internal content via http(s) requests.
+CVE: CWE-611
+
+Plugin name: Weak password[--MANDATORY--] 
+Risk factor: High
+Description: This page is using a weak password. Acunetix WVS was able to guess the credentials required to access this page. A weak password is short, common, a system default, or something that could be rapidly guessed by executing a brute force attack using a subset of all possible passwords, such as words in the dictionary, proper names, words based on the user name or common variations on these themes.
+Fix Information: An attacker may access the contents of the password-protected page.
+CVE: CWE-200
 
 Plugin name: User credentials are sent in clear text[--MANDATORY--] 
 Risk factor: Medium
@@ -84,7 +121,7 @@ Fix Information: Possible sensitive information disclosure.
 CVE: CWE-200
 
 
-Critical: 0 || High: 4 || Medium: 6 || Low: 10 || Information: 32 || Total risks: 52 ||
+Critical: 0 || High: 8 || Medium: 6 || Low: 10 || Information: 32 || Total risks: 56 ||
 
 Plugin name: Samba 3.0.0 &lt; 4.3.3 Multiple Vulnerabilities[--MANDATORY--]
 Risk factor: High

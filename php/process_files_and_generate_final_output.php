@@ -272,6 +272,13 @@ function buildAcunetixHTMLString($htmlDocument, $divElement, $global_array, $fil
 			$cve_strings = '';
 			$cve_strings = $element_from_specific_report['cve'];
 
+			$comment = '';
+			$comment = $element_from_specific_report['comment'];
+			if($comment == "")
+			{
+				$comment = "-";
+			}			
+
 			$mandatory = "";
 			if($value["right"]["checked"] == "checked")
 			{
@@ -372,6 +379,13 @@ function buildCombinedHTMLString($htmlDocument, $divElement, $global_array, $fil
 			{
 				$mandatory = "[--MANDATORY--]";
 			}
+
+			$comment = '';
+			$comment = $element_from_specific_report['comment'];
+			if($comment == "")
+			{
+				$comment = "-";
+			}		
 
 			$fixInformation = '';
 			if (isset($element_from_specific_report['information']))

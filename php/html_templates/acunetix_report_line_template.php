@@ -31,7 +31,7 @@ $html = "
 
              <li class='list-group-item'><input type='checkbox' style='display:none;' name='result[0][cve]' value=\"" . $cve_strings . '" /><strong>CVE:&#160;</strong>' . $cve_strings . '
              </li>
-             <li class=\'list-group-item\'><strong>Commentaries:  </strong><input type=\'text\'></input> </li>
+             <li class=\'list-group-item \'><strong>Commentaries:  </strong><input type=\'text\' class=\'acunetix_comments\'></input> </li>
            </ul>
          </div>
        </div>

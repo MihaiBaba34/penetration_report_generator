@@ -139,47 +139,54 @@
 			/*window.onload = console.log(JSON.parse(localStorage.getItem("global_array")));*/
 
 
-			function collectSelectedReports()
-			{
-				var acunetixLeftCheckboxClass="acunetixLeftCheckbox";
-				var acunetixRightCheckboxClass="acunetixRightCheckbox";
-				var combinedLeftCheckboxClass="combinedLeftCheckbox";
-				var combinedRightCheckboxClass="combinedRightCheckbox";
-				var acunetix;
-				var combined;				
-				 
-				acunetix = getReportByCheckboxClass(acunetixLeftCheckboxClass,acunetixRightCheckboxClass);
-				combined = getReportByCheckboxClass(combinedLeftCheckboxClass,combinedRightCheckboxClass);
+function collectSelectedReports()
+     {
+      var acunetixLeftCheckboxClass="acunetixLeftCheckbox";
+      var acunetixRightCheckboxClass="acunetixRightCheckbox";
+      var combinedLeftCheckboxClass="combinedLeftCheckbox";
+      var combinedRightCheckboxClass="combinedRightCheckbox";
+      var acunetix;
+      var combined;				
+
+      acunetix = getReportByCheckboxClass(acunetixLeftCheckboxClass,acunetixRightCheckboxClass);
+      combined = getReportByCheckboxClass(combinedLeftCheckboxClass,combinedRightCheckboxClass);
 
 				//get the global array of items from local storage
 				var global_array = JSON.parse(localStorage.getItem("global_array"));
-				console.log(global_array);
-				
-				var input_fields = JSON.parse(localStorage.getItem("input_fields"));
+        console.log("*******global_array********");
+        console.log(global_array);
+        console.log("*******global_array********");
+
+        global_array = appendCommentariesForEachReportLine(global_array);
+
+        console.log("*******global_array_with_comments********");
+        console.log(global_array);
+        console.log("*******global_array_with_comments********");
+
+        var input_fields = JSON.parse(localStorage.getItem("input_fields"));
+
+        $.ajax({
+         type: "POST",
+         url: "../php/process_files_and_generate_final_output.php",
+         data: {
+          acunetix: acunetix,				
+          combined: combined,
+          input_fields: input_fields,
+          global_array: global_array
+        }
+      })
+      .done(function( msg ) {
+
+         console.log("*********");
+         console.log(msg);
+         console.log("*********");
+         var url = JSON.parse(msg);
+         console.log("*********");
+         console.log(url);
+         console.log("*********");
 
 
-				$.ajax({
-					type: "POST",
-					url: "../php/process_files_and_generate_final_output.php",
-					data: {
-						acunetix: acunetix,				
-						combined: combined,
-						input_fields: input_fields,
-						global_array: global_array
-					}
-				})
-				.done(function( msg ) {
-
-					console.log("*********");
-					console.log(msg);
-					console.log("*********");
-					var url = JSON.parse(msg);
-					console.log("*********");
-					console.log(url);
-					console.log("*********");
-
-					
-					window.location.href = url;
+		 window.location.href = url;
 
 					/*var received_data = JSON.parse(msg);
 					var url = received_data.url_to_html_output;
@@ -190,68 +197,98 @@
 			        localStorage.setItem("global_array",storage_array);
 
 			        window.location.href = url;*/
-    			});	
+          });				
+      }
+
+      function appendCommentariesForEachReportLine(local_global_array)
+      {
+        var acunetix_commentaries = document.getElementsByClassName("acunetix_comments");
+        var combined_commentaries = document.getElementsByClassName("combined_comments");
 
 
+/*        console.log("acunetix_commentaries");
+        console.log(acunetix_commentaries);
+        console.log("acunetix_commentaries");
+        
+        console.log("combined_commentaries");
+        console.log(combined_commentaries);
+        console.log("combined_commentaries");*/
 
-
-
-
-		function getReportByCheckboxClass(LeftCheckbox,RightCheckbox)
+        var comments_index = 0;
+        for(var acunetix_obj in local_global_array["acunetix"])
         {
+        	var acunetix_risks_array = local_global_array["acunetix"][acunetix_obj];
+        	for(var risk_object in acunetix_risks_array)
+        	{
+        		acunetix_risks_array[risk_object]["comment"] = acunetix_commentaries[comments_index].value;
+        		comments_index++;
+        	}
+        }
 
-          var leftCheckBoxes = document.getElementsByClassName(LeftCheckbox);
-          var rightCheckBoxes = document.getElementsByClassName(RightCheckbox);
-          var checkBoxArray=[];
-          
-          for (var i=0; i<leftCheckBoxes.length; i++) {
+        comments_index = 0;
+        for(var combined_obj in local_global_array["combined"])
+        {
+        	var combined_risks_array = local_global_array["combined"][combined_obj];
+        	for(var risk_object in combined_risks_array)
+        	{
+        		combined_risks_array[risk_object]["comment"] = combined_commentaries[comments_index].value;
+        		comments_index++;
+        	}
+        }
 
-              var leftReportInfo= {};
-              var rightReportInfo= {};
-              var reportCheckboxesInfo={};
+        return local_global_array;
+      }
 
-              leftReportInfo["riskLevel"]=leftCheckBoxes[i].value;
-              leftReportInfo["positionInRiskVector"]=leftCheckBoxes[i].name;
-             if( leftCheckBoxes[i].checked == true)
-			  {
-			  	leftReportInfo["checked"]= "checked";	
-			  }
-			  else
-			  {
-			  	leftReportInfo["checked"]= "unchecked";		
-			  }
-              
+      function getReportByCheckboxClass(LeftCheckbox,RightCheckbox)
+      {
 
-              rightReportInfo["riskLevel"]=rightCheckBoxes[i].value;
-              rightReportInfo["positionInRiskVector"]=rightCheckBoxes[i].name;
-              
-			  if( rightCheckBoxes[i].checked == true)
-			  {
-			  	rightReportInfo["checked"]= "checked";	
-			  }
-			  else
-			  {
-			  	rightReportInfo["checked"]= "unchecked";		
-			  }
-              
+        var leftCheckBoxes = document.getElementsByClassName(LeftCheckbox);
+        var rightCheckBoxes = document.getElementsByClassName(RightCheckbox);
+        var checkBoxArray=[];
 
-              reportCheckboxesInfo["left"]=leftReportInfo;
-              reportCheckboxesInfo["right"]=rightReportInfo;
+        for (var i=0; i<leftCheckBoxes.length; i++) {
 
-              checkBoxArray.push(reportCheckboxesInfo);
-             
-         }            
+          var leftReportInfo= {};
+          var rightReportInfo= {};
+          var reportCheckboxesInfo={};
+
+          leftReportInfo["riskLevel"]=leftCheckBoxes[i].value;
+          leftReportInfo["positionInRiskVector"]=leftCheckBoxes[i].name;
+          if( leftCheckBoxes[i].checked == true)
+          {
+            leftReportInfo["checked"]= "checked"; 
+          }
+          else
+          {
+            leftReportInfo["checked"]= "unchecked";   
+          }
+
+
+          rightReportInfo["riskLevel"]=rightCheckBoxes[i].value;
+          rightReportInfo["positionInRiskVector"]=rightCheckBoxes[i].name;
+
+          if( rightCheckBoxes[i].checked == true)
+          {
+            rightReportInfo["checked"]= "checked";  
+          }
+          else
+          {
+            rightReportInfo["checked"]= "unchecked";    
+          }
+
+
+          reportCheckboxesInfo["left"]=leftReportInfo;
+          reportCheckboxesInfo["right"]=rightReportInfo;
+
+          checkBoxArray.push(reportCheckboxesInfo);
+
+        }            
 
 
          //console.log(checkboxesChecked);
          return checkBoxArray;
 
-        }
-
-
-				
-
-			}
+       }
 		</script>
 	</body>
 	</html>
